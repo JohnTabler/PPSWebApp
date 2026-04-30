@@ -10,30 +10,30 @@
    ============================================================= */
 
 /* ── GOOGLE FONTS ─────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
 
 /* ── DESIGN TOKENS ────────────────────────────────────────── */
 :root {
-  /* Backgrounds */
-  --bg:       #0d0f14;
-  --surface:  #13161e;
-  --surface2: #1a1e29;
-  --surface3: #1f2330;
-  --border:   #252a38;
+/* Backgrounds */
+  --bg:       #f4f6fa;
+  --surface:  #ffffff;
+  --surface2: #f0f2f7;
+  --surface3: #e8ebf2;
+  --border:   #dde1ec;
 
   /* Brand colors */
-  --accent:   #4f9cf9;   /* Blue — primary actions, links */
-  --accent2:  #38d9a9;   /* Green — success, positive */
-  --warn:     #ffa94d;   /* Orange — warnings */
-  --danger:   #ff6b6b;   /* Red — errors, issues */
+  --accent:   #2c6fef;   /* Blue — primary actions, links */
+  --accent2:  #12a47a;   /* Green — success, positive */
+  --warn:     #e07b00;   /* Orange — warnings */
+  --danger:   #d63b3b;   /* Red — errors, issues */
 
   /* Text */
-  --text:     #e8ecf4;
+  --text:     #1a1d27;
   --muted:    #6b7591;
 
   /* Typography */
   --mono:     'DM Mono', monospace;
-  --sans:     'Syne', sans-serif;
+  --sans:     'Inter', sans-serif;
 }
 
 /* ── RESET ────────────────────────────────────────────────── */
