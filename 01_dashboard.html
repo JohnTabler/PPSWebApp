@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPS – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e29;
+    --border: #252a38;
+    --accent: #4f9cf9;
+    --accent2: #38d9a9;
+    --warn: #ffa94d;
+    --danger: #ff6b6b;
+    --text: #e8ecf4;
+    --muted: #6b7591;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; display: flex; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px; min-height: 100vh; background: var(--surface);
+    border-right: 1px solid var(--border); padding: 28px 0; flex-shrink: 0;
+    display: flex; flex-direction: column;
+  }
+  .logo { padding: 0 22px 28px; border-bottom: 1px solid var(--border); }
+  .logo-mark { font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--text); }
+  .logo-mark span { color: var(--accent); }
+  .logo-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: 0.08em; }
+  .project-chip {
+    margin: 16px 14px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .project-chip .label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .project-chip .name { font-size: 12px; font-weight: 600; color: var(--text); margin-top: 3px; line-height: 1.3; }
+  nav { padding: 8px 0; flex: 1; }
+  .nav-section { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; padding: 14px 22px 6px; text-transform: uppercase; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 22px;
+    font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer;
+    border-left: 2px solid transparent; transition: all 0.15s;
+    text-decoration: none;
+  }
+  a.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--text); border-left-color: var(--accent); background: rgba(79,156,249,0.06); }
+  .nav-item.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+  .user-area { padding: 16px 14px; border-top: 1px solid var(--border); }
+  .user-chip { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .user-name { font-size: 12px; font-weight: 600; }
+  .user-role { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+  .topbar {
+    height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center;
+    padding: 0 32px; gap: 16px; flex-shrink: 0; background: var(--surface);
+  }
+  .page-title { font-size: 16px; font-weight: 700; flex: 1; }
+  .badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-blue { background: rgba(79,156,249,0.15); color: var(--accent); border: 1px solid rgba(79,156,249,0.25); }
+  .badge-green { background: rgba(56,217,169,0.12); color: var(--accent2); border: 1px solid rgba(56,217,169,0.2); }
+  .badge-warn { background: rgba(255,169,77,0.12); color: var(--warn); border: 1px solid rgba(255,169,77,0.2); }
+  .btn { padding: 8px 16px; border-radius: 7px; font-family: var(--sans); font-size: 12px; font-weight: 700; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+  .content { padding: 28px 32px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* STAT CARDS */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; position: relative; overflow: hidden;
+  }
+  .stat-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .stat-card.blue::after { background: var(--accent); }
+  .stat-card.green::after { background: var(--accent2); }
+  .stat-card.warn::after { background: var(--warn); }
+  .stat-card.red::after { background: var(--danger); }
+  .stat-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .stat-value { font-size: 28px; font-weight: 800; margin: 6px 0 4px; letter-spacing: -1px; }
+  .stat-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  /* GRID 2-COL */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3-1 { display: grid; grid-template-columns: 3fr 1fr; gap: 20px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex;
+    align-items: center; justify-content: space-between;
+  }
+  .card-title { font-size: 13px; font-weight: 700; }
+  .card-body { padding: 20px; }
+
+  /* FINANCIALS TABLE */
+  .fin-table { width: 100%; border-collapse: collapse; }
+  .fin-table th { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; text-align: right; padding: 0 0 10px; }
+  .fin-table th:first-child { text-align: left; }
+  .fin-table td { font-size: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .fin-table td:not(:first-child) { text-align: right; font-family: var(--mono); }
+  .fin-table tr:last-child td { border-bottom: none; }
+  .fin-name { display: flex; align-items: center; gap: 8px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .positive { color: var(--accent2); }
+  .total-row td { font-weight: 700; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13px; }
+
+  /* GANTT */
+  .gantt-wrap { overflow-x: auto; }
+  .gantt-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+  .gantt-table th { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-align: center; padding: 0 0 8px; }
+  .gantt-table th.label-col { text-align: left; min-width: 200px; }
+  .gantt-table td { padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
+  .gantt-table tr:last-child td { border-bottom: none; }
+  .act-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; padding-right: 12px; }
+  .act-type { font-family: var(--mono); font-size: 9px; color: var(--muted); }
+  .gantt-cell { position: relative; height: 24px; }
+  .bar {
+    position: absolute; top: 4px; height: 16px; border-radius: 3px;
+    display: flex; align-items: center; padding: 0 6px; font-family: var(--mono); font-size: 9px; color: #fff;
+    white-space: nowrap; overflow: hidden;
+  }
+  .pct-badge { font-family: var(--mono); font-size: 9px; color: var(--muted); text-align: right; padding-left: 8px; }
+
+  /* BUDGET DONUT */
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  svg.donut { overflow: visible; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+  .legend-swatch { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .legend-amt { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-left: auto; }
+
+  /* STATUS PILLS */
+  .status { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.05em; }
+  .s-track { background: rgba(56,217,169,0.12); color: var(--accent2); }
+  .s-issue { background: rgba(255,107,107,0.12); color: var(--danger); }
+  .s-done  { background: rgba(79,156,249,0.12); color: var(--accent); }
+
+  .progress-bg { background: var(--border); border-radius: 2px; height: 4px; width: 80px; overflow: hidden; display: inline-block; vertical-align: middle; }
+  .progress-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Plan<span>Perfect</span></div>
+    <div class="logo-sub">Systems · v2.0</div>
+  </div>
+  <div class="project-chip">
+    <div class="label">Active Project</div>
+    <div class="name">SDCCD 1450 Frazee<br>5th Floor TI</div>
+  </div>
+  <nav>
+    <div class="nav-section">Core</div>
+    <a class="nav-item active" href="index.html"><span class="icon">⬛</span> Dashboard</a>
+    <a class="nav-item" href="02_ffe_list.html"><span class="icon">📋</span> Master FF&E</a>
+    <a class="nav-item" href="03_move_management.html"><span class="icon">🚚</span> Move Mgmt</a>
+    <div class="nav-item disabled"><span class="icon">🔄</span> Swing Space</div>
+    <div class="nav-item disabled"><span class="icon">🏗</span> Tenant Imp.</div>
+    <div class="nav-section">Project</div>
+    <a class="nav-item" href="05_schedule_gantt.html"><span class="icon">📅</span> Schedule</a>
+    <div class="nav-item disabled"><span class="icon">🚨</span> Issue Log</div>
+    <div class="nav-item disabled"><span class="icon">✅</span> Punch List</div>
+    <div class="nav-item disabled"><span class="icon">📊</span> Reports</div>
+    <div class="nav-section">Admin</div>
+    <div class="nav-item disabled"><span class="icon">⚙️</span> Settings</div>
+    <div class="nav-item disabled"><span class="icon">👥</span> Users</div>
+  </nav>
+  <div class="user-area">
+    <div class="user-chip">
+      <div class="avatar">MG</div>
+      <div>
+        <div class="user-name">Molly Gardner</div>
+        <div class="user-role">Project Manager</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <span class="page-title">Dashboard</span>
+    <span class="badge badge-blue">1450 Frazee · 5th Floor</span>
+    <span class="badge badge-warn">Move Date: Sep 19, 2025</span>
+    <button class="btn btn-ghost">Export</button>
+    <button class="btn btn-primary">+ New Item</button>
+  </div>
+
+  <div class="content">
+    <!-- STAT ROW -->
+    <div class="stats-row">
+      <div class="stat-card blue">
+        <div class="stat-label">Total Budget</div>
+        <div class="stat-value">$330K</div>
+        <div class="stat-sub">Funds Remaining</div>
+      </div>
+      <div class="stat-card warn">
+        <div class="stat-label">Total Spend (Planned)</div>
+        <div class="stat-value">$309K</div>
+        <div class="stat-sub">FF&E + Other</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">FF&E Items Tracked</div>
+        <div class="stat-value">97+</div>
+        <div class="stat-sub">Across all modules</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Open Issues</div>
+        <div class="stat-value">3</div>
+        <div class="stat-sub">Active · Needs attention</div>
+      </div>
+    </div>
+
+    <!-- FINANCIALS + DONUT -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Financials: Planned vs Actual</span>
+          <span class="badge badge-blue">Budget Utilization</span>
+        </div>
+        <div class="card-body">
+          <table class="fin-table">
+            <thead>
+              <tr>
+                <th>Cost Area</th>
+                <th>Planned</th>
+                <th>Actual</th>
+                <th>Variance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="fin-name"><span class="dot" style="background:#4f9cf9"></span>FF&E (Non Ed-Tech/IT)</span></td>
+                <td>$225,209</td>
+                <td>$0</td>
+                <td class="positive">$225,209</td>
+              </tr>
+              <tr>
+                <td><span class="fin-name"><span class="dot" style="background:#38d9a9"></span>Other</span></td>
+                <td>$83,819</td>
+                <td>$0</td>
+                <td class="positive">$83,819</td>
+              </tr>
+              <tr>
+                <td><span class="fin-name"><span class="dot" style="background:#6b7591"></span>IT</span></td>
+                <td>$0</td><td>$0</td><td>—</td>
+              </tr>
+              <tr>
+                <td><span class="fin-name"><span class="dot" style="background:#6b7591"></span>AV/Ed-Tech</span></td>
+                <td>$0</td><td>$0</td><td>—</td>
+              </tr>
+              <tr>
+                <td><span class="fin-name"><span class="dot" style="background:#6b7591"></span>Move Management</span></td>
+                <td>$0</td><td>$0</td><td>—</td>
+              </tr>
+              <tr>
+                <td><span class="fin-name"><span class="dot" style="background:#6b7591"></span>Swing Space</span></td>
+                <td>$0</td><td>$0</td><td>—</td>
+              </tr>
+              <tr>
+                <td><span class="fin-name"><span class="dot" style="background:#ffa94d"></span>Tenant Improvement</span></td>
+                <td>$0</td><td>$0</td><td>—</td>
+              </tr>
+              <tr class="total-row">
+                <td>Total Spend</td>
+                <td>$309,028</td>
+                <td>$0</td>
+                <td class="positive">$309,028</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Budget Allocation</span>
+          <span class="badge badge-green">$330K Total</span>
+        </div>
+        <div class="card-body">
+          <div class="donut-wrap">
+            <svg width="160" height="160" class="donut" viewBox="0 0 160 160">
+              <!-- FF&E: 225209/309028 = 72.9% → 262.4° -->
+              <circle cx="80" cy="80" r="58" fill="none" stroke="#1a1e29" stroke-width="28"/>
+              <circle cx="80" cy="80" r="58" fill="none" stroke="#4f9cf9" stroke-width="28"
+                stroke-dasharray="265 99" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
+              <circle cx="80" cy="80" r="58" fill="none" stroke="#38d9a9" stroke-width="28"
+                stroke-dasharray="99 265" stroke-dashoffset="-265" transform="rotate(-90 80 80)"/>
+              <text x="80" y="75" text-anchor="middle" fill="#e8ecf4" font-family="Syne" font-size="20" font-weight="800">$309K</text>
+              <text x="80" y="93" text-anchor="middle" fill="#6b7591" font-family="DM Mono" font-size="10">planned spend</text>
+            </svg>
+            <div style="width:100%; display:flex; flex-direction:column; gap:8px;">
+              <div class="legend-item"><span class="legend-swatch" style="background:#4f9cf9"></span>FF&E (Non Ed-Tech/IT)<span class="legend-amt">$225,209</span></div>
+              <div class="legend-item"><span class="legend-swatch" style="background:#38d9a9"></span>Other<span class="legend-amt">$83,819</span></div>
+              <div class="legend-item"><span class="legend-swatch" style="background:#252a38"></span>Remaining Budget<span class="legend-amt">$20,972</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE / GANTT -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Schedule · Key Activities (Aug–Sep 2025)</span>
+        <span class="badge badge-warn">Move Horizon</span>
+      </div>
+      <div class="card-body" style="padding:16px 20px;">
+        <div class="gantt-wrap">
+          <table class="gantt-table">
+            <thead>
+              <tr>
+                <th class="label-col">Activity</th>
+                <th>Type</th>
+                <th style="min-width:300px; text-align:left; padding-left:4px;">Aug 19 ────────────────────────────── Sep 19</th>
+                <th>% Done</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="act-label">Mover Swing Space Packing Material</td>
+                <td class="act-type">Move Mgmt</td>
+                <td class="gantt-cell">
+                  <div class="bar" style="background:#4f9cf9; left:0%; width:4%;">·</div>
+                </td>
+                <td class="pct-badge">0%</td>
+                <td><span class="status s-track">On Track</span></td>
+              </tr>
+              <tr>
+                <td class="act-label">Confirm Move Order / Sequence</td>
+                <td class="act-type">Move Mgmt</td>
+                <td class="gantt-cell">
+                  <div class="bar" style="background:#4f9cf9; left:0%; width:4%;">·</div>
+                </td>
+                <td class="pct-badge">50%<div style="display:inline-block;margin-left:4px;" class="progress-bg"><div class="progress-fill" style="width:50%"></div></div></td>
+                <td><span class="status s-track">On Track</span></td>
+              </tr>
+              <tr>
+                <td class="act-label">Swing Space Furniture Liquidation</td>
+                <td class="act-type">Swing Space</td>
+                <td class="gantt-cell">
+                  <div class="bar" style="background:#38d9a9; left:38%; width:4%;">·</div>
+                </td>
+                <td class="pct-badge">0%</td>
+                <td><span class="status s-track">On Track</span></td>
+              </tr>
+              <tr>
+                <td class="act-label">Verkpleys Order Delivered</td>
+                <td class="act-type">FF&E</td>
+                <td class="gantt-cell">
+                  <div class="bar" style="background:#4f9cf9; left:38%; width:4%;">·</div>
+                </td>
+                <td class="pct-badge">0%</td>
+                <td><span class="status s-track">On Track</span></td>
+              </tr>
+              <tr>
+                <td class="act-label">Prime Electrical Clearance</td>
+                <td class="act-type">Other</td>
+                <td class="gantt-cell">
+                  <div class="bar" style="background:#ffa94d; left:38%; width:32%;">TBD</div>
+                </td>
+                <td class="pct-badge">0%</td>
+                <td><span class="status s-issue">Issue</span></td>
+              </tr>
+              <tr>
+                <td class="act-label">Swing Space Staff Pack</td>
+                <td class="act-type">Move Mgmt</td>
+                <td class="gantt-cell">
+                  <div class="bar" style="background:#4f9cf9; left:44%; width:16%;">···</div>
+                </td>
+                <td class="pct-badge">0%</td>
+                <td><span class="status s-track">On Track</span></td>
+              </tr>
+              <tr>
+                <td class="act-label">Seismic / Earthquake Retrofit</td>
+                <td class="act-type">Other</td>
+                <td class="gantt-cell">
+                  <div class="bar" style="background:#38d9a9; left:48%; width:4%;">·</div>
+                </td>
+                <td class="pct-badge">0%</td>
+                <td><span class="status s-done">Complete</span></td>
+              </tr>
+              <tr>
+                <td class="act-label">New Printers Delivery &amp; Install</td>
+                <td class="act-type">FF&E</td>
+                <td class="gantt-cell">
+                  <div class="bar" style="background:#4f9cf9; left:48%; width:4%;">·</div>
+                </td>
+                <td class="pct-badge">0%</td>
+                <td><span class="status s-track">On Track</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PPS – Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14; --surface: #13161e; --surface2: #1a1e29; --border: #252a38;
+    --accent: #4f9cf9; --accent2: #38d9a9; --warn: #ffa94d; --danger: #ff6b6b;
+    --text: #e8ecf4; --muted: #6b7591; --mono: 'DM Mono', monospace; --sans: 'Syne', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; display: flex; }
+
+  .sidebar { width: 220px; min-height: 100vh; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 0; flex-shrink: 0; display: flex; flex-direction: column; }
+  .logo { padding: 0 22px 28px; border-bottom: 1px solid var(--border); }
+  .logo-mark { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
+  .logo-mark span { color: var(--accent); }
+  .logo-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: 0.08em; }
+  .project-chip { margin: 16px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .project-chip .label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .project-chip .name { font-size: 12px; font-weight: 600; margin-top: 3px; line-height: 1.3; }
+  nav { padding: 8px 0; flex: 1; }
+  .nav-section { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; padding: 14px 22px 6px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 22px; font-size: 13px; font-weight: 600; color: var(--muted); border-left: 2px solid transparent; text-decoration: none; }
+  a.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--text); border-left-color: var(--accent); background: rgba(79,156,249,0.06); }
+  .nav-item.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+  .nav-item.active { color: var(--text); border-left-color: var(--accent); background: rgba(79,156,249,0.06); }
+  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+  .user-area { padding: 16px 14px; border-top: 1px solid var(--border); }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+  .user-chip { display: flex; align-items: center; gap: 10px; }
+  .user-name { font-size: 12px; font-weight: 600; }
+  .user-role { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; gap: 12px; background: var(--surface); flex-shrink: 0; }
+  .page-title { font-size: 16px; font-weight: 700; }
+  .topbar-spacer { flex: 1; }
+  .badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-blue { background: rgba(79,156,249,0.15); color: var(--accent); border: 1px solid rgba(79,156,249,0.25); }
+  .badge-warn { background: rgba(255,169,77,0.12); color: var(--warn); border: 1px solid rgba(255,169,77,0.2); }
+  .btn { padding: 8px 16px; border-radius: 7px; font-family: var(--sans); font-size: 12px; font-weight: 700; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+  .content { flex: 1; overflow: auto; padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 16px; align-items: center; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* GANTT */
+  .gantt-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .gantt-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .gantt-title { font-size: 13px; font-weight: 700; }
+
+  .gantt-wrap { overflow-x: auto; }
+  .gantt-grid { display: flex; min-width: 1100px; }
+
+  /* LEFT: activity names */
+  .gantt-labels { width: 300px; flex-shrink: 0; border-right: 1px solid var(--border); }
+  .gantt-label-header { height: 36px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; }
+  .header-txt { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .gantt-row { height: 40px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 8px; }
+  .gantt-row:last-child { border-bottom: none; }
+  .act-name { font-size: 11px; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .act-type-pill { font-family: var(--mono); font-size: 8px; padding: 1px 5px; border-radius: 2px; flex-shrink: 0; }
+  .tp-move  { background: rgba(79,156,249,0.15); color: var(--accent); }
+  .tp-ffe   { background: rgba(56,217,169,0.15); color: var(--accent2); }
+  .tp-other { background: rgba(255,169,77,0.15); color: var(--warn); }
+  .tp-swing { background: rgba(107,117,145,0.2); color: var(--muted); }
+
+  /* RIGHT: timeline */
+  .gantt-timeline { flex: 1; }
+  .gantt-dates { height: 36px; border-bottom: 1px solid var(--border); display: flex; }
+  .date-col { flex: 1; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 9px; color: var(--muted); border-right: 1px solid var(--border); }
+  .date-col:last-child { border-right: none; }
+  .gantt-bar-row { height: 40px; border-bottom: 1px solid var(--border); display: flex; align-items: center; position: relative; }
+  .gantt-bar-row:last-child { border-bottom: none; }
+  .day-tick { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); opacity: 0.5; }
+  .bar-item {
+    position: absolute; height: 22px; border-radius: 4px;
+    display: flex; align-items: center; padding: 0 8px;
+    font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.9);
+    white-space: nowrap; overflow: hidden;
+  }
+  .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--danger); opacity: 0.7; z-index: 5; }
+
+  /* pct col on right */
+  .pct-col { width: 64px; flex-shrink: 0; border-left: 1px solid var(--border); }
+  .pct-header { height: 36px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+  .pct-header span { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .pct-row { height: 40px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .pct-row:last-child { border-bottom: none; }
+  .pct-num { font-family: var(--mono); font-size: 10px; }
+  .pct-bar { width: 28px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .pct-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+
+  .milestone {
+    position: absolute; width: 12px; height: 12px; background: var(--warn);
+    transform: rotate(45deg); z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Plan<span>Perfect</span></div>
+    <div class="logo-sub">Systems · v2.0</div>
+  </div>
+  <div class="project-chip">
+    <div class="label">Active Project</div>
+    <div class="name">SDCCD 1450 Frazee<br>5th Floor TI</div>
+  </div>
+  <nav>
+    <div class="nav-section">Core</div>
+    <a class="nav-item" href="index.html"><span class="icon">⬛</span> Dashboard</a>
+    <a class="nav-item" href="02_ffe_list.html"><span class="icon">📋</span> Master FF&E</a>
+    <a class="nav-item" href="03_move_management.html"><span class="icon">🚚</span> Move Mgmt</a>
+    <div class="nav-item disabled"><span class="icon">🔄</span> Swing Space</div>
+    <div class="nav-item disabled"><span class="icon">🏗</span> Tenant Imp.</div>
+    <div class="nav-section">Project</div>
+    <a class="nav-item active" href="05_schedule_gantt.html"><span class="icon">📅</span> Schedule</a>
+    <div class="nav-item disabled"><span class="icon">🚨</span> Issue Log</div>
+    <div class="nav-item disabled"><span class="icon">✅</span> Punch List</div>
+    <div class="nav-item disabled"><span class="icon">📊</span> Reports</div>
+    <div class="nav-section">Admin</div>
+    <div class="nav-item disabled"><span class="icon">⚙️</span> Settings</div>
+    <div class="nav-item disabled"><span class="icon">👥</span> Users</div>
+  </nav>
+  <div class="user-area">
+    <div class="user-chip">
+      <div class="avatar">MG</div>
+      <div><div class="user-name">Molly Gardner</div><div class="user-role">Project Manager</div></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="page-title">Schedule</span>
+    <span class="badge badge-blue">13 Activities</span>
+    <span class="badge badge-warn">⚑ Move Date: Sep 19</span>
+    <div class="topbar-spacer"></div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#4f9cf9"></div>Move Mgmt</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#38d9a9"></div>FF&E</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#ffa94d"></div>Other</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#6b7591"></div>Swing Space</div>
+    </div>
+    <button class="btn btn-ghost">Export</button>
+    <button class="btn btn-primary">+ Add Activity</button>
+  </div>
+
+  <div class="content">
+    <div class="gantt-card">
+      <div class="gantt-header">
+        <span class="gantt-title">Project Gantt — Aug 19 → Sep 19, 2025 (32 days)</span>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost" style="font-size:10px; padding:5px 10px;">Week</button>
+          <button class="btn btn-ghost" style="font-size:10px; padding:5px 10px; border-color:var(--accent); color:var(--accent);">Day</button>
+        </div>
+      </div>
+      <div class="gantt-wrap">
+        <div class="gantt-grid">
+
+          <!-- LEFT: Labels -->
+          <div class="gantt-labels">
+            <div class="gantt-label-header"><span class="header-txt">Activity</span></div>
+            <div class="gantt-row"><span class="act-name">Mover Packing Material & Labels</span><span class="act-type-pill tp-move">Move</span></div>
+            <div class="gantt-row"><span class="act-name">Confirm Move Order / Sequence</span><span class="act-type-pill tp-move">Move</span></div>
+            <div class="gantt-row"><span class="act-name">Swing Space Liquidation Sale</span><span class="act-type-pill tp-swing">Swing</span></div>
+            <div class="gantt-row"><span class="act-name">Verkpleys Order Delivered</span><span class="act-type-pill tp-ffe">FF&E</span></div>
+            <div class="gantt-row"><span class="act-name">Verkpleys Move Swing Space Furn.</span><span class="act-type-pill tp-move">Move</span></div>
+            <div class="gantt-row"><span class="act-name">Verkpleys New Order Move</span><span class="act-type-pill tp-move">Move</span></div>
+            <div class="gantt-row"><span class="act-name">Prime Electrical Clearance</span><span class="act-type-pill tp-other">Other</span></div>
+            <div class="gantt-row"><span class="act-name">Swing Space Staff Pack</span><span class="act-type-pill tp-move">Move</span></div>
+            <div class="gantt-row"><span class="act-name">New Printers Delivery & Install</span><span class="act-type-pill tp-ffe">FF&E</span></div>
+            <div class="gantt-row"><span class="act-name">Seismic / Earthquake Retrofit</span><span class="act-type-pill tp-other">Other</span></div>
+            <div class="gantt-row"><span class="act-name">Fire Safety Requirements</span><span class="act-type-pill tp-other">Other</span></div>
+            <div class="gantt-row"><span class="act-name">Fire Extinguisher Locations</span><span class="act-type-pill tp-other">Other</span></div>
+            <div class="gantt-row"><span class="act-name">Fire Extinguisher Expiration Review</span><span class="act-type-pill tp-other">Other</span></div>
+          </div>
+
+          <!-- CENTER: Timeline bars (32 days = Aug 19 – Sep 19) -->
+          <div class="gantt-timeline" style="position:relative;">
+            <!-- Date headers (every 4 days) -->
+            <div class="gantt-dates">
+              <div class="date-col">Aug 19</div>
+              <div class="date-col">Aug 23</div>
+              <div class="date-col">Aug 27</div>
+              <div class="date-col">Aug 31</div>
+              <div class="date-col">Sep 4</div>
+              <div class="date-col">Sep 8</div>
+              <div class="date-col">Sep 12</div>
+              <div class="date-col">Sep 16</div>
+              <div class="date-col">Sep 19</div>
+            </div>
+
+            <!-- Each row: 100% = 32 days. Day 0 = Aug 19 -->
+            <!-- Aug 19 = day 0 = 0%. Sep 19 = day 31 = 100% -->
+            <!-- Bars: left = (start_day/31)*100%  width = max(2, (dur/31)*100)% -->
+
+            <!-- Row 1: Aug 19 (day 0), 1-day point -->
+            <div class="gantt-bar-row" style="background: rgba(79,156,249,0.03);">
+              <div class="bar-item" style="background:#4f9cf9; left:0%; width:3%;">▌</div>
+            </div>
+            <!-- Row 2: Aug 19 point -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#4f9cf9; left:0%; width:3%; opacity:0.7;">▌</div>
+            </div>
+            <!-- Row 3: Sep 1 (day 13) -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#6b7591; left:41.9%; width:3%;">▌</div>
+            </div>
+            <!-- Row 4: Sep 1 (day 13) -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#38d9a9; left:41.9%; width:3%;">▌</div>
+            </div>
+            <!-- Row 5: Sep 1 -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#4f9cf9; left:41.9%; width:3%;">▌</div>
+            </div>
+            <!-- Row 6: Sep 1 -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#4f9cf9; left:41.9%; width:3%;">▌</div>
+            </div>
+            <!-- Row 7: Prime Electrical – Sep 1 to Sep 19 (open end) -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#ffa94d; left:41.9%; width:58.1%; border-radius:4px 0 0 4px; opacity:0.8;">Prime Electrical – TBD End</div>
+            </div>
+            <!-- Row 8: Sep 3 to Sep 7 (4 days) -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#4f9cf9; left:48.4%; width:12.9%;">Staff Pack</div>
+            </div>
+            <!-- Row 9: Sep 4 -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#38d9a9; left:51.6%; width:3%;">▌</div>
+            </div>
+            <!-- Row 10: Sep 4 -->
+            <div class="gantt-bar-row" style="background:rgba(56,217,169,0.03);">
+              <div class="bar-item" style="background:#38d9a9; left:51.6%; width:3%;">▌</div>
+            </div>
+            <!-- Row 11: Sep 4 -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#ffa94d; left:51.6%; width:3%;">▌</div>
+            </div>
+            <!-- Row 12: Sep 4 -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#ffa94d; left:51.6%; width:3%;">▌</div>
+            </div>
+            <!-- Row 13: Sep 4 -->
+            <div class="gantt-bar-row">
+              <div class="bar-item" style="background:#ffa94d; left:51.6%; width:3%;">▌</div>
+            </div>
+
+            <!-- Today / Move date indicator at Sep 19 (100%) -->
+            <div class="today-line" style="left:99.5%; top:0; bottom:0; position:absolute;"></div>
+            <!-- Milestone diamond at Sep 19 -->
+            <div class="milestone" style="position:absolute; right:6px; top:8px;"></div>
+          </div>
+
+          <!-- RIGHT: % Complete -->
+          <div class="pct-col">
+            <div class="pct-header"><span>%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row">
+              <span class="pct-num" style="color:var(--accent2);">50%</span>
+              <div class="pct-bar"><div class="pct-fill" style="width:50%"></div></div>
+            </div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

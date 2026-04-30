@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PPS – Master FF&E List</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14; --surface: #13161e; --surface2: #1a1e29; --border: #252a38;
+    --accent: #4f9cf9; --accent2: #38d9a9; --warn: #ffa94d; --danger: #ff6b6b;
+    --text: #e8ecf4; --muted: #6b7591; --mono: 'DM Mono', monospace; --sans: 'Syne', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; display: flex; }
+
+  .sidebar {
+    width: 220px; min-height: 100vh; background: var(--surface);
+    border-right: 1px solid var(--border); padding: 28px 0; flex-shrink: 0; display: flex; flex-direction: column;
+  }
+  .logo { padding: 0 22px 28px; border-bottom: 1px solid var(--border); }
+  .logo-mark { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
+  .logo-mark span { color: var(--accent); }
+  .logo-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: 0.08em; }
+  .project-chip { margin: 16px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .project-chip .label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .project-chip .name { font-size: 12px; font-weight: 600; margin-top: 3px; line-height: 1.3; }
+  nav { padding: 8px 0; flex: 1; }
+  .nav-section { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; padding: 14px 22px 6px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 22px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-left: 2px solid transparent; text-decoration: none; }
+  a.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--text); border-left-color: var(--accent); background: rgba(79,156,249,0.06); }
+  .nav-item.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+  .user-area { padding: 16px 14px; border-top: 1px solid var(--border); }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+  .user-chip { display: flex; align-items: center; gap: 10px; }
+  .user-name { font-size: 12px; font-weight: 600; }
+  .user-role { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; gap: 12px; background: var(--surface); flex-shrink: 0; }
+  .page-title { font-size: 16px; font-weight: 700; }
+  .topbar-spacer { flex: 1; }
+  .badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-blue { background: rgba(79,156,249,0.15); color: var(--accent); border: 1px solid rgba(79,156,249,0.25); }
+  .badge-green { background: rgba(56,217,169,0.12); color: var(--accent2); border: 1px solid rgba(56,217,169,0.2); }
+  .badge-warn { background: rgba(255,169,77,0.12); color: var(--warn); border: 1px solid rgba(255,169,77,0.2); }
+  .btn { padding: 8px 16px; border-radius: 7px; font-family: var(--sans); font-size: 12px; font-weight: 700; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+  /* TOOLBAR */
+  .toolbar { padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: var(--surface); flex-shrink: 0; }
+  .search-box { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; flex: 1; max-width: 320px; }
+  .search-box input { background: none; border: none; outline: none; color: var(--text); font-family: var(--sans); font-size: 12px; width: 100%; }
+  .search-box input::placeholder { color: var(--muted); }
+  .filter-chip { display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; background: var(--surface2); }
+  .filter-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(79,156,249,0.08); }
+  .count-label { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-left: auto; }
+
+  /* TABLE */
+  .table-wrap { flex: 1; overflow: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 1400px; }
+  thead { position: sticky; top: 0; z-index: 10; }
+  th { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 10px 14px; font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; text-align: left; white-space: nowrap; font-weight: 400; }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 11px; white-space: nowrap; vertical-align: middle; }
+  tr:hover td { background: rgba(255,255,255,0.015); }
+  .id-cell { font-family: var(--mono); font-size: 10px; color: var(--accent); }
+  .item-name { font-weight: 600; font-size: 12px; }
+  .item-desc { font-size: 10px; color: var(--muted); }
+
+  .status { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; display: inline-block; }
+  .s-instock { background: rgba(56,217,169,0.12); color: #38d9a9; }
+  .s-ordered { background: rgba(79,156,249,0.12); color: #4f9cf9; }
+  .s-review  { background: rgba(255,169,77,0.12); color: #ffa94d; }
+  .s-quoted  { background: rgba(107,117,145,0.2); color: #a0aec0; }
+  .s-delivered { background: rgba(56,217,169,0.18); color: #38d9a9; }
+
+  .ffe-status { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 3px; display: inline-block; }
+  .fs-ontrack { background: rgba(56,217,169,0.1); color: #38d9a9; }
+  .fs-issue   { background: rgba(255,107,107,0.1); color: #ff6b6b; }
+  .fs-na      { color: var(--muted); }
+
+  .priority { font-family: var(--mono); font-size: 9px; }
+  .p-high   { color: #ff6b6b; }
+  .p-med    { color: #ffa94d; }
+  .p-low    { color: #6b7591; }
+
+  .qty-cell { font-family: var(--mono); font-size: 11px; text-align: right; }
+  .cost-cell { font-family: var(--mono); font-size: 11px; text-align: right; color: var(--accent2); }
+  .muted-cell { color: var(--muted); font-size: 10px; }
+  .link-cell { color: var(--accent); font-family: var(--mono); font-size: 10px; }
+
+  .row-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.1s; }
+  tr:hover .row-actions { opacity: 1; }
+  .action-btn { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-family: var(--mono); background: var(--surface2); border: 1px solid var(--border); color: var(--muted); cursor: pointer; }
+
+  .pagination { padding: 14px 32px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 8px; flex-shrink: 0; background: var(--surface); }
+  .page-btn { padding: 5px 10px; border-radius: 5px; background: var(--surface2); border: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--muted); cursor: pointer; }
+  .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .page-info { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-left: auto; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Plan<span>Perfect</span></div>
+    <div class="logo-sub">Systems · v2.0</div>
+  </div>
+  <div class="project-chip">
+    <div class="label">Active Project</div>
+    <div class="name">SDCCD 1450 Frazee<br>5th Floor TI</div>
+  </div>
+  <nav>
+    <div class="nav-section">Core</div>
+    <a class="nav-item" href="index.html"><span class="icon">⬛</span> Dashboard</a>
+    <a class="nav-item active" href="02_ffe_list.html"><span class="icon">📋</span> Master FF&E</a>
+    <a class="nav-item" href="03_move_management.html"><span class="icon">🚚</span> Move Mgmt</a>
+    <div class="nav-item disabled"><span class="icon">🔄</span> Swing Space</div>
+    <div class="nav-item disabled"><span class="icon">🏗</span> Tenant Imp.</div>
+    <div class="nav-section">Project</div>
+    <a class="nav-item" href="05_schedule_gantt.html"><span class="icon">📅</span> Schedule</a>
+    <div class="nav-item disabled"><span class="icon">🚨</span> Issue Log</div>
+    <div class="nav-item disabled"><span class="icon">✅</span> Punch List</div>
+    <div class="nav-item disabled"><span class="icon">📊</span> Reports</div>
+    <div class="nav-section">Admin</div>
+    <div class="nav-item disabled"><span class="icon">⚙️</span> Settings</div>
+    <div class="nav-item disabled"><span class="icon">👥</span> Users</div>
+  </nav>
+  <div class="user-area">
+    <div class="user-chip">
+      <div class="avatar">MG</div>
+      <div><div class="user-name">Molly Gardner</div><div class="user-role">Project Manager</div></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="page-title">Master FF&amp;E List</span>
+    <span class="badge badge-blue">97 Items</span>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-ghost">Import CSV</button>
+    <button class="btn btn-ghost">Export</button>
+    <button class="btn btn-primary">+ Add Item</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span style="color:var(--muted); font-size:13px;">🔍</span>
+      <input type="text" placeholder="Search by name, ID, room, vendor…" value="">
+    </div>
+    <div class="filter-chip active">All Types</div>
+    <div class="filter-chip">Furniture</div>
+    <div class="filter-chip">AV/Ed-Tech</div>
+    <div class="filter-chip">IT</div>
+    <div class="filter-chip">Other</div>
+    <div class="filter-chip">🚨 Issues Only</div>
+    <span class="count-label">Showing 1–20 of 97</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>FF&E ID</th>
+          <th>Item Name</th>
+          <th>Product Type</th>
+          <th>Vendor</th>
+          <th>Current Location</th>
+          <th>New Location</th>
+          <th>Room Type</th>
+          <th>Room No.</th>
+          <th>Proc. Method</th>
+          <th>Qty Needed</th>
+          <th>Qty Exist.</th>
+          <th>Qty New</th>
+          <th>Unit Price</th>
+          <th>Ext. Cost</th>
+          <th>Process Status</th>
+          <th>FF&E Status</th>
+          <th>Condition</th>
+          <th>Priority</th>
+          <th>Swing?</th>
+          <th>Move ID</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="id-cell">FFE-1</td>
+          <td><div class="item-name">Credenza</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 5th</td>
+          <td>1450 Frazee · 5th</td>
+          <td class="muted-cell">Storage</td>
+          <td class="muted-cell">568</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">1</td>
+          <td class="qty-cell">1</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-1</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-2</td>
+          <td><div class="item-name">Guest Chair</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 2nd</td>
+          <td>1450 Frazee · 2nd</td>
+          <td class="muted-cell">Other</td>
+          <td class="muted-cell">Open Office</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">3</td>
+          <td class="qty-cell">3</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-2</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-9</td>
+          <td><div class="item-name">24" Dell Monitors</div><div class="item-desc">Server Room equipment</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 5th</td>
+          <td>1450 Frazee · 5th</td>
+          <td class="muted-cell">Server Room</td>
+          <td class="muted-cell">553</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">7</td>
+          <td class="qty-cell">7</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-9</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-11</td>
+          <td><div class="item-name">Conference Chair</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 5th</td>
+          <td>1450 Frazee · 5th</td>
+          <td class="muted-cell">Conf. Room</td>
+          <td class="muted-cell">566</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">16</td>
+          <td class="qty-cell">16</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-11</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-12</td>
+          <td><div class="item-name">Conference Table</div><div class="item-desc">189W × 47.5D</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 2nd</td>
+          <td>1450 Frazee · 5th</td>
+          <td class="muted-cell">Conf. Room</td>
+          <td class="muted-cell">Conf. Rm 501</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">1</td>
+          <td class="qty-cell">1</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-12</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-13</td>
+          <td><div class="item-name">Newline Touch Screen TV</div><div class="item-desc">97" Diagonal · Wall mount · 120V</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 2nd</td>
+          <td>1450 Frazee · 5th</td>
+          <td class="muted-cell">Conf. Room</td>
+          <td class="muted-cell">Conf. Rm 501</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">1</td>
+          <td class="qty-cell">1</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-13</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-18</td>
+          <td><div class="item-name">Round Table</div><div class="item-desc">41.5" Diameter</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 2nd</td>
+          <td>1450 Frazee · 5th</td>
+          <td class="muted-cell">Break Room</td>
+          <td class="muted-cell">559</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">3</td>
+          <td class="qty-cell">3</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-18</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-20</td>
+          <td><div class="item-name">Barstools</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 2nd</td>
+          <td>1450 Frazee · 2nd</td>
+          <td class="muted-cell">Break Room</td>
+          <td class="muted-cell">Break Room</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">6</td>
+          <td class="qty-cell">6</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-20</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-21</td>
+          <td><div class="item-name">Refrigerator</div><div class="item-desc">120V power required</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 2nd</td>
+          <td>1450 Frazee · 5th</td>
+          <td class="muted-cell">Break Room</td>
+          <td class="muted-cell">559</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">1</td>
+          <td class="qty-cell">1</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-21</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+        <tr>
+          <td class="id-cell">FFE-38</td>
+          <td><div class="item-name">Desk HAT</div><div class="item-desc">70W × 29D · 120V hard-wired</div></td>
+          <td class="muted-cell">Furniture</td>
+          <td>SDCCD / Molly Gardner</td>
+          <td>1450 Frazee · 2nd</td>
+          <td>1450 Frazee · 5th</td>
+          <td class="muted-cell">Office</td>
+          <td class="muted-cell">527/528 Steve/Ben</td>
+          <td class="muted-cell">OFOI</td>
+          <td class="qty-cell">2</td>
+          <td class="qty-cell">2</td>
+          <td class="qty-cell">0</td>
+          <td class="cost-cell">$0</td>
+          <td class="cost-cell">$0</td>
+          <td><span class="status s-instock">In Stock</span></td>
+          <td><span class="ffe-status fs-na">N/A</span></td>
+          <td class="muted-cell">Used</td>
+          <td><span class="priority p-med">Med</span></td>
+          <td class="muted-cell">Yes</td>
+          <td class="link-cell">MM-38</td>
+          <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">4</button>
+    <button class="page-btn">5</button>
+    <span style="color:var(--muted); font-family:var(--mono); font-size:11px;">…</span>
+    <button class="page-btn">10</button>
+    <span class="page-info">Items 1–10 of 97 · 20 per page</span>
+  </div>
+</main>
+</body>
+</html>

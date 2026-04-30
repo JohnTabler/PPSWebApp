@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PPS – Move Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14; --surface: #13161e; --surface2: #1a1e29; --border: #252a38;
+    --accent: #4f9cf9; --accent2: #38d9a9; --warn: #ffa94d; --danger: #ff6b6b;
+    --text: #e8ecf4; --muted: #6b7591; --mono: 'DM Mono', monospace; --sans: 'Syne', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; display: flex; }
+
+  .sidebar { width: 220px; min-height: 100vh; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 0; flex-shrink: 0; display: flex; flex-direction: column; }
+  .logo { padding: 0 22px 28px; border-bottom: 1px solid var(--border); }
+  .logo-mark { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
+  .logo-mark span { color: var(--accent); }
+  .logo-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: 0.08em; }
+  .project-chip { margin: 16px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .project-chip .label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .project-chip .name { font-size: 12px; font-weight: 600; margin-top: 3px; line-height: 1.3; }
+  nav { padding: 8px 0; flex: 1; }
+  .nav-section { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; padding: 14px 22px 6px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 22px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-left: 2px solid transparent; text-decoration: none; }
+  a.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--text); border-left-color: var(--accent); background: rgba(79,156,249,0.06); }
+  .nav-item.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+  .user-area { padding: 16px 14px; border-top: 1px solid var(--border); }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+  .user-chip { display: flex; align-items: center; gap: 10px; }
+  .user-name { font-size: 12px; font-weight: 600; }
+  .user-role { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; gap: 12px; background: var(--surface); flex-shrink: 0; }
+  .page-title { font-size: 16px; font-weight: 700; }
+  .topbar-spacer { flex: 1; }
+  .badge { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+  .badge-blue { background: rgba(79,156,249,0.15); color: var(--accent); border: 1px solid rgba(79,156,249,0.25); }
+  .badge-green { background: rgba(56,217,169,0.12); color: var(--accent2); border: 1px solid rgba(56,217,169,0.2); }
+  .badge-warn { background: rgba(255,169,77,0.12); color: var(--warn); border: 1px solid rgba(255,169,77,0.2); }
+  .btn { padding: 8px 16px; border-radius: 7px; font-family: var(--sans); font-size: 12px; font-weight: 700; cursor: pointer; border: none; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+  .content { flex: 1; overflow: auto; padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* STAT ROW */
+  .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; position: relative; overflow: hidden; }
+  .stat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .stat-card.blue::after { background: var(--accent); }
+  .stat-card.green::after { background: var(--accent2); }
+  .stat-card.warn::after { background: var(--warn); }
+  .stat-card.red::after { background: var(--danger); }
+  .stat-card.muted::after { background: var(--muted); }
+  .stat-label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .stat-value { font-size: 24px; font-weight: 800; margin: 5px 0 3px; }
+  .stat-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  /* MOVE TABLE */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 13px; font-weight: 700; }
+
+  .toolbar { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .search-box { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 7px 12px; flex: 1; max-width: 280px; }
+  .search-box input { background: none; border: none; outline: none; color: var(--text); font-family: var(--sans); font-size: 11px; width: 100%; }
+  .search-box input::placeholder { color: var(--muted); }
+  .filter-chip { padding: 6px 10px; border-radius: 5px; border: 1px solid var(--border); font-size: 10px; font-weight: 600; color: var(--muted); cursor: pointer; background: var(--surface2); }
+  .filter-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(79,156,249,0.08); }
+  .filter-chip.green { border-color: var(--accent2); color: var(--accent2); background: rgba(56,217,169,0.08); }
+
+  table { width: 100%; border-collapse: collapse; min-width: 1200px; }
+  .table-wrap { overflow-x: auto; }
+  thead th { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 9px 14px; font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; text-align: left; white-space: nowrap; font-weight: 400; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 11px; vertical-align: middle; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.015); }
+  .id-cell { font-family: var(--mono); font-size: 10px; color: var(--accent); }
+  .muted-cell { color: var(--muted); }
+  .arrow { color: var(--muted); margin: 0 4px; font-size: 10px; }
+
+  .move-status { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 3px; display: inline-block; }
+  .ms-ontrack  { background: rgba(56,217,169,0.12); color: #38d9a9; }
+  .ms-complete { background: rgba(79,156,249,0.12); color: #4f9cf9; }
+  .ms-issue    { background: rgba(255,107,107,0.12); color: #ff6b6b; }
+  .ms-na       { color: var(--muted); }
+
+  .link-cell { color: var(--accent); font-family: var(--mono); font-size: 10px; }
+  .note-cell { color: var(--muted); font-size: 10px; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+  .row-actions { display: flex; gap: 5px; opacity: 0; transition: opacity 0.1s; }
+  tr:hover .row-actions { opacity: 1; }
+  .action-btn { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-family: var(--mono); background: var(--surface2); border: 1px solid var(--border); color: var(--muted); cursor: pointer; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Plan<span>Perfect</span></div>
+    <div class="logo-sub">Systems · v2.0</div>
+  </div>
+  <div class="project-chip">
+    <div class="label">Active Project</div>
+    <div class="name">SDCCD 1450 Frazee<br>5th Floor TI</div>
+  </div>
+  <nav>
+    <div class="nav-section">Core</div>
+    <a class="nav-item" href="index.html"><span class="icon">⬛</span> Dashboard</a>
+    <a class="nav-item" href="02_ffe_list.html"><span class="icon">📋</span> Master FF&E</a>
+    <a class="nav-item active" href="03_move_management.html"><span class="icon">🚚</span> Move Mgmt</a>
+    <div class="nav-item disabled"><span class="icon">🔄</span> Swing Space</div>
+    <div class="nav-item disabled"><span class="icon">🏗</span> Tenant Imp.</div>
+    <div class="nav-section">Project</div>
+    <a class="nav-item" href="05_schedule_gantt.html"><span class="icon">📅</span> Schedule</a>
+    <div class="nav-item disabled"><span class="icon">🚨</span> Issue Log</div>
+    <div class="nav-item disabled"><span class="icon">✅</span> Punch List</div>
+    <div class="nav-item disabled"><span class="icon">📊</span> Reports</div>
+    <div class="nav-section">Admin</div>
+    <div class="nav-item disabled"><span class="icon">⚙️</span> Settings</div>
+    <div class="nav-item disabled"><span class="icon">👥</span> Users</div>
+  </nav>
+  <div class="user-area">
+    <div class="user-chip">
+      <div class="avatar">MG</div>
+      <div><div class="user-name">Molly Gardner</div><div class="user-role">Project Manager</div></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="page-title">Move Management</span>
+    <span class="badge badge-blue">97+ Moves</span>
+    <span class="badge badge-warn">Move Date: Sep 19, 2025</span>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-ghost">Export</button>
+    <button class="btn btn-primary">+ Add Move</button>
+  </div>
+
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card blue">
+        <div class="stat-label">Total Moves</div>
+        <div class="stat-value">97</div>
+        <div class="stat-sub">All records</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">On Track</div>
+        <div class="stat-value">94</div>
+        <div class="stat-sub">Scheduled · OK</div>
+      </div>
+      <div class="stat-card warn">
+        <div class="stat-label">No Status</div>
+        <div class="stat-value">2</div>
+        <div class="stat-sub">Needs update</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Issues</div>
+        <div class="stat-value">0</div>
+        <div class="stat-sub">Active issues</div>
+      </div>
+      <div class="stat-card muted">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value">1</div>
+        <div class="stat-sub">MM-2 done</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Move Records</span>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-blue">Mover: Alexander's · POC: Steve</span>
+          <span class="badge badge-warn">Sched. Date: Sep 19, 2025</span>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="search-box">
+          <span style="color:var(--muted); font-size:13px;">🔍</span>
+          <input placeholder="Search item, room, ID…">
+        </div>
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip green">Complete</div>
+        <div class="filter-chip">On Track</div>
+        <div class="filter-chip">Issues</div>
+        <div style="margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--muted);">Showing 1–12 of 97</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Move ID</th>
+              <th>Item Being Moved</th>
+              <th>User/Group</th>
+              <th>From Floor</th>
+              <th>From Room</th>
+              <th>→ To Floor</th>
+              <th>→ To Room</th>
+              <th>Room Type</th>
+              <th>Move Date</th>
+              <th>Mover</th>
+              <th>Status</th>
+              <th>Swing?</th>
+              <th>FF&E ID</th>
+              <th>SS ID</th>
+              <th>POC</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="id-cell">MM-1</td>
+              <td style="font-weight:600;">Credenza</td>
+              <td class="muted-cell">Facilities Dept</td>
+              <td class="muted-cell">5th</td>
+              <td class="muted-cell">568 (Storage)</td>
+              <td class="muted-cell">5th</td>
+              <td class="muted-cell">568 (Storage)</td>
+              <td class="muted-cell">Storage</td>
+              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
+              <td class="muted-cell">Alexander's</td>
+              <td><span class="move-status ms-ontrack">On Track</span></td>
+              <td class="muted-cell">Yes</td>
+              <td class="link-cell">FFE-1</td>
+              <td class="link-cell">SS-1</td>
+              <td class="muted-cell">Molly G.</td>
+              <td class="note-cell">—</td>
+              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+            </tr>
+            <tr>
+              <td class="id-cell">MM-2</td>
+              <td style="font-weight:600;">Guest Chair</td>
+              <td class="muted-cell">Facilities Dept</td>
+              <td class="muted-cell">2nd</td>
+              <td class="muted-cell">Open Office Area</td>
+              <td class="muted-cell">2nd</td>
+              <td class="muted-cell">Open Office Area</td>
+              <td class="muted-cell">Other</td>
+              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
+              <td class="muted-cell">Alexander's</td>
+              <td><span class="move-status ms-complete">Complete</span></td>
+              <td class="muted-cell">Yes</td>
+              <td class="link-cell">FFE-2</td>
+              <td class="link-cell">SS-2</td>
+              <td class="muted-cell">Molly G.</td>
+              <td class="note-cell">Transfer to Warehouse</td>
+              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+            </tr>
+            <tr>
+              <td class="id-cell">MM-11</td>
+              <td style="font-weight:600;">Conference Chair</td>
+              <td class="muted-cell">Facilities Dept</td>
+              <td class="muted-cell">5th</td>
+              <td class="muted-cell">566 (Conf. Rm)</td>
+              <td class="muted-cell">5th</td>
+              <td class="muted-cell">566 (Conf. Rm)</td>
+              <td class="muted-cell">Conf. Room</td>
+              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
+              <td class="muted-cell">Alexander's</td>
+              <td><span class="move-status ms-na">—</span></td>
+              <td class="muted-cell">Yes</td>
+              <td class="link-cell">FFE-11</td>
+              <td class="link-cell">SS-11</td>
+              <td class="muted-cell">Molly G.</td>
+              <td class="note-cell">—</td>
+              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+            </tr>
+            <tr>
+              <td class="id-cell">MM-12</td>
+              <td style="font-weight:600;">Conference Table</td>
+              <td class="muted-cell">Facilities Dept</td>
+              <td class="muted-cell">2nd</td>
+              <td class="muted-cell">Large Conf. Rm</td>
+              <td class="muted-cell">5th</td>
+              <td class="muted-cell">Conf. Rm 501</td>
+              <td class="muted-cell">Conf. Room</td>
+              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
+              <td class="muted-cell">Alexander's</td>
+              <td><span class="move-status ms-na">—</span></td>
+              <td class="muted-cell">Yes</td>
+              <td class="link-cell">FFE-12</td>
+              <td class="link-cell">SS-12</td>
+              <td class="muted-cell">Molly G.</td>
+              <td class="note-cell">—</td>
+              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+            </tr>
+            <tr>
+              <td class="id-cell">MM-13</td>
+              <td style="font-weight:600;">Newline Touch Screen TV</td>
+              <td class="muted-cell">Facilities Dept</td>
+              <td class="muted-cell">2nd</td>
+              <td class="muted-cell">Large Conf. Rm</td>
+              <td class="muted-cell">5th</td>
+              <td class="muted-cell">Conf. Rm 501</td>
+              <td class="muted-cell">Conf. Room</td>
+              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
+              <td class="muted-cell">Alexander's</td>
+              <td><span class="move-status ms-na">—</span></td>
+              <td class="muted-cell">Yes</td>
+              <td class="link-cell">FFE-13</td>
+              <td class="link-cell">SS-13</td>
+              <td class="muted-cell">Molly G.</td>
+              <td class="note-cell">—</td>
+              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+            </tr>
+            <tr>
+              <td class="id-cell">MM-27</td>
+              <td style="font-weight:600;">Office Desk</td>
+              <td class="muted-cell">Facilities Dept</td>
+              <td class="muted-cell">2nd</td>
+              <td class="muted-cell">Office #1 Aurora</td>
+              <td class="muted-cell">5th</td>
+              <td class="muted-cell">Office #531 Aurora</td>
+              <td class="muted-cell">Office</td>
+              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
+              <td class="muted-cell">Alexander's</td>
+              <td><span class="move-status ms-na">—</span></td>
+              <td class="muted-cell">Yes</td>
+              <td class="link-cell">FFE-27</td>
+              <td class="link-cell">SS-27</td>
+              <td class="muted-cell">Molly G.</td>
+              <td class="note-cell">—</td>
+              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+            </tr>
+            <tr>
+              <td class="id-cell">MM-51</td>
+              <td style="font-weight:600;">Conference Table</td>
+              <td class="muted-cell">Facilities Dept</td>
+              <td class="muted-cell">2nd</td>
+              <td class="muted-cell">Dr Peterson Office</td>
+              <td style="color:var(--warn);">3rd</td>
+              <td style="color:var(--warn);">3375 Camino Del Rio S</td>
+              <td class="muted-cell">Office</td>
+              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
+              <td class="muted-cell">Alexander's</td>
+              <td><span class="move-status ms-na">—</span></td>
+              <td class="muted-cell">Yes</td>
+              <td class="link-cell">FFE-51</td>
+              <td class="link-cell">SS-51</td>
+              <td class="muted-cell">Molly G.</td>
+              <td class="note-cell">Off-site destination</td>
+              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
