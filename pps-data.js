@@ -289,6 +289,82 @@ const PPS = {
     { label: "Move Management",       color: "#6b7591", planned: 0,      actual: 0 },
     { label: "Swing Space",           color: "#6b7591", planned: 0,      actual: 0 },
     { label: "Tenant Improvement",    color: "#ffa94d", planned: 0,      actual: 0 }
+  ],
+
+  // ── SWING SPACE ITEMS ──────────────────────────────────────
+  // Fields: id, name, desc, location, roomNo, roomType,
+  //   assignedTo, fromDate, toDate, status, ffeId, notes
+  // status values: "Active" | "Vacated" | "Pending" | "Issue"
+
+  swingSpaceItems: [
+    // Add swing space records here
+    // Example:
+    // { id: "SS-1", name: "Credenza", desc: "", location: "1450 Frazee · 3rd",
+    //   roomNo: "301", roomType: "Storage", assignedTo: "Facilities Dept",
+    //   fromDate: "Aug 19, 2025", toDate: "Sep 19, 2025",
+    //   status: "Active", ffeId: "FFE-1", notes: "" }
+  ],
+
+  // ── TENANT IMPROVEMENT ITEMS ───────────────────────────────
+  // Fields: id, name, desc, scope, location, roomNo, contractor,
+  //   plannedCost, actualCost, startDate, endDate, status, notes
+  // status values: "Not Started" | "In Progress" | "Complete" | "Issue"
+
+  tenantImprovementItems: [
+    // Add TI records here
+    // Example:
+    // { id: "TI-1", name: "Electrical Upgrade", desc: "120V circuits added",
+    //   scope: "Electrical", location: "1450 Frazee · 5th", roomNo: "553",
+    //   contractor: "Prime Electric", plannedCost: 12000, actualCost: 0,
+    //   startDate: "Aug 19, 2025", endDate: "Sep 10, 2025",
+    //   status: "In Progress", notes: "Pending clearance" }
+  ],
+
+  // ── ISSUES ────────────────────────────────────────────────
+  // Fields: id, title, description, linkedId, linkedType,
+  //   severity, status, openedDate, assignedTo, resolvedDate, notes
+  // severity values: "High" | "Med" | "Low"
+  // status values:   "Open" | "In Progress" | "Resolved" | "Closed"
+  // linkedType values: "FFE" | "Move" | "Schedule" | "TI" | "General"
+
+  issues: [
+    // Add issue records here
+    // Example:
+    // { id: "ISS-1", title: "Prime Electrical clearance delayed",
+    //   description: "Electrical contractor has not received permit sign-off.",
+    //   linkedId: "SA-7", linkedType: "Schedule",
+    //   severity: "High", status: "Open",
+    //   openedDate: "Aug 25, 2025", assignedTo: "Molly G.", resolvedDate: "", notes: "" }
+  ],
+
+  // ── PUNCH LIST ────────────────────────────────────────────
+  // Fields: id, task, description, linkedId, linkedType,
+  //   dueDate, assignedTo, pctComplete, status, notes
+  // status values: "Not Started" | "In Progress" | "Complete" | "Blocked"
+
+  punchListItems: [
+    // Add punch list tasks here
+    // Example:
+    // { id: "PL-1", task: "Confirm all TVs wall-mounted",
+    //   description: "Verify Newline screens in Conf. Rm 501 are secured.",
+    //   linkedId: "FFE-13", linkedType: "FFE",
+    //   dueDate: "Sep 19, 2025", assignedTo: "Molly G.",
+    //   pctComplete: 0, status: "Not Started", notes: "" }
+  ],
+
+  // ── USERS ────────────────────────────────────────────────
+  // Fields: id, name, initials, email, role, projects,
+  //   status, lastActive
+  // role values:   "Admin" | "Project Manager" | "Viewer"
+  // status values: "Active" | "Inactive" | "Pending"
+
+  users: [
+    { id: "USR-1", name: "Molly Gardner",  initials: "MG", email: "mgardner@sdccd.edu",
+      role: "Project Manager", projects: ["SDCCD 1450 Frazee"],
+      status: "Active", lastActive: "Today" },
+    { id: "USR-2", name: "Admin User",     initials: "AU", email: "admin@pps.app",
+      role: "Admin", projects: ["All Projects"],
+      status: "Active", lastActive: "Today" }
   ]
 
 };

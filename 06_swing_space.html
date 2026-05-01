@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PPS – Swing Space</title>
+<link rel="stylesheet" href="pps-theme.css">
+<style>
+  /* ── SWING SPACE PAGE STYLES ── */
+  .main { overflow: hidden; }
+  table { min-width: 1100px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Plan<span>Perfect</span></div>
+    <div class="logo-sub">Systems · v2.0</div>
+  </div>
+  <div class="project-chip">
+    <div class="label">Active Project</div>
+    <div class="name" id="sidebar-project-name">—</div>
+  </div>
+  <nav>
+    <div class="nav-section">Core</div>
+    <a class="nav-item" href="index.html"><span class="icon">⬛</span> Dashboard</a>
+    <a class="nav-item" href="02_ffe_list.html"><span class="icon">📋</span> Master FF&amp;E</a>
+    <a class="nav-item" href="03_move_management.html"><span class="icon">🚚</span> Move Mgmt</a>
+    <a class="nav-item active" href="06_swing_space.html"><span class="icon">🔄</span> Swing Space</a>
+    <a class="nav-item" href="07_tenant_improvement.html"><span class="icon">🏗</span> Tenant Imp.</a>
+    <div class="nav-section">Project</div>
+    <a class="nav-item" href="05_schedule_gantt.html"><span class="icon">📅</span> Schedule</a>
+    <a class="nav-item" href="08_issue_log.html"><span class="icon">🚨</span> Issue Log</a>
+    <a class="nav-item" href="09_punch_list.html"><span class="icon">✅</span> Punch List</a>
+    <a class="nav-item" href="10_reports.html"><span class="icon">📊</span> Reports</a>
+    <div class="nav-section">Admin</div>
+    <a class="nav-item" href="11_admin_settings.html"><span class="icon">⚙️</span> Settings</a>
+    <a class="nav-item" href="12_user_management.html"><span class="icon">👥</span> Users</a>
+  </nav>
+  <div class="user-area">
+    <div class="user-chip">
+      <div class="avatar" id="user-initials">—</div>
+      <div><div class="user-name" id="user-name">—</div><div class="user-role" id="user-role">—</div></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="page-title">Swing Space</span>
+    <span class="badge badge-blue" id="item-count-badge">0 Items</span>
+    <span class="badge badge-warn" id="topbar-movedate"></span>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-ghost">Export</button>
+    <button class="btn btn-primary">+ Add Item</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span style="color:var(--muted); font-size:13px;">🔍</span>
+      <input type="text" placeholder="Search by name, location, ID…">
+    </div>
+    <div class="filter-chip active">All</div>
+    <div class="filter-chip">Active</div>
+    <div class="filter-chip">Vacated</div>
+    <div class="filter-chip">Pending</div>
+    <div class="filter-chip">🚨 Issues</div>
+    <span class="count-label" id="count-label">0 items</span>
+  </div>
+
+  <div class="table-wrap" style="flex:1; overflow:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>SS ID</th>
+          <th>Item Name</th>
+          <th>Location</th>
+          <th>Room No.</th>
+          <th>Room Type</th>
+          <th>Assigned To</th>
+          <th>From Date</th>
+          <th>To Date</th>
+          <th>FF&amp;E ID</th>
+          <th>Status</th>
+          <th>Notes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="ss-tbody"><!-- populated by JS --></tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <span class="page-info" id="page-info">No items yet — add swing space records in pps-data.js</span>
+  </div>
+</main>
+
+<script src="pps-data.js"></script>
+<script>
+  // Sidebar + user
+  document.getElementById('sidebar-project-name').innerHTML = PPS.project.name + '<br>' + PPS.project.subtitle;
+  document.getElementById('user-initials').textContent = PPS.user.initials;
+  document.getElementById('user-name').textContent     = PPS.user.name;
+  document.getElementById('user-role').textContent     = PPS.user.role;
+  document.getElementById('topbar-movedate').textContent = 'Move Date: ' + PPS.project.moveDate;
+
+  const statusClass = { 'Active': 'ms-ontrack', 'Vacated': 'ms-complete', 'Pending': 's-review', 'Issue': 'ms-issue' };
+
+  function renderTable(items) {
+    document.getElementById('item-count-badge').textContent = items.length + ' Items';
+    document.getElementById('count-label').textContent = items.length + ' items';
+    const tbody = document.getElementById('ss-tbody');
+    if (items.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; padding:40px; color:var(--muted); font-family:var(--mono); font-size:11px;">
+        No swing space records yet · Add items to <strong>PPS.swingSpaceItems</strong> in pps-data.js
+      </td></tr>`;
+      return;
+    }
+    tbody.innerHTML = items.map(item => `
+      <tr>
+        <td class="id-cell">${item.id}</td>
+        <td><div class="item-name">${item.name}</div>${item.desc ? `<div class="item-desc">${item.desc}</div>` : ''}</td>
+        <td>${item.location}</td>
+        <td class="muted-cell">${item.roomNo}</td>
+        <td class="muted-cell">${item.roomType}</td>
+        <td class="muted-cell">${item.assignedTo}</td>
+        <td style="font-family:var(--mono); font-size:10px;">${item.fromDate}</td>
+        <td style="font-family:var(--mono); font-size:10px;">${item.toDate}</td>
+        <td class="link-cell">${item.ffeId}</td>
+        <td><span class="status ${statusClass[item.status] || ''}">${item.status}</span></td>
+        <td class="muted-cell" style="max-width:160px; overflow:hidden; text-overflow:ellipsis;">${item.notes || '—'}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+      </tr>
+    `).join('');
+  }
+
+  renderTable(PPS.swingSpaceItems);
+
+  document.querySelector('.search-box input').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    renderTable(PPS.swingSpaceItems.filter(i =>
+      i.name.toLowerCase().includes(q) || i.id.toLowerCase().includes(q) ||
+      i.location.toLowerCase().includes(q) || i.roomNo.toLowerCase().includes(q)
+    ));
+  });
+</script>
+</body>
+</html>

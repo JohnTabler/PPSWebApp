@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PPS – Reports</title>
+<link rel="stylesheet" href="pps-theme.css">
+<style>
+  /* ── REPORTS PAGE STYLES ── */
+  .content { padding: 28px 32px; display: flex; flex-direction: column; gap: 24px; }
+  .reports-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+  /* Power BI embed placeholder */
+  .pbi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .pbi-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .pbi-title { font-size: 13px; font-weight: 700; }
+  .pbi-meta  { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+  .pbi-embed { height: 280px; background: var(--surface2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border-top: none; }
+  .pbi-icon  { font-size: 36px; opacity: 0.3; }
+  .pbi-label { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: center; line-height: 1.6; }
+  .pbi-label strong { color: var(--accent); }
+  .pbi-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+
+  /* Full-width embed area */
+  .pbi-card.full { grid-column: 1 / -1; }
+  .pbi-card.full .pbi-embed { height: 360px; }
+
+  /* Export panel */
+  .export-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .export-label { font-size: 13px; font-weight: 700; flex: 1; min-width: 160px; }
+  .export-sub   { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .export-btns  { display: flex; gap: 10px; flex-wrap: wrap; }
+  .export-btn   { display: flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; }
+  .export-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .export-btn .ext { font-family: var(--mono); font-size: 9px; background: var(--border); padding: 1px 5px; border-radius: 3px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Plan<span>Perfect</span></div>
+    <div class="logo-sub">Systems · v2.0</div>
+  </div>
+  <div class="project-chip">
+    <div class="label">Active Project</div>
+    <div class="name" id="sidebar-project-name">—</div>
+  </div>
+  <nav>
+    <div class="nav-section">Core</div>
+    <a class="nav-item" href="index.html"><span class="icon">⬛</span> Dashboard</a>
+    <a class="nav-item" href="02_ffe_list.html"><span class="icon">📋</span> Master FF&amp;E</a>
+    <a class="nav-item" href="03_move_management.html"><span class="icon">🚚</span> Move Mgmt</a>
+    <a class="nav-item" href="06_swing_space.html"><span class="icon">🔄</span> Swing Space</a>
+    <a class="nav-item" href="07_tenant_improvement.html"><span class="icon">🏗</span> Tenant Imp.</a>
+    <div class="nav-section">Project</div>
+    <a class="nav-item" href="05_schedule_gantt.html"><span class="icon">📅</span> Schedule</a>
+    <a class="nav-item" href="08_issue_log.html"><span class="icon">🚨</span> Issue Log</a>
+    <a class="nav-item" href="09_punch_list.html"><span class="icon">✅</span> Punch List</a>
+    <a class="nav-item active" href="10_reports.html"><span class="icon">📊</span> Reports</a>
+    <div class="nav-section">Admin</div>
+    <a class="nav-item" href="11_admin_settings.html"><span class="icon">⚙️</span> Settings</a>
+    <a class="nav-item" href="12_user_management.html"><span class="icon">👥</span> Users</a>
+  </nav>
+  <div class="user-area">
+    <div class="user-chip">
+      <div class="avatar" id="user-initials">—</div>
+      <div><div class="user-name" id="user-name">—</div><div class="user-role" id="user-role">—</div></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="page-title">Reports &amp; Dashboards</span>
+    <span class="badge badge-blue">Power BI Embedded</span>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-ghost">Refresh Data</button>
+    <button class="btn btn-primary">Open in Power BI ↗</button>
+  </div>
+
+  <div class="content">
+
+    <!-- Export Panel -->
+    <div class="export-panel">
+      <div>
+        <div class="export-label">Export Project Data</div>
+        <div class="export-sub">Download current project data in your preferred format</div>
+      </div>
+      <div class="export-btns">
+        <button class="export-btn">📋 FF&amp;E List <span class="ext">XLSX</span></button>
+        <button class="export-btn">🚚 Move Records <span class="ext">XLSX</span></button>
+        <button class="export-btn">📅 Schedule <span class="ext">XLSX</span></button>
+        <button class="export-btn">📄 Full Report <span class="ext">PDF</span></button>
+      </div>
+    </div>
+
+    <!-- Power BI Report Cards -->
+    <div class="reports-grid">
+
+      <div class="pbi-card">
+        <div class="pbi-header">
+          <div>
+            <div class="pbi-title">Cost Summary</div>
+            <div class="pbi-meta">Planned vs Actual · All cost areas</div>
+          </div>
+          <span class="badge badge-blue">Power BI</span>
+        </div>
+        <div class="pbi-embed">
+          <div class="pbi-icon">📊</div>
+          <div class="pbi-label">Power BI embed will appear here<br><strong>Configure report ID in Admin → Settings</strong></div>
+        </div>
+        <div class="pbi-footer">
+          <button class="btn btn-ghost" style="font-size:11px; padding:6px 12px;">Export XLSX</button>
+          <button class="btn btn-ghost" style="font-size:11px; padding:6px 12px;">Export PDF</button>
+          <span style="margin-left:auto; font-family:var(--mono); font-size:9px; color:var(--muted);">Last refresh: —</span>
+        </div>
+      </div>
+
+      <div class="pbi-card">
+        <div class="pbi-header">
+          <div>
+            <div class="pbi-title">Move Management Summary</div>
+            <div class="pbi-meta">Status breakdown · Timeline view</div>
+          </div>
+          <span class="badge badge-blue">Power BI</span>
+        </div>
+        <div class="pbi-embed">
+          <div class="pbi-icon">🚚</div>
+          <div class="pbi-label">Power BI embed will appear here<br><strong>Configure report ID in Admin → Settings</strong></div>
+        </div>
+        <div class="pbi-footer">
+          <button class="btn btn-ghost" style="font-size:11px; padding:6px 12px;">Export XLSX</button>
+          <button class="btn btn-ghost" style="font-size:11px; padding:6px 12px;">Export PDF</button>
+          <span style="margin-left:auto; font-family:var(--mono); font-size:9px; color:var(--muted);">Last refresh: —</span>
+        </div>
+      </div>
+
+      <div class="pbi-card">
+        <div class="pbi-header">
+          <div>
+            <div class="pbi-title">Procurement Spend</div>
+            <div class="pbi-meta">By vendor · By category · By status</div>
+          </div>
+          <span class="badge badge-blue">Power BI</span>
+        </div>
+        <div class="pbi-embed">
+          <div class="pbi-icon">🛒</div>
+          <div class="pbi-label">Power BI embed will appear here<br><strong>Configure report ID in Admin → Settings</strong></div>
+        </div>
+        <div class="pbi-footer">
+          <button class="btn btn-ghost" style="font-size:11px; padding:6px 12px;">Export XLSX</button>
+          <button class="btn btn-ghost" style="font-size:11px; padding:6px 12px;">Export PDF</button>
+          <span style="margin-left:auto; font-family:var(--mono); font-size:9px; color:var(--muted);">Last refresh: —</span>
+        </div>
+      </div>
+
+      <div class="pbi-card">
+        <div class="pbi-header">
+          <div>
+            <div class="pbi-title">Schedule Variance</div>
+            <div class="pbi-meta">Planned vs Actual dates · % complete</div>
+          </div>
+          <span class="badge badge-blue">Power BI</span>
+        </div>
+        <div class="pbi-embed">
+          <div class="pbi-icon">📅</div>
+          <div class="pbi-label">Power BI embed will appear here<br><strong>Configure report ID in Admin → Settings</strong></div>
+        </div>
+        <div class="pbi-footer">
+          <button class="btn btn-ghost" style="font-size:11px; padding:6px 12px;">Export XLSX</button>
+          <button class="btn btn-ghost" style="font-size:11px; padding:6px 12px;">Export PDF</button>
+          <span style="margin-left:auto; font-family:var(--mono); font-size:9px; color:var(--muted);">Last refresh: —</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script src="pps-data.js"></script>
+<script>
+  document.getElementById('sidebar-project-name').innerHTML = PPS.project.name + '<br>' + PPS.project.subtitle;
+  document.getElementById('user-initials').textContent = PPS.user.initials;
+  document.getElementById('user-name').textContent     = PPS.user.name;
+  document.getElementById('user-role').textContent     = PPS.user.role;
+</script>
+</body>
+</html>

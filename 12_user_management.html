@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PPS – User Management</title>
+<link rel="stylesheet" href="pps-theme.css">
+<style>
+  /* ── USER MANAGEMENT PAGE STYLES ── */
+  .main { overflow: hidden; }
+  table { min-width: 900px; }
+
+  /* User avatar in table */
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .user-cell { display: flex; align-items: center; gap: 10px; }
+  .user-cell-name { font-size: 12px; font-weight: 600; }
+  .user-cell-email { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  /* Role badges */
+  .role-admin   { background: rgba(255,107,107,0.1); color: var(--danger); border: 1px solid rgba(255,107,107,0.2); font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 3px; display:inline-block; }
+  .role-pm      { background: rgba(79,156,249,0.12); color: var(--accent); border: 1px solid rgba(79,156,249,0.2); font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 3px; display:inline-block; }
+  .role-viewer  { background: rgba(107,117,145,0.15); color: var(--muted); border: 1px solid var(--border); font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 3px; display:inline-block; }
+
+  /* User status */
+  .u-active   { background: rgba(56,217,169,0.12); color: var(--accent2); }
+  .u-inactive { background: rgba(107,117,145,0.15); color: var(--muted); }
+  .u-pending  { background: rgba(255,169,77,0.12); color: var(--warn); }
+
+  /* Project tags */
+  .proj-tag { display: inline-block; padding: 2px 7px; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; font-family: var(--mono); font-size: 9px; color: var(--muted); margin: 1px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Plan<span>Perfect</span></div>
+    <div class="logo-sub">Systems · v2.0</div>
+  </div>
+  <div class="project-chip">
+    <div class="label">Active Project</div>
+    <div class="name" id="sidebar-project-name">—</div>
+  </div>
+  <nav>
+    <div class="nav-section">Core</div>
+    <a class="nav-item" href="index.html"><span class="icon">⬛</span> Dashboard</a>
+    <a class="nav-item" href="02_ffe_list.html"><span class="icon">📋</span> Master FF&amp;E</a>
+    <a class="nav-item" href="03_move_management.html"><span class="icon">🚚</span> Move Mgmt</a>
+    <a class="nav-item" href="06_swing_space.html"><span class="icon">🔄</span> Swing Space</a>
+    <a class="nav-item" href="07_tenant_improvement.html"><span class="icon">🏗</span> Tenant Imp.</a>
+    <div class="nav-section">Project</div>
+    <a class="nav-item" href="05_schedule_gantt.html"><span class="icon">📅</span> Schedule</a>
+    <a class="nav-item" href="08_issue_log.html"><span class="icon">🚨</span> Issue Log</a>
+    <a class="nav-item" href="09_punch_list.html"><span class="icon">✅</span> Punch List</a>
+    <a class="nav-item" href="10_reports.html"><span class="icon">📊</span> Reports</a>
+    <div class="nav-section">Admin</div>
+    <a class="nav-item" href="11_admin_settings.html"><span class="icon">⚙️</span> Settings</a>
+    <a class="nav-item active" href="12_user_management.html"><span class="icon">👥</span> Users</a>
+  </nav>
+  <div class="user-area">
+    <div class="user-chip">
+      <div class="avatar" id="user-initials">—</div>
+      <div><div class="user-name" id="user-name">—</div><div class="user-role" id="user-role">—</div></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="page-title">User Management</span>
+    <span class="badge badge-blue" id="total-badge">0 Users</span>
+    <span class="badge badge-green" id="active-badge">0 Active</span>
+    <span class="badge badge-warn">Admin Only</span>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-ghost">Export</button>
+    <button class="btn btn-primary">+ Invite User</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span style="color:var(--muted); font-size:13px;">🔍</span>
+      <input type="text" placeholder="Search by name, email, role…">
+    </div>
+    <div class="filter-chip active">All</div>
+    <div class="filter-chip">Admin</div>
+    <div class="filter-chip">Project Manager</div>
+    <div class="filter-chip">Viewer</div>
+    <div class="filter-chip green">Active</div>
+    <span class="count-label" id="count-label">0 users</span>
+  </div>
+
+  <div class="table-wrap" style="flex:1; overflow:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Role</th>
+          <th>Projects</th>
+          <th>Status</th>
+          <th>Last Active</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="user-tbody"><!-- populated by JS --></tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <span class="page-info" id="page-info">—</span>
+  </div>
+</main>
+
+<script src="pps-data.js"></script>
+<script>
+  document.getElementById('sidebar-project-name').innerHTML = PPS.project.name + '<br>' + PPS.project.subtitle;
+  document.getElementById('user-initials').textContent = PPS.user.initials;
+  document.getElementById('user-name').textContent     = PPS.user.name;
+  document.getElementById('user-role').textContent     = PPS.user.role;
+
+  const roleClass   = { 'Admin': 'role-admin', 'Project Manager': 'role-pm', 'Viewer': 'role-viewer' };
+  const statusClass = { 'Active': 'u-active', 'Inactive': 'u-inactive', 'Pending': 'u-pending' };
+  const avatarColors = ['#4f9cf9', '#38d9a9', '#ffa94d', '#ff6b6b', '#a78bfa'];
+
+  function renderTable(items) {
+    const active = items.filter(u => u.status === 'Active').length;
+    document.getElementById('total-badge').textContent  = items.length + ' Users';
+    document.getElementById('active-badge').textContent = active + ' Active';
+    document.getElementById('count-label').textContent  = items.length + ' users';
+    document.getElementById('page-info').textContent    = items.length + ' users total';
+    const tbody = document.getElementById('user-tbody');
+    if (items.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--muted); font-family:var(--mono); font-size:11px;">
+        No users yet · Add records to <strong>PPS.users</strong> in pps-data.js
+      </td></tr>`;
+      return;
+    }
+    tbody.innerHTML = items.map((user, i) => `
+      <tr>
+        <td>
+          <div class="user-cell">
+            <div class="user-avatar" style="background:${avatarColors[i % avatarColors.length]}">${user.initials}</div>
+            <div>
+              <div class="user-cell-name">${user.name}</div>
+              <div class="user-cell-email">${user.email}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="${roleClass[user.role] || 'role-viewer'}">${user.role}</span></td>
+        <td>${user.projects.map(p => `<span class="proj-tag">${p}</span>`).join('')}</td>
+        <td><span class="status ${statusClass[user.status] || ''}">${user.status}</span></td>
+        <td style="font-family:var(--mono); font-size:10px; color:var(--muted);">${user.lastActive}</td>
+        <td>
+          <div class="row-actions">
+            <button class="action-btn">Edit</button>
+            <button class="action-btn">Permissions</button>
+            <button class="action-btn" style="color:var(--danger);">Deactivate</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  renderTable(PPS.users);
+
+  document.querySelector('.search-box input').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    renderTable(PPS.users.filter(u =>
+      u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) ||
+      u.role.toLowerCase().includes(q)
+    ));
+  });
+</script>
+</body>
+</html>
