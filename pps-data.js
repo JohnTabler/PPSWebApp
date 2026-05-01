@@ -368,3 +368,246 @@ const PPS = {
   ]
 
 };
+
+// =============================================================
+// PPS DATA — SECOND PROJECT SAMPLE
+// =============================================================
+
+const PPS_2 = {
+
+  project: {
+    name:         "SDCCD Mission Valley Campus",
+    subtitle:     "Admin Building Renovation",
+    moveDate:     "Nov 3, 2025",
+    budget:       525000,
+    plannedSpend: 472300,
+    client:       "James Ortega",
+    clientDept:   "Campus Operations",
+    mover:        "Bekins Moving Solutions",
+    moverPOC:     "Laura Kim"
+  },
+
+  user: {
+    name:    "James Ortega",
+    initials:"JO",
+    role:    "Project Manager"
+  },
+
+  ffeItems: [
+    {
+      id: "FFE-101",
+      name: "Sit-Stand Desk",
+      desc: "72W × 30D · Electric height adjustable",
+      type: "Furniture",
+      vendor: "Steelcase",
+      locationCurrent: "Mission Valley · Bldg A",
+      locationNew: "Mission Valley · Admin",
+      roomType: "Office",
+      roomNo: "201",
+      procMethod: "Purchased",
+      qtyNeeded: 10, qtyExisting: 2, qtyNew: 8,
+      unitPrice: 850, extCost: 6800,
+      processStatus: "Ordered",
+      ffeStatus: "On Track",
+      condition: "New",
+      priority: "High",
+      swing: false,
+      moveId: "MM-101"
+    },
+    {
+      id: "FFE-102",
+      name: "Ergonomic Task Chair",
+      desc: "Mesh back · adjustable arms",
+      type: "Furniture",
+      vendor: "Herman Miller",
+      locationCurrent: "Warehouse",
+      locationNew: "Mission Valley · Admin",
+      roomType: "Office",
+      roomNo: "Open Office",
+      procMethod: "Purchased",
+      qtyNeeded: 25, qtyExisting: 0, qtyNew: 25,
+      unitPrice: 620, extCost: 15500,
+      processStatus: "Quoted",
+      ffeStatus: "On Track",
+      condition: "New",
+      priority: "High",
+      swing: false,
+      moveId: "MM-102"
+    },
+    {
+      id: "FFE-103",
+      name: "Conference Table (Large)",
+      desc: "14' table · integrated power",
+      type: "Furniture",
+      vendor: "Haworth",
+      locationCurrent: "Mission Valley · Old Admin",
+      locationNew: "Mission Valley · Admin",
+      roomType: "Conf. Room",
+      roomNo: "301",
+      procMethod: "Reuse",
+      qtyNeeded: 1, qtyExisting: 1, qtyNew: 0,
+      unitPrice: 0, extCost: 0,
+      processStatus: "In Stock",
+      ffeStatus: "On Track",
+      condition: "Used",
+      priority: "Med",
+      swing: true,
+      moveId: "MM-103"
+    },
+    {
+      id: "FFE-104",
+      name: "Break Room Cabinets",
+      desc: "Upper & lower set",
+      type: "Furniture",
+      vendor: "IKEA",
+      locationCurrent: "Vendor",
+      locationNew: "Mission Valley · Admin",
+      roomType: "Break Room",
+      roomNo: "150",
+      procMethod: "Purchased",
+      qtyNeeded: 1, qtyExisting: 0, qtyNew: 1,
+      unitPrice: 4200, extCost: 4200,
+      processStatus: "Delivered",
+      ffeStatus: "On Track",
+      condition: "New",
+      priority: "Med",
+      swing: false,
+      moveId: "MM-104"
+    },
+    {
+      id: "FFE-105",
+      name: "Wall-Mounted TV",
+      desc: "75\" · HDMI + wireless casting",
+      type: "AV",
+      vendor: "Best Buy Business",
+      locationCurrent: "Vendor",
+      locationNew: "Mission Valley · Admin",
+      roomType: "Conf. Room",
+      roomNo: "301",
+      procMethod: "Purchased",
+      qtyNeeded: 2, qtyExisting: 0, qtyNew: 2,
+      unitPrice: 1200, extCost: 2400,
+      processStatus: "Ordered",
+      ffeStatus: "On Track",
+      condition: "New",
+      priority: "High",
+      swing: false,
+      moveId: "MM-105"
+    }
+  ],
+
+  moveRecords: [
+    { id: "MM-101", itemName: "Sit-Stand Desk", userGroup: "Admin Staff",
+      fromFloor: "Warehouse", fromRoom: "Storage",
+      toFloor: "2nd", toRoom: "Office 201",
+      roomType: "Office", moveDate: "Nov 3, 2025",
+      mover: "Bekins Moving Solutions", status: "On Track",
+      swing: false, ffeId: "FFE-101", ssId: "SS-101",
+      poc: "James O.", notes: "" },
+
+    { id: "MM-103", itemName: "Conference Table (Large)", userGroup: "Admin Staff",
+      fromFloor: "1st", fromRoom: "Old Admin Conf.",
+      toFloor: "3rd", toRoom: "Room 301",
+      roomType: "Conf. Room", moveDate: "Nov 3, 2025",
+      mover: "Bekins Moving Solutions", status: "On Track",
+      swing: true, ffeId: "FFE-103", ssId: "SS-103",
+      poc: "James O.", notes: "Requires disassembly" }
+  ],
+
+  scheduleActivities: [
+    { id: "SA-101", name: "Furniture Delivery", type: "FF&E", startDay: 5, durationDays: 2, pctComplete: 20 },
+    { id: "SA-102", name: "IT Setup", type: "Other", startDay: 8, durationDays: 3, pctComplete: 0 },
+    { id: "SA-103", name: "Final Move", type: "Move", startDay: 12, durationDays: 1, pctComplete: 0 }
+  ],
+
+  financials: [
+    { label: "FF&E", color: "#4f9cf9", planned: 280000, actual: 0 },
+    { label: "Construction", color: "#ffa94d", planned: 192300, actual: 0 },
+    { label: "IT", color: "#38d9a9", planned: 50000, actual: 0 }
+  ],
+
+  swingSpaceItems: [
+    {
+      id: "SS-101",
+      name: "Sit-Stand Desk",
+      desc: "",
+      location: "Temp Offices · Bldg B",
+      roomNo: "110",
+      roomType: "Office",
+      assignedTo: "Admin Staff",
+      fromDate: "Oct 1, 2025",
+      toDate: "Nov 3, 2025",
+      status: "Active",
+      ffeId: "FFE-101",
+      notes: ""
+    }
+  ],
+
+  tenantImprovementItems: [
+    {
+      id: "TI-101",
+      name: "Electrical Upgrade",
+      desc: "New circuits for workstations",
+      scope: "Electrical",
+      location: "Mission Valley · Admin",
+      roomNo: "2nd Floor",
+      contractor: "Prime Electric",
+      plannedCost: 25000,
+      actualCost: 0,
+      startDate: "Oct 1, 2025",
+      endDate: "Oct 20, 2025",
+      status: "In Progress",
+      notes: ""
+    }
+  ],
+
+  issues: [
+    {
+      id: "ISS-101",
+      title: "Delayed Chair Shipment",
+      description: "Vendor pushed delivery by 1 week",
+      linkedId: "FFE-102",
+      linkedType: "FFE",
+      severity: "Med",
+      status: "Open",
+      openedDate: "Oct 10, 2025",
+      assignedTo: "James O.",
+      resolvedDate: "",
+      notes: ""
+    }
+  ],
+
+  punchListItems: [
+    {
+      id: "PL-101",
+      task: "Install TVs",
+      description: "Mount and test all conference TVs",
+      linkedId: "FFE-105",
+      linkedType: "FFE",
+      dueDate: "Nov 3, 2025",
+      assignedTo: "IT Team",
+      pctComplete: 0,
+      status: "Not Started",
+      notes: ""
+    }
+  ],
+
+  users: [
+    {
+      id: "USR-101",
+      name: "James Ortega",
+      initials: "JO",
+      email: "jortega@sdccd.edu",
+      role: "Project Manager",
+      projects: ["SDCCD Mission Valley Campus"],
+      status: "Active",
+      lastActive: "Today"
+    }
+  ]
+
+};
+
+// =============================================================
+// PROJECT COLLECTION
+// =============================================================
+const PROJECTS = [PPS, PPS_2];
