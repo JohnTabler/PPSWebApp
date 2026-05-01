@@ -24,7 +24,7 @@
   </div>
   <div class="project-chip">
     <div class="label">Active Project</div>
-    <div class="name">SDCCD 1450 Frazee<br>5th Floor TI</div>
+    <div class="name" id="sidebar-project-name">—</div>
   </div>
   <nav>
     <div class="nav-section">Core</div>
@@ -44,8 +44,8 @@
   </nav>
   <div class="user-area">
     <div class="user-chip">
-      <div class="avatar">MG</div>
-      <div><div class="user-name">Molly Gardner</div><div class="user-role">Project Manager</div></div>
+      <div class="avatar" id="user-initials">—</div>
+      <div><div class="user-name" id="user-name">—</div><div class="user-role" id="user-role">—</div></div>
     </div>
   </div>
 </aside>
@@ -53,8 +53,8 @@
 <main class="main">
   <div class="topbar">
     <span class="page-title">Move Management</span>
-    <span class="badge badge-blue">97+ Moves</span>
-    <span class="badge badge-warn">Move Date: Sep 19, 2025</span>
+    <span class="badge badge-blue" id="move-count-badge">— Moves</span>
+    <span class="badge badge-warn" id="topbar-movedate"></span>
     <div class="topbar-spacer"></div>
     <button class="btn btn-ghost">Export</button>
     <button class="btn btn-primary">+ Add Move</button>
@@ -64,28 +64,28 @@
     <div class="stats-row">
       <div class="stat-card blue">
         <div class="stat-label">Total Moves</div>
-        <div class="stat-value">97</div>
+        <div class="stat-value" id="stat-total">—</div>
         <div class="stat-sub">All records</div>
       </div>
       <div class="stat-card green">
         <div class="stat-label">On Track</div>
-        <div class="stat-value">94</div>
+        <div class="stat-value" id="stat-ontrack">—</div>
         <div class="stat-sub">Scheduled · OK</div>
       </div>
       <div class="stat-card warn">
         <div class="stat-label">No Status</div>
-        <div class="stat-value">2</div>
+        <div class="stat-value" id="stat-nostatus">—</div>
         <div class="stat-sub">Needs update</div>
       </div>
       <div class="stat-card red">
         <div class="stat-label">Issues</div>
-        <div class="stat-value">0</div>
+        <div class="stat-value" id="stat-issues">—</div>
         <div class="stat-sub">Active issues</div>
       </div>
       <div class="stat-card muted">
         <div class="stat-label">Completed</div>
-        <div class="stat-value">1</div>
-        <div class="stat-sub">MM-2 done</div>
+        <div class="stat-value" id="stat-complete">—</div>
+        <div class="stat-sub">Done</div>
       </div>
     </div>
 
@@ -93,8 +93,8 @@
       <div class="card-header">
         <span class="card-title">Move Records</span>
         <div style="display:flex; gap:8px;">
-          <span class="badge badge-blue">Mover: Alexander's · POC: Steve</span>
-          <span class="badge badge-warn">Sched. Date: Sep 19, 2025</span>
+          <span class="badge badge-blue" id="mover-badge"></span>
+          <span class="badge badge-warn" id="movedate-badge"></span>
         </div>
       </div>
       <div class="toolbar">
@@ -131,145 +131,75 @@
               <th></th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td class="id-cell">MM-1</td>
-              <td style="font-weight:600;">Credenza</td>
-              <td class="muted-cell">Facilities Dept</td>
-              <td class="muted-cell">5th</td>
-              <td class="muted-cell">568 (Storage)</td>
-              <td class="muted-cell">5th</td>
-              <td class="muted-cell">568 (Storage)</td>
-              <td class="muted-cell">Storage</td>
-              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
-              <td class="muted-cell">Alexander's</td>
-              <td><span class="move-status ms-ontrack">On Track</span></td>
-              <td class="muted-cell">Yes</td>
-              <td class="link-cell">FFE-1</td>
-              <td class="link-cell">SS-1</td>
-              <td class="muted-cell">Molly G.</td>
-              <td class="note-cell">—</td>
-              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
-            </tr>
-            <tr>
-              <td class="id-cell">MM-2</td>
-              <td style="font-weight:600;">Guest Chair</td>
-              <td class="muted-cell">Facilities Dept</td>
-              <td class="muted-cell">2nd</td>
-              <td class="muted-cell">Open Office Area</td>
-              <td class="muted-cell">2nd</td>
-              <td class="muted-cell">Open Office Area</td>
-              <td class="muted-cell">Other</td>
-              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
-              <td class="muted-cell">Alexander's</td>
-              <td><span class="move-status ms-complete">Complete</span></td>
-              <td class="muted-cell">Yes</td>
-              <td class="link-cell">FFE-2</td>
-              <td class="link-cell">SS-2</td>
-              <td class="muted-cell">Molly G.</td>
-              <td class="note-cell">Transfer to Warehouse</td>
-              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
-            </tr>
-            <tr>
-              <td class="id-cell">MM-11</td>
-              <td style="font-weight:600;">Conference Chair</td>
-              <td class="muted-cell">Facilities Dept</td>
-              <td class="muted-cell">5th</td>
-              <td class="muted-cell">566 (Conf. Rm)</td>
-              <td class="muted-cell">5th</td>
-              <td class="muted-cell">566 (Conf. Rm)</td>
-              <td class="muted-cell">Conf. Room</td>
-              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
-              <td class="muted-cell">Alexander's</td>
-              <td><span class="move-status ms-na">—</span></td>
-              <td class="muted-cell">Yes</td>
-              <td class="link-cell">FFE-11</td>
-              <td class="link-cell">SS-11</td>
-              <td class="muted-cell">Molly G.</td>
-              <td class="note-cell">—</td>
-              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
-            </tr>
-            <tr>
-              <td class="id-cell">MM-12</td>
-              <td style="font-weight:600;">Conference Table</td>
-              <td class="muted-cell">Facilities Dept</td>
-              <td class="muted-cell">2nd</td>
-              <td class="muted-cell">Large Conf. Rm</td>
-              <td class="muted-cell">5th</td>
-              <td class="muted-cell">Conf. Rm 501</td>
-              <td class="muted-cell">Conf. Room</td>
-              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
-              <td class="muted-cell">Alexander's</td>
-              <td><span class="move-status ms-na">—</span></td>
-              <td class="muted-cell">Yes</td>
-              <td class="link-cell">FFE-12</td>
-              <td class="link-cell">SS-12</td>
-              <td class="muted-cell">Molly G.</td>
-              <td class="note-cell">—</td>
-              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
-            </tr>
-            <tr>
-              <td class="id-cell">MM-13</td>
-              <td style="font-weight:600;">Newline Touch Screen TV</td>
-              <td class="muted-cell">Facilities Dept</td>
-              <td class="muted-cell">2nd</td>
-              <td class="muted-cell">Large Conf. Rm</td>
-              <td class="muted-cell">5th</td>
-              <td class="muted-cell">Conf. Rm 501</td>
-              <td class="muted-cell">Conf. Room</td>
-              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
-              <td class="muted-cell">Alexander's</td>
-              <td><span class="move-status ms-na">—</span></td>
-              <td class="muted-cell">Yes</td>
-              <td class="link-cell">FFE-13</td>
-              <td class="link-cell">SS-13</td>
-              <td class="muted-cell">Molly G.</td>
-              <td class="note-cell">—</td>
-              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
-            </tr>
-            <tr>
-              <td class="id-cell">MM-27</td>
-              <td style="font-weight:600;">Office Desk</td>
-              <td class="muted-cell">Facilities Dept</td>
-              <td class="muted-cell">2nd</td>
-              <td class="muted-cell">Office #1 Aurora</td>
-              <td class="muted-cell">5th</td>
-              <td class="muted-cell">Office #531 Aurora</td>
-              <td class="muted-cell">Office</td>
-              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
-              <td class="muted-cell">Alexander's</td>
-              <td><span class="move-status ms-na">—</span></td>
-              <td class="muted-cell">Yes</td>
-              <td class="link-cell">FFE-27</td>
-              <td class="link-cell">SS-27</td>
-              <td class="muted-cell">Molly G.</td>
-              <td class="note-cell">—</td>
-              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
-            </tr>
-            <tr>
-              <td class="id-cell">MM-51</td>
-              <td style="font-weight:600;">Conference Table</td>
-              <td class="muted-cell">Facilities Dept</td>
-              <td class="muted-cell">2nd</td>
-              <td class="muted-cell">Dr Peterson Office</td>
-              <td style="color:var(--warn);">3rd</td>
-              <td style="color:var(--warn);">3375 Camino Del Rio S</td>
-              <td class="muted-cell">Office</td>
-              <td style="font-family:var(--mono); font-size:10px;">Sep 19, 2025</td>
-              <td class="muted-cell">Alexander's</td>
-              <td><span class="move-status ms-na">—</span></td>
-              <td class="muted-cell">Yes</td>
-              <td class="link-cell">FFE-51</td>
-              <td class="link-cell">SS-51</td>
-              <td class="muted-cell">Molly G.</td>
-              <td class="note-cell">Off-site destination</td>
-              <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
-            </tr>
-          </tbody>
+          <tbody id="move-tbody"><!-- populated by JS --></tbody>
         </table>
       </div>
     </div>
   </div>
 </main>
+<script src="pps-data.js"></script>
+<script>
+  // Sidebar + user
+  document.getElementById('sidebar-project-name').innerHTML = PPS.project.name + '<br>' + PPS.project.subtitle;
+  document.getElementById('user-initials').textContent = PPS.user.initials;
+  document.getElementById('user-name').textContent     = PPS.user.name;
+  document.getElementById('user-role').textContent     = PPS.user.role;
+
+  // Topbar + card badges
+  document.getElementById('topbar-movedate').textContent = 'Move Date: ' + PPS.project.moveDate;
+  document.getElementById('mover-badge').textContent     = 'Mover: ' + PPS.project.mover + ' · POC: ' + PPS.project.moverPOC;
+  document.getElementById('movedate-badge').textContent  = 'Sched. Date: ' + PPS.project.moveDate;
+
+  // Stat cards
+  const records = PPS.moveRecords;
+  document.getElementById('move-count-badge').textContent  = records.length + ' Moves';
+  document.getElementById('stat-total').textContent        = records.length;
+  document.getElementById('stat-ontrack').textContent      = records.filter(m => m.status === 'On Track').length;
+  document.getElementById('stat-nostatus').textContent     = records.filter(m => m.status === '—').length;
+  document.getElementById('stat-issues').textContent       = records.filter(m => m.status === 'Issue').length;
+  document.getElementById('stat-complete').textContent     = records.filter(m => m.status === 'Complete').length;
+
+  // Status class map
+  const statusClass = { 'On Track': 'ms-ontrack', 'Complete': 'ms-complete', 'Issue': 'ms-issue', '—': 'ms-na' };
+
+  function renderMoveTable(items) {
+    document.getElementById('move-tbody').innerHTML = items.map(m => {
+      const offsite = m.toFloor !== m.fromFloor;
+      return `<tr>
+        <td class="id-cell">${m.id}</td>
+        <td style="font-weight:600;">${m.itemName}</td>
+        <td class="muted-cell">${m.userGroup}</td>
+        <td class="muted-cell">${m.fromFloor}</td>
+        <td class="muted-cell">${m.fromRoom}</td>
+        <td class="${offsite ? '' : 'muted-cell'}" ${offsite ? 'style="color:var(--warn);"' : ''}>${m.toFloor}</td>
+        <td class="${offsite ? '' : 'muted-cell'}" ${offsite ? 'style="color:var(--warn);"' : ''}>${m.toRoom}</td>
+        <td class="muted-cell">${m.roomType}</td>
+        <td style="font-family:var(--mono); font-size:10px;">${m.moveDate}</td>
+        <td class="muted-cell">${m.mover}</td>
+        <td><span class="move-status ${statusClass[m.status] || 'ms-na'}">${m.status}</span></td>
+        <td class="muted-cell">${m.swing ? 'Yes' : 'No'}</td>
+        <td class="link-cell">${m.ffeId}</td>
+        <td class="link-cell">${m.ssId}</td>
+        <td class="muted-cell">${m.poc}</td>
+        <td class="note-cell">${m.notes || '—'}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  renderMoveTable(PPS.moveRecords);
+
+  // Search filter
+  document.querySelector('.search-box input').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    const filtered = PPS.moveRecords.filter(m =>
+      m.itemName.toLowerCase().includes(q) ||
+      m.id.toLowerCase().includes(q) ||
+      m.fromRoom.toLowerCase().includes(q) ||
+      m.toRoom.toLowerCase().includes(q)
+    );
+    renderMoveTable(filtered);
+  });
+</script>
 </body>
 </html>

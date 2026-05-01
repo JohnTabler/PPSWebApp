@@ -66,7 +66,7 @@
   </div>
   <div class="project-chip">
     <div class="label">Active Project</div>
-    <div class="name">SDCCD 1450 Frazee<br>5th Floor TI</div>
+    <div class="name" id="sidebar-project-name">—</div>
   </div>
   <nav>
     <div class="nav-section">Core</div>
@@ -86,8 +86,8 @@
   </nav>
   <div class="user-area">
     <div class="user-chip">
-      <div class="avatar">MG</div>
-      <div><div class="user-name">Molly Gardner</div><div class="user-role">Project Manager</div></div>
+      <div class="avatar" id="user-initials">—</div>
+      <div><div class="user-name" id="user-name">—</div><div class="user-role" id="user-role">—</div></div>
     </div>
   </div>
 </aside>
@@ -95,8 +95,8 @@
 <main class="main">
   <div class="topbar">
     <span class="page-title">Schedule</span>
-    <span class="badge badge-blue">13 Activities</span>
-    <span class="badge badge-warn">⚑ Move Date: Sep 19</span>
+    <span class="badge badge-blue" id="activity-count-badge">— Activities</span>
+    <span class="badge badge-warn" id="topbar-movedate"></span>
     <div class="topbar-spacer"></div>
     <div class="legend">
       <div class="leg-item"><div class="leg-dot" style="background:#4f9cf9"></div>Move Mgmt</div>
@@ -119,28 +119,12 @@
       </div>
       <div class="gantt-wrap">
         <div class="gantt-grid">
-
-          <!-- LEFT: Labels -->
           <div class="gantt-labels">
             <div class="gantt-label-header"><span class="header-txt">Activity</span></div>
-            <div class="gantt-row"><span class="act-name">Mover Packing Material & Labels</span><span class="act-type-pill tp-move">Move</span></div>
-            <div class="gantt-row"><span class="act-name">Confirm Move Order / Sequence</span><span class="act-type-pill tp-move">Move</span></div>
-            <div class="gantt-row"><span class="act-name">Swing Space Liquidation Sale</span><span class="act-type-pill tp-swing">Swing</span></div>
-            <div class="gantt-row"><span class="act-name">Verkpleys Order Delivered</span><span class="act-type-pill tp-ffe">FF&E</span></div>
-            <div class="gantt-row"><span class="act-name">Verkpleys Move Swing Space Furn.</span><span class="act-type-pill tp-move">Move</span></div>
-            <div class="gantt-row"><span class="act-name">Verkpleys New Order Move</span><span class="act-type-pill tp-move">Move</span></div>
-            <div class="gantt-row"><span class="act-name">Prime Electrical Clearance</span><span class="act-type-pill tp-other">Other</span></div>
-            <div class="gantt-row"><span class="act-name">Swing Space Staff Pack</span><span class="act-type-pill tp-move">Move</span></div>
-            <div class="gantt-row"><span class="act-name">New Printers Delivery & Install</span><span class="act-type-pill tp-ffe">FF&E</span></div>
-            <div class="gantt-row"><span class="act-name">Seismic / Earthquake Retrofit</span><span class="act-type-pill tp-other">Other</span></div>
-            <div class="gantt-row"><span class="act-name">Fire Safety Requirements</span><span class="act-type-pill tp-other">Other</span></div>
-            <div class="gantt-row"><span class="act-name">Fire Extinguisher Locations</span><span class="act-type-pill tp-other">Other</span></div>
-            <div class="gantt-row"><span class="act-name">Fire Extinguisher Expiration Review</span><span class="act-type-pill tp-other">Other</span></div>
+            <div id="gantt-label-rows"><!-- populated by JS --></div>
           </div>
 
-          <!-- CENTER: Timeline bars (32 days = Aug 19 – Sep 19) -->
           <div class="gantt-timeline" style="position:relative;">
-            <!-- Date headers (every 4 days) -->
             <div class="gantt-dates">
               <div class="date-col">Aug 19</div>
               <div class="date-col">Aug 23</div>
@@ -152,95 +136,64 @@
               <div class="date-col">Sep 16</div>
               <div class="date-col">Sep 19</div>
             </div>
-
-            <!-- Each row: 100% = 32 days. Day 0 = Aug 19 -->
-            <!-- Aug 19 = day 0 = 0%. Sep 19 = day 31 = 100% -->
-            <!-- Bars: left = (start_day/31)*100%  width = max(2, (dur/31)*100)% -->
-
-            <!-- Row 1: Aug 19 (day 0), 1-day point -->
-            <div class="gantt-bar-row" style="background: rgba(79,156,249,0.03);">
-              <div class="bar-item" style="background:#4f9cf9; left:0%; width:3%;">▌</div>
-            </div>
-            <!-- Row 2: Aug 19 point -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#4f9cf9; left:0%; width:3%; opacity:0.7;">▌</div>
-            </div>
-            <!-- Row 3: Sep 1 (day 13) -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#6b7591; left:41.9%; width:3%;">▌</div>
-            </div>
-            <!-- Row 4: Sep 1 (day 13) -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#38d9a9; left:41.9%; width:3%;">▌</div>
-            </div>
-            <!-- Row 5: Sep 1 -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#4f9cf9; left:41.9%; width:3%;">▌</div>
-            </div>
-            <!-- Row 6: Sep 1 -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#4f9cf9; left:41.9%; width:3%;">▌</div>
-            </div>
-            <!-- Row 7: Prime Electrical – Sep 1 to Sep 19 (open end) -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#ffa94d; left:41.9%; width:58.1%; border-radius:4px 0 0 4px; opacity:0.8;">Prime Electrical – TBD End</div>
-            </div>
-            <!-- Row 8: Sep 3 to Sep 7 (4 days) -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#4f9cf9; left:48.4%; width:12.9%;">Staff Pack</div>
-            </div>
-            <!-- Row 9: Sep 4 -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#38d9a9; left:51.6%; width:3%;">▌</div>
-            </div>
-            <!-- Row 10: Sep 4 -->
-            <div class="gantt-bar-row" style="background:rgba(56,217,169,0.03);">
-              <div class="bar-item" style="background:#38d9a9; left:51.6%; width:3%;">▌</div>
-            </div>
-            <!-- Row 11: Sep 4 -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#ffa94d; left:51.6%; width:3%;">▌</div>
-            </div>
-            <!-- Row 12: Sep 4 -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#ffa94d; left:51.6%; width:3%;">▌</div>
-            </div>
-            <!-- Row 13: Sep 4 -->
-            <div class="gantt-bar-row">
-              <div class="bar-item" style="background:#ffa94d; left:51.6%; width:3%;">▌</div>
-            </div>
-
-            <!-- Today / Move date indicator at Sep 19 (100%) -->
-            <div class="today-line" style="left:99.5%; top:0; bottom:0; position:absolute;"></div>
-            <!-- Milestone diamond at Sep 19 -->
+            <div id="gantt-bar-rows"><!-- populated by JS --></div>
+            <div class="today-line" style="left:99.5%;"></div>
             <div class="milestone" style="position:absolute; right:6px; top:8px;"></div>
           </div>
-
-          <!-- RIGHT: % Complete -->
           <div class="pct-col">
             <div class="pct-header"><span>%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row">
-              <span class="pct-num" style="color:var(--accent2);">50%</span>
-              <div class="pct-bar"><div class="pct-fill" style="width:50%"></div></div>
-            </div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
-            <div class="pct-row"><span class="pct-num" style="color:var(--muted);">0%</span></div>
+            <div id="gantt-pct-rows"><!-- populated by JS --></div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 </main>
+<script src="pps-data.js"></script>
+<script>
+  // Sidebar + user
+  document.getElementById('sidebar-project-name').innerHTML = PPS.project.name + '<br>' + PPS.project.subtitle;
+  document.getElementById('user-initials').textContent = PPS.user.initials;
+  document.getElementById('user-name').textContent     = PPS.user.name;
+  document.getElementById('user-role').textContent     = PPS.user.role;
+
+  // Topbar
+  document.getElementById('activity-count-badge').textContent = PPS.scheduleActivities.length + ' Activities';
+  document.getElementById('topbar-movedate').textContent = '⚑ Move Date: ' + PPS.project.moveDate;
+
+  const typeColor    = { 'Move': '#4f9cf9', 'FF&E': '#38d9a9', 'Swing': '#6b7591', 'Other': '#ffa94d' };
+  const typePillClass = { 'Move': 'tp-move', 'FF&E': 'tp-ffe', 'Swing': 'tp-swing', 'Other': 'tp-other' };
+  const TOTAL_DAYS   = 31;
+
+  // Label rows
+  document.getElementById('gantt-label-rows').innerHTML =
+    PPS.scheduleActivities.map(act =>
+      `<div class="gantt-row">
+        <span class="act-name">${act.name}</span>
+        <span class="act-type-pill ${typePillClass[act.type] || ''}">${act.type}</span>
+      </div>`
+    ).join('');
+
+  // Bar rows
+  document.getElementById('gantt-bar-rows').innerHTML =
+    PPS.scheduleActivities.map(act => {
+      const left  = ((act.startDay / TOTAL_DAYS) * 100).toFixed(1);
+      const width = Math.max(3, ((act.durationDays / TOTAL_DAYS) * 100)).toFixed(1);
+      const color = typeColor[act.type] || '#6b7591';
+      return `<div class="gantt-bar-row">
+        <div class="bar-item" style="background:${color}; left:${left}%; width:${width}%;">${act.durationDays > 3 ? act.name : '▌'}</div>
+      </div>`;
+    }).join('');
+
+  // Pct rows
+  document.getElementById('gantt-pct-rows').innerHTML =
+    PPS.scheduleActivities.map(act => {
+      const color = act.pctComplete > 0 ? 'var(--accent2)' : 'var(--muted)';
+      return `<div class="pct-row">
+        <span class="pct-num" style="color:${color};">${act.pctComplete}%</span>
+        ${act.pctComplete > 0 ? `<div class="pct-bar"><div class="pct-fill" style="width:${act.pctComplete}%"></div></div>` : ''}
+      </div>`;
+    }).join('');
+</script>
 </body>
 </html>

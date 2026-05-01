@@ -243,6 +243,52 @@ const PPS = {
       swing: true,
       moveId: "MM-38"
     }
+  ],
+
+  // ── MOVE RECORDS ───────────────────────────────────────────
+  // status values: "On Track" | "Complete" | "Issue" | "—"
+
+  moveRecords: [
+    { id: "MM-1",  itemName: "Credenza",               userGroup: "Facilities Dept", fromFloor: "5th", fromRoom: "568 (Storage)",      toFloor: "5th", toRoom: "568 (Storage)",      roomType: "Storage",    moveDate: "Sep 19, 2025", mover: "Alexander's", status: "On Track", swing: true, ffeId: "FFE-1",  ssId: "SS-1",  poc: "Molly G.", notes: "" },
+    { id: "MM-2",  itemName: "Guest Chair",             userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Open Office Area",   toFloor: "2nd", toRoom: "Open Office Area",   roomType: "Other",      moveDate: "Sep 19, 2025", mover: "Alexander's", status: "Complete", swing: true, ffeId: "FFE-2",  ssId: "SS-2",  poc: "Molly G.", notes: "Transfer to Warehouse" },
+    { id: "MM-11", itemName: "Conference Chair",        userGroup: "Facilities Dept", fromFloor: "5th", fromRoom: "566 (Conf. Rm)",     toFloor: "5th", toRoom: "566 (Conf. Rm)",     roomType: "Conf. Room", moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-11", ssId: "SS-11", poc: "Molly G.", notes: "" },
+    { id: "MM-12", itemName: "Conference Table",        userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Large Conf. Rm",     toFloor: "5th", toRoom: "Conf. Rm 501",       roomType: "Conf. Room", moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-12", ssId: "SS-12", poc: "Molly G.", notes: "" },
+    { id: "MM-13", itemName: "Newline Touch Screen TV", userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Large Conf. Rm",     toFloor: "5th", toRoom: "Conf. Rm 501",       roomType: "Conf. Room", moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-13", ssId: "SS-13", poc: "Molly G.", notes: "" },
+    { id: "MM-27", itemName: "Office Desk",             userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Office #1 Aurora",   toFloor: "5th", toRoom: "Office #531 Aurora",  roomType: "Office",     moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-27", ssId: "SS-27", poc: "Molly G.", notes: "" },
+    { id: "MM-51", itemName: "Conference Table",        userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Dr Peterson Office", toFloor: "3rd", toRoom: "3375 Camino Del Rio S", roomType: "Office",   moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-51", ssId: "SS-51", poc: "Molly G.", notes: "Off-site destination" }
+  ],
+
+  // ── SCHEDULE ACTIVITIES ─────────────────────────────────────
+  // startDay: days from Aug 19 (day 0). Timeline = 32 days total.
+  // type values: "Move" | "FF&E" | "Swing" | "Other"
+
+  scheduleActivities: [
+    { id: "SA-1",  name: "Mover Packing Material & Labels",     type: "Move",  startDay: 0,  durationDays: 1,  pctComplete: 0  },
+    { id: "SA-2",  name: "Confirm Move Order / Sequence",       type: "Move",  startDay: 0,  durationDays: 1,  pctComplete: 50 },
+    { id: "SA-3",  name: "Swing Space Liquidation Sale",        type: "Swing", startDay: 13, durationDays: 1,  pctComplete: 0  },
+    { id: "SA-4",  name: "Verkpleys Order Delivered",           type: "FF&E",  startDay: 13, durationDays: 1,  pctComplete: 0  },
+    { id: "SA-5",  name: "Verkpleys Move Swing Space Furn.",    type: "Move",  startDay: 13, durationDays: 1,  pctComplete: 0  },
+    { id: "SA-6",  name: "Verkpleys New Order Move",            type: "Move",  startDay: 13, durationDays: 1,  pctComplete: 0  },
+    { id: "SA-7",  name: "Prime Electrical Clearance",          type: "Other", startDay: 13, durationDays: 18, pctComplete: 0  },
+    { id: "SA-8",  name: "Swing Space Staff Pack",              type: "Move",  startDay: 15, durationDays: 4,  pctComplete: 0  },
+    { id: "SA-9",  name: "New Printers Delivery & Install",     type: "FF&E",  startDay: 16, durationDays: 1,  pctComplete: 0  },
+    { id: "SA-10", name: "Seismic / Earthquake Retrofit",       type: "Other", startDay: 16, durationDays: 1,  pctComplete: 0  },
+    { id: "SA-11", name: "Fire Safety Requirements",            type: "Other", startDay: 16, durationDays: 1,  pctComplete: 0  },
+    { id: "SA-12", name: "Fire Extinguisher Locations",         type: "Other", startDay: 16, durationDays: 1,  pctComplete: 0  },
+    { id: "SA-13", name: "Fire Extinguisher Expiration Review", type: "Other", startDay: 16, durationDays: 1,  pctComplete: 0  }
+  ],
+
+  // ── FINANCIALS ─────────────────────────────────────────────
+  // color: dot indicator hex. planned/actual in dollars.
+
+  financials: [
+    { label: "FF&E (Non Ed-Tech/IT)", color: "#4f9cf9", planned: 225209, actual: 0 },
+    { label: "Other",                 color: "#38d9a9", planned: 83819,  actual: 0 },
+    { label: "IT",                    color: "#6b7591", planned: 0,      actual: 0 },
+    { label: "AV/Ed-Tech",            color: "#6b7591", planned: 0,      actual: 0 },
+    { label: "Move Management",       color: "#6b7591", planned: 0,      actual: 0 },
+    { label: "Swing Space",           color: "#6b7591", planned: 0,      actual: 0 },
+    { label: "Tenant Improvement",    color: "#ffa94d", planned: 0,      actual: 0 }
   ]
 
 };

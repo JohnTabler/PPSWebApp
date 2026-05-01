@@ -51,7 +51,7 @@
   </div>
   <div class="project-chip">
     <div class="label">Active Project</div>
-    <div class="name">SDCCD 1450 Frazee<br>5th Floor TI</div>
+    <div class="name" id="sidebar-project-name">—</div>
   </div>
   <nav>
     <div class="nav-section">Core</div>
@@ -71,10 +71,10 @@
   </nav>
   <div class="user-area">
     <div class="user-chip">
-      <div class="avatar">MG</div>
+      <div class="avatar" id="user-initials">—</div>
       <div>
-        <div class="user-name">Molly Gardner</div>
-        <div class="user-role">Project Manager</div>
+        <div class="user-name" id="user-name">—</div>
+        <div class="user-role" id="user-role">—</div>
       </div>
     </div>
   </div>
@@ -84,8 +84,8 @@
 <main class="main">
   <div class="topbar">
     <span class="page-title">Dashboard</span>
-    <span class="badge badge-blue">1450 Frazee · 5th Floor</span>
-    <span class="badge badge-warn">Move Date: Sep 19, 2025</span>
+    <span class="badge badge-blue" id="topbar-project"></span>
+    <span class="badge badge-warn" id="topbar-movedate"></span>
     <button class="btn btn-ghost">Export</button>
     <button class="btn btn-primary">+ New Item</button>
   </div>
@@ -95,22 +95,22 @@
     <div class="stats-row">
       <div class="stat-card blue">
         <div class="stat-label">Total Budget</div>
-        <div class="stat-value">$330K</div>
-        <div class="stat-sub">Funds Remaining</div>
+        <div class="stat-value" id="stat-budget">—</div>
+        <div class="stat-sub">Approved budget</div>
       </div>
       <div class="stat-card warn">
         <div class="stat-label">Total Spend (Planned)</div>
-        <div class="stat-value">$309K</div>
-        <div class="stat-sub">FF&E + Other</div>
+        <div class="stat-value" id="stat-planned">—</div>
+        <div class="stat-sub">FF&amp;E + Other</div>
       </div>
       <div class="stat-card green">
-        <div class="stat-label">FF&E Items Tracked</div>
-        <div class="stat-value">97+</div>
+        <div class="stat-label">FF&amp;E Items Tracked</div>
+        <div class="stat-value" id="stat-ffe-count">—</div>
         <div class="stat-sub">Across all modules</div>
       </div>
       <div class="stat-card red">
         <div class="stat-label">Open Issues</div>
-        <div class="stat-value">3</div>
+        <div class="stat-value" id="stat-issues">—</div>
         <div class="stat-sub">Active · Needs attention</div>
       </div>
     </div>
@@ -132,46 +132,7 @@
                 <th>Variance</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td><span class="fin-name"><span class="dot" style="background:#4f9cf9"></span>FF&E (Non Ed-Tech/IT)</span></td>
-                <td>$225,209</td>
-                <td>$0</td>
-                <td class="positive">$225,209</td>
-              </tr>
-              <tr>
-                <td><span class="fin-name"><span class="dot" style="background:#38d9a9"></span>Other</span></td>
-                <td>$83,819</td>
-                <td>$0</td>
-                <td class="positive">$83,819</td>
-              </tr>
-              <tr>
-                <td><span class="fin-name"><span class="dot" style="background:#6b7591"></span>IT</span></td>
-                <td>$0</td><td>$0</td><td>—</td>
-              </tr>
-              <tr>
-                <td><span class="fin-name"><span class="dot" style="background:#6b7591"></span>AV/Ed-Tech</span></td>
-                <td>$0</td><td>$0</td><td>—</td>
-              </tr>
-              <tr>
-                <td><span class="fin-name"><span class="dot" style="background:#6b7591"></span>Move Management</span></td>
-                <td>$0</td><td>$0</td><td>—</td>
-              </tr>
-              <tr>
-                <td><span class="fin-name"><span class="dot" style="background:#6b7591"></span>Swing Space</span></td>
-                <td>$0</td><td>$0</td><td>—</td>
-              </tr>
-              <tr>
-                <td><span class="fin-name"><span class="dot" style="background:#ffa94d"></span>Tenant Improvement</span></td>
-                <td>$0</td><td>$0</td><td>—</td>
-              </tr>
-              <tr class="total-row">
-                <td>Total Spend</td>
-                <td>$309,028</td>
-                <td>$0</td>
-                <td class="positive">$309,028</td>
-              </tr>
-            </tbody>
+            <tbody id="fin-tbody"><!-- populated by JS --></tbody>
           </table>
         </div>
       </div>
@@ -183,20 +144,11 @@
         </div>
         <div class="card-body">
           <div class="donut-wrap">
-            <svg width="160" height="160" class="donut" viewBox="0 0 160 160">
-              <!-- FF&E: 225209/309028 = 72.9% → 262.4° -->
-              <circle cx="80" cy="80" r="58" fill="none" stroke="#1a1e29" stroke-width="28"/>
-              <circle cx="80" cy="80" r="58" fill="none" stroke="#4f9cf9" stroke-width="28"
-                stroke-dasharray="265 99" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
-              <circle cx="80" cy="80" r="58" fill="none" stroke="#38d9a9" stroke-width="28"
-                stroke-dasharray="99 265" stroke-dashoffset="-265" transform="rotate(-90 80 80)"/>
-              <text x="80" y="75" text-anchor="middle" fill="#1a1d27" font-family="Inter" font-size="18" font-weight="700">$309K</text>
-              <text x="80" y="93" text-anchor="middle" fill="#6b7591" font-family="Inter" font-size="10">planned spend</text>
+            <svg width="160" height="160" class="donut" viewBox="0 0 160 160" id="donut-svg">
+              <!-- populated by JS -->
             </svg>
-            <div style="width:100%; display:flex; flex-direction:column; gap:8px;">
-              <div class="legend-item"><span class="legend-swatch" style="background:#4f9cf9"></span>FF&E (Non Ed-Tech/IT)<span class="legend-amt">$225,209</span></div>
-              <div class="legend-item"><span class="legend-swatch" style="background:#38d9a9"></span>Other<span class="legend-amt">$83,819</span></div>
-              <div class="legend-item"><span class="legend-swatch" style="background:#252a38"></span>Remaining Budget<span class="legend-amt">$20,972</span></div>
+            <div style="width:100%; display:flex; flex-direction:column; gap:8px;" id="donut-legend">
+              <!-- populated by JS -->
             </div>
           </div>
         </div>
@@ -221,80 +173,7 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td class="act-label">Mover Swing Space Packing Material</td>
-                <td class="act-type">Move Mgmt</td>
-                <td class="gantt-cell">
-                  <div class="bar" style="background:#4f9cf9; left:0%; width:4%;">·</div>
-                </td>
-                <td class="pct-badge">0%</td>
-                <td><span class="status s-track">On Track</span></td>
-              </tr>
-              <tr>
-                <td class="act-label">Confirm Move Order / Sequence</td>
-                <td class="act-type">Move Mgmt</td>
-                <td class="gantt-cell">
-                  <div class="bar" style="background:#4f9cf9; left:0%; width:4%;">·</div>
-                </td>
-                <td class="pct-badge">50%<div style="display:inline-block;margin-left:4px;" class="progress-bg"><div class="progress-fill" style="width:50%"></div></div></td>
-                <td><span class="status s-track">On Track</span></td>
-              </tr>
-              <tr>
-                <td class="act-label">Swing Space Furniture Liquidation</td>
-                <td class="act-type">Swing Space</td>
-                <td class="gantt-cell">
-                  <div class="bar" style="background:#38d9a9; left:38%; width:4%;">·</div>
-                </td>
-                <td class="pct-badge">0%</td>
-                <td><span class="status s-track">On Track</span></td>
-              </tr>
-              <tr>
-                <td class="act-label">Verkpleys Order Delivered</td>
-                <td class="act-type">FF&E</td>
-                <td class="gantt-cell">
-                  <div class="bar" style="background:#4f9cf9; left:38%; width:4%;">·</div>
-                </td>
-                <td class="pct-badge">0%</td>
-                <td><span class="status s-track">On Track</span></td>
-              </tr>
-              <tr>
-                <td class="act-label">Prime Electrical Clearance</td>
-                <td class="act-type">Other</td>
-                <td class="gantt-cell">
-                  <div class="bar" style="background:#ffa94d; left:38%; width:32%;">TBD</div>
-                </td>
-                <td class="pct-badge">0%</td>
-                <td><span class="status s-issue">Issue</span></td>
-              </tr>
-              <tr>
-                <td class="act-label">Swing Space Staff Pack</td>
-                <td class="act-type">Move Mgmt</td>
-                <td class="gantt-cell">
-                  <div class="bar" style="background:#4f9cf9; left:44%; width:16%;">···</div>
-                </td>
-                <td class="pct-badge">0%</td>
-                <td><span class="status s-track">On Track</span></td>
-              </tr>
-              <tr>
-                <td class="act-label">Seismic / Earthquake Retrofit</td>
-                <td class="act-type">Other</td>
-                <td class="gantt-cell">
-                  <div class="bar" style="background:#38d9a9; left:48%; width:4%;">·</div>
-                </td>
-                <td class="pct-badge">0%</td>
-                <td><span class="status s-done">Complete</span></td>
-              </tr>
-              <tr>
-                <td class="act-label">New Printers Delivery &amp; Install</td>
-                <td class="act-type">FF&E</td>
-                <td class="gantt-cell">
-                  <div class="bar" style="background:#4f9cf9; left:48%; width:4%;">·</div>
-                </td>
-                <td class="pct-badge">0%</td>
-                <td><span class="status s-track">On Track</span></td>
-              </tr>
-            </tbody>
+            <tbody id="gantt-tbody"><!-- populated by JS --></tbody>
           </table>
         </div>
       </div>
@@ -302,5 +181,93 @@
 
   </div>
 </main>
+<script src="pps-data.js"></script>
+<script>
+  const fmt = n => n === 0 ? '$0' : '$' + n.toLocaleString();
+  const fmtK = n => '$' + Math.round(n / 1000) + 'K';
+
+  // Sidebar + user
+  document.getElementById('sidebar-project-name').innerHTML = PPS.project.name + '<br>' + PPS.project.subtitle;
+  document.getElementById('user-initials').textContent = PPS.user.initials;
+  document.getElementById('user-name').textContent     = PPS.user.name;
+  document.getElementById('user-role').textContent     = PPS.user.role;
+
+  // Topbar badges
+  document.getElementById('topbar-project').textContent  = PPS.project.name + ' · ' + PPS.project.subtitle;
+  document.getElementById('topbar-movedate').textContent = 'Move Date: ' + PPS.project.moveDate;
+
+  // Stat cards
+  document.getElementById('stat-budget').textContent    = fmtK(PPS.project.budget);
+  document.getElementById('stat-planned').textContent   = fmtK(PPS.project.plannedSpend);
+  document.getElementById('stat-ffe-count').textContent = PPS.ffeItems.length;
+  const issueCount = PPS.moveRecords.filter(m => m.status === 'Issue').length;
+  document.getElementById('stat-issues').textContent    = issueCount;
+
+  // Financials table
+  const totalPlanned = PPS.financials.reduce((s, r) => s + r.planned, 0);
+  const totalActual  = PPS.financials.reduce((s, r) => s + r.actual, 0);
+  document.getElementById('fin-tbody').innerHTML =
+    PPS.financials.map(row => {
+      const variance = row.planned - row.actual;
+      return `<tr>
+        <td><span class="fin-name"><span class="dot" style="background:${row.color}"></span>${row.label}</span></td>
+        <td>${fmt(row.planned)}</td>
+        <td>${fmt(row.actual)}</td>
+        <td>${variance > 0 ? `<span class="positive">${fmt(variance)}</span>` : '—'}</td>
+      </tr>`;
+    }).join('') +
+    `<tr class="total-row">
+      <td>Total Spend</td>
+      <td>${fmt(totalPlanned)}</td>
+      <td>${fmt(totalActual)}</td>
+      <td><span class="positive">${fmt(totalPlanned - totalActual)}</span></td>
+    </tr>`;
+
+  // Donut chart
+  const CIRC = 2 * Math.PI * 58; // circumference
+  const itemsWithBudget = PPS.financials.filter(r => r.planned > 0);
+  let offset = 0;
+  const svgCircles = itemsWithBudget.map(row => {
+    const pct = row.planned / totalPlanned;
+    const dash = pct * CIRC;
+    const circle = `<circle cx="80" cy="80" r="58" fill="none" stroke="${row.color}" stroke-width="28"
+      stroke-dasharray="${dash.toFixed(1)} ${(CIRC - dash).toFixed(1)}"
+      stroke-dashoffset="${(-offset).toFixed(1)}" transform="rotate(-90 80 80)"/>`;
+    offset += dash;
+    return circle;
+  }).join('');
+  document.getElementById('donut-svg').innerHTML =
+    `<circle cx="80" cy="80" r="58" fill="none" stroke="var(--surface2)" stroke-width="28"/>` +
+    svgCircles +
+    `<text x="80" y="75" text-anchor="middle" fill="var(--text)" font-family="Inter" font-size="20" font-weight="800">${fmtK(totalPlanned)}</text>
+     <text x="80" y="93" text-anchor="middle" fill="var(--muted)" font-family="DM Mono" font-size="10">planned spend</text>`;
+  const remaining = PPS.project.budget - totalPlanned;
+  document.getElementById('donut-legend').innerHTML =
+    itemsWithBudget.map(row =>
+      `<div class="legend-item"><span class="legend-swatch" style="background:${row.color}"></span>${row.label}<span class="legend-amt">${fmt(row.planned)}</span></div>`
+    ).join('') +
+    `<div class="legend-item"><span class="legend-swatch" style="background:var(--border)"></span>Remaining Budget<span class="legend-amt">${fmt(remaining)}</span></div>`;
+
+  // Dashboard Gantt (first 8 activities)
+  const typeColor = { 'Move': '#4f9cf9', 'FF&E': '#38d9a9', 'Swing': '#6b7591', 'Other': '#ffa94d' };
+  const TOTAL_DAYS = 31;
+  document.getElementById('gantt-tbody').innerHTML =
+    PPS.scheduleActivities.slice(0, 8).map(act => {
+      const left  = ((act.startDay / TOTAL_DAYS) * 100).toFixed(1);
+      const width = Math.max(3, ((act.durationDays / TOTAL_DAYS) * 100)).toFixed(1);
+      const color = typeColor[act.type] || '#6b7591';
+      const statusCls = act.pctComplete === 100 ? 's-done' : act.type === 'Other' && act.durationDays > 5 ? 's-issue' : 's-track';
+      const statusLabel = act.pctComplete === 100 ? 'Complete' : act.type === 'Other' && act.durationDays > 5 ? 'Issue' : 'On Track';
+      return `<tr>
+        <td class="act-label">${act.name}</td>
+        <td class="act-type">${act.type}</td>
+        <td class="gantt-cell">
+          <div class="bar" style="background:${color}; left:${left}%; width:${width}%;">·</div>
+        </td>
+        <td class="pct-badge">${act.pctComplete}%${act.pctComplete > 0 ? `<div style="display:inline-block;margin-left:4px;" class="progress-bg"><div class="progress-fill" style="width:${act.pctComplete}%"></div></div>` : ''}</td>
+        <td><span class="status ${statusCls}">${statusLabel}</span></td>
+      </tr>`;
+    }).join('');
+</script>
 </body>
 </html>
