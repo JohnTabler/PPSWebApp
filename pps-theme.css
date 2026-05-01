@@ -32,8 +32,8 @@
   --muted:    #6b7591;
 
   /* Typography */
-  --mono:     'Segoe UI', semibold;
-  --sans:     'Inter', sans-serif;
+  --mono:     'Segoe UI', Black;
+  --sans:     'Segoe UI', italic;
 }
 
 /* ── RESET ────────────────────────────────────────────────── */
