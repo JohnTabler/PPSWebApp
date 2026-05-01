@@ -2,14 +2,622 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=01_dashboard.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PPS – Plan Perfect Systems</title>
+<link rel="stylesheet" href="pps-theme.css">
 <style>
-  body { background: #0d0f14; color: #e8ecf4; font-family: 'Syne', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-  a { color: #4f9cf9; }
+/* ── SPA SHELL ──────────────────────────────────────────────── */
+#app-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; }
+.page-enter { animation: fadeSlide 0.18s ease; }
+@keyframes fadeSlide { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── DASHBOARD ──────────────────────────────────────────────── */
+.fin-table { width:100%; border-collapse:collapse; }
+.fin-table th { font-family:var(--mono); font-size:9px; letter-spacing:0.1em; color:var(--muted); text-transform:uppercase; text-align:right; padding:0 0 10px; }
+.fin-table th:first-child { text-align:left; }
+.fin-table td { font-size:12px; padding:8px 0; border-bottom:1px solid var(--border); vertical-align:middle; }
+.fin-table td:not(:first-child) { text-align:right; font-family:var(--mono); }
+.fin-table tr:last-child td { border-bottom:none; }
+.fin-name { display:flex; align-items:center; gap:8px; }
+.dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.positive { color:var(--accent2); }
+.total-row td { font-weight:700; padding-top:12px; border-top:1px solid var(--border); font-size:13px; }
+.gantt-wrap { overflow-x:auto; }
+.gantt-table { width:100%; border-collapse:collapse; min-width:800px; }
+.gantt-table th { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:0.08em; text-align:center; padding:0 0 8px; }
+.gantt-table th.label-col { text-align:left; min-width:200px; }
+.gantt-table td { padding:5px 0; border-bottom:1px solid var(--border); font-size:11px; }
+.gantt-table tr:last-child td { border-bottom:none; }
+.act-label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; padding-right:12px; }
+.act-type  { font-family:var(--mono); font-size:9px; color:var(--muted); }
+.gantt-cell { position:relative; height:24px; }
+.bar { position:absolute; top:4px; height:16px; border-radius:3px; display:flex; align-items:center; padding:0 6px; font-family:var(--mono); font-size:9px; color:#fff; white-space:nowrap; overflow:hidden; }
+.pct-badge { font-family:var(--mono); font-size:9px; color:var(--muted); text-align:right; padding-left:8px; }
+.donut-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; }
+svg.donut { overflow:visible; }
+.legend-item { display:flex; align-items:center; gap:8px; font-size:11px; }
+.legend-swatch { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+.legend-amt { font-family:var(--mono); font-size:10px; color:var(--muted); margin-left:auto; }
+
+/* ── SCHEDULE ───────────────────────────────────────────────── */
+.legend { display:flex; gap:16px; align-items:center; }
+.leg-item { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; color:var(--muted); }
+.leg-dot { width:10px; height:10px; border-radius:2px; }
+.gantt-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.gantt-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.gantt-title { font-size:13px; font-weight:700; }
+.gantt-grid { display:flex; min-width:1100px; }
+.gantt-labels { width:300px; flex-shrink:0; border-right:1px solid var(--border); }
+.gantt-label-header { height:36px; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 16px; }
+.header-txt { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+.gantt-row { height:40px; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 16px; gap:8px; }
+.gantt-row:last-child { border-bottom:none; }
+.act-name { font-size:11px; font-weight:600; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.act-type-pill { font-family:var(--mono); font-size:8px; padding:1px 5px; border-radius:2px; flex-shrink:0; }
+.tp-move  { background:rgba(79,156,249,0.15); color:var(--accent); }
+.tp-ffe   { background:rgba(56,217,169,0.15); color:var(--accent2); }
+.tp-other { background:rgba(255,169,77,0.15);  color:var(--warn); }
+.tp-swing { background:rgba(107,117,145,0.2);  color:var(--muted); }
+.gantt-timeline { flex:1; }
+.gantt-dates { height:36px; border-bottom:1px solid var(--border); display:flex; }
+.date-col { flex:1; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:9px; color:var(--muted); border-right:1px solid var(--border); }
+.date-col:last-child { border-right:none; }
+.gantt-bar-row { height:40px; border-bottom:1px solid var(--border); display:flex; align-items:center; position:relative; }
+.gantt-bar-row:last-child { border-bottom:none; }
+.bar-item { position:absolute; height:22px; border-radius:4px; display:flex; align-items:center; padding:0 8px; font-family:var(--mono); font-size:9px; color:rgba(255,255,255,0.9); white-space:nowrap; overflow:hidden; }
+.today-line { position:absolute; top:0; bottom:0; width:2px; background:var(--danger); opacity:0.7; z-index:5; }
+.pct-col { width:64px; flex-shrink:0; border-left:1px solid var(--border); }
+.pct-header { height:36px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:center; }
+.pct-header span { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+.pct-row { height:40px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:center; gap:4px; }
+.pct-row:last-child { border-bottom:none; }
+.pct-num { font-family:var(--mono); font-size:10px; }
+.pct-bar { width:28px; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+.pct-fill { height:100%; background:var(--accent); border-radius:2px; }
+.milestone { position:absolute; width:12px; height:12px; background:var(--warn); transform:rotate(45deg); z-index:5; }
+
+/* ── PAGE-SPECIFIC EXTRAS ───────────────────────────────────── */
+.note-cell { color:var(--muted); font-size:10px; max-width:180px; overflow:hidden; text-overflow:ellipsis; }
+.severity-high { color:var(--danger); font-family:var(--mono); font-size:9px; font-weight:700; }
+.severity-med  { color:var(--warn);   font-family:var(--mono); font-size:9px; font-weight:700; }
+.severity-low  { color:var(--muted);  font-family:var(--mono); font-size:9px; }
+.pct-inline { display:flex; align-items:center; gap:6px; }
+.pct-text { font-family:var(--mono); font-size:10px; width:28px; text-align:right; }
+
+/* ── REPORTS ────────────────────────────────────────────────── */
+.reports-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+.pbi-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.pbi-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.pbi-title { font-size:13px; font-weight:700; }
+.pbi-meta  { font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:0.08em; }
+.pbi-embed { height:280px; background:var(--surface2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; }
+.pbi-icon  { font-size:36px; opacity:0.3; }
+.pbi-label { font-family:var(--mono); font-size:11px; color:var(--muted); text-align:center; line-height:1.6; }
+.pbi-label strong { color:var(--accent); }
+.pbi-footer { padding:12px 20px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+.export-panel { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.export-label { font-size:13px; font-weight:700; flex:1; min-width:160px; }
+.export-sub   { font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px; }
+.export-btns  { display:flex; gap:10px; flex-wrap:wrap; }
+.export-btn   { display:flex; align-items:center; gap:6px; padding:9px 16px; border-radius:7px; border:1px solid var(--border); background:var(--surface2); font-family:var(--sans); font-size:12px; font-weight:600; color:var(--text); cursor:pointer; }
+.export-btn:hover { border-color:var(--accent); color:var(--accent); }
+.export-btn .ext { font-family:var(--mono); font-size:9px; background:var(--border); padding:1px 5px; border-radius:3px; color:var(--muted); }
+
+/* ── ADMIN ──────────────────────────────────────────────────── */
+.settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.setting-row { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border); gap:20px; }
+.setting-row:last-child { border-bottom:none; }
+.setting-label { font-size:13px; font-weight:600; }
+.setting-desc  { font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:2px; }
+.setting-input  { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:7px 10px; font-family:var(--sans); font-size:12px; color:var(--text); outline:none; min-width:200px; }
+.setting-input:focus { border-color:var(--accent); }
+.setting-select { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:7px 10px; font-family:var(--sans); font-size:12px; color:var(--text); outline:none; appearance:none; cursor:pointer; min-width:160px; }
+.toggle-wrap { display:flex; align-items:center; gap:8px; }
+.toggle { width:36px; height:20px; border-radius:10px; background:var(--border); position:relative; cursor:pointer; transition:background 0.2s; flex-shrink:0; }
+.toggle.on { background:var(--accent); }
+.toggle::after { content:''; position:absolute; width:14px; height:14px; border-radius:50%; background:#fff; top:3px; left:3px; transition:left 0.2s; }
+.toggle.on::after { left:19px; }
+.toggle-label { font-family:var(--mono); font-size:10px; color:var(--muted); }
+.lookup-tag { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; background:var(--surface2); border:1px solid var(--border); border-radius:5px; font-family:var(--mono); font-size:10px; color:var(--text); margin:3px; }
+.lookup-tag .remove { color:var(--muted); cursor:pointer; font-size:12px; line-height:1; }
+.lookup-tag .remove:hover { color:var(--danger); }
+.lookup-add { display:flex; gap:8px; margin-top:10px; }
+.lookup-add input { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-family:var(--sans); font-size:11px; color:var(--text); outline:none; flex:1; }
+.lookup-add input:focus { border-color:var(--accent); }
+
+/* ── USERS ──────────────────────────────────────────────────── */
+.user-avatar { width:28px; height:28px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
+.user-cell { display:flex; align-items:center; gap:10px; }
+.user-cell-name  { font-size:12px; font-weight:600; }
+.user-cell-email { font-family:var(--mono); font-size:10px; color:var(--muted); }
+.role-admin  { background:rgba(255,107,107,0.1); color:var(--danger); border:1px solid rgba(255,107,107,0.2); font-family:var(--mono); font-size:9px; padding:2px 7px; border-radius:3px; display:inline-block; }
+.role-pm     { background:rgba(79,156,249,0.12);  color:var(--accent); border:1px solid rgba(79,156,249,0.2);  font-family:var(--mono); font-size:9px; padding:2px 7px; border-radius:3px; display:inline-block; }
+.role-viewer { background:rgba(107,117,145,0.15); color:var(--muted);  border:1px solid var(--border);          font-family:var(--mono); font-size:9px; padding:2px 7px; border-radius:3px; display:inline-block; }
+.u-active    { background:rgba(56,217,169,0.12);  color:var(--accent2); }
+.u-inactive  { background:rgba(107,117,145,0.15); color:var(--muted); }
+.u-pending   { background:rgba(255,169,77,0.12);  color:var(--warn); }
+.proj-tag { display:inline-block; padding:2px 7px; background:var(--surface2); border:1px solid var(--border); border-radius:3px; font-family:var(--mono); font-size:9px; color:var(--muted); margin:1px; }
 </style>
 </head>
 <body>
-  <p>Redirecting to <a href="01_dashboard.html">Dashboard</a>…</p>
+
+<!-- ── SIDEBAR ──────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Plan<span>Perfect</span></div>
+    <div class="logo-sub">Systems · v2.0</div>
+  </div>
+  <div class="project-chip">
+    <div class="label">Active Project</div>
+    <div class="name" id="sidebar-project-name">—</div>
+  </div>
+  <nav>
+    <div class="nav-section">Core</div>
+    <a class="nav-item" href="#dashboard"  data-route="dashboard"> <span class="icon">⬛</span> Dashboard</a>
+    <a class="nav-item" href="#ffe"        data-route="ffe">       <span class="icon">📋</span> Master FF&amp;E</a>
+    <a class="nav-item" href="#move"       data-route="move">      <span class="icon">🚚</span> Move Mgmt</a>
+    <a class="nav-item" href="#swing"      data-route="swing">     <span class="icon">🔄</span> Swing Space</a>
+    <a class="nav-item" href="#ti"         data-route="ti">        <span class="icon">🏗</span> Tenant Imp.</a>
+    <div class="nav-section">Project</div>
+    <a class="nav-item" href="#schedule"   data-route="schedule">  <span class="icon">📅</span> Schedule</a>
+    <a class="nav-item" href="#issues"     data-route="issues">    <span class="icon">🚨</span> Issue Log</a>
+    <a class="nav-item" href="#punchlist"  data-route="punchlist"> <span class="icon">✅</span> Punch List</a>
+    <a class="nav-item" href="#reports"    data-route="reports">   <span class="icon">📊</span> Reports</a>
+    <div class="nav-section">Admin</div>
+    <a class="nav-item" href="#settings"   data-route="settings">  <span class="icon">⚙️</span> Settings</a>
+    <a class="nav-item" href="#users"      data-route="users">     <span class="icon">👥</span> Users</a>
+  </nav>
+  <div class="user-area">
+    <div class="user-chip">
+      <div class="avatar" id="user-initials">—</div>
+      <div><div class="user-name" id="user-name">—</div><div class="user-role" id="user-role">—</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN CONTENT AREA ─────────────────────────────────────── -->
+<div id="app-content"></div>
+
+<script src="pps-data.js"></script>
+<script>
+// =============================================================
+// PPS SPA — Single Page Application
+// =============================================================
+
+// ── Shared helpers ────────────────────────────────────────────
+const fmt  = n => n === 0 ? '$0' : '$' + n.toLocaleString();
+const fmtK = n => '$' + Math.round(n / 1000) + 'K';
+const processStatusClass = {'In Stock':'s-instock','Ordered':'s-ordered','Review':'s-review','Quoted':'s-quoted','Delivered':'s-delivered'};
+const ffeStatusClass     = {'On Track':'fs-ontrack','Issue':'fs-issue','N/A':'fs-na'};
+const priorityClass      = {'High':'p-high','Med':'p-med','Low':'p-low'};
+const moveStatusClass    = {'On Track':'ms-ontrack','Complete':'ms-complete','Issue':'ms-issue','—':'ms-na'};
+const typeColor          = {'Move':'#4f9cf9','FF&E':'#38d9a9','Swing':'#6b7591','Other':'#ffa94d'};
+const typePillClass      = {'Move':'tp-move','FF&E':'tp-ffe','Swing':'tp-swing','Other':'tp-other'};
+const avatarColors       = ['#4f9cf9','#38d9a9','#ffa94d','#ff6b6b','#a78bfa'];
+
+// ── Sidebar ───────────────────────────────────────────────────
+document.getElementById('sidebar-project-name').innerHTML = PPS.project.name + '<br>' + PPS.project.subtitle;
+document.getElementById('user-initials').textContent = PPS.user.initials;
+document.getElementById('user-name').textContent     = PPS.user.name;
+document.getElementById('user-role').textContent     = PPS.user.role;
+
+// ── Filter chip + search wiring ───────────────────────────────
+function wireFilters(container, getData, searchFn, filterFn, renderFn) {
+  let activeFilter = 'All';
+  let searchQuery  = '';
+  function apply() {
+    let items = getData();
+    if (searchQuery) items = items.filter(i => searchFn(i, searchQuery));
+    renderFn(items, activeFilter);
+  }
+  container.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      container.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active','green'));
+      this.classList.add('active');
+      activeFilter = this.textContent.replace('🚨 ','').replace('🔴 ','').trim();
+      apply();
+    });
+  });
+  const searchInput = container.querySelector('.search-box input');
+  if (searchInput) searchInput.addEventListener('input', function() { searchQuery = this.value.toLowerCase(); apply(); });
+  apply();
+}
+
+function emptyRow(cols, msg) {
+  return `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:var(--muted);font-family:var(--mono);font-size:11px;">${msg}</td></tr>`;
+}
+
+// =============================================================
+// PAGE RENDERERS
+// =============================================================
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+function renderDashboard() {
+  const totalPlanned = PPS.financials.reduce((s,r)=>s+r.planned,0);
+  const totalActual  = PPS.financials.reduce((s,r)=>s+r.actual,0);
+  const issueCount   = PPS.moveRecords.filter(m=>m.status==='Issue').length;
+  const remaining    = PPS.project.budget - totalPlanned;
+
+  const finRows = PPS.financials.map(r => {
+    const v = r.planned - r.actual;
+    return `<tr><td><span class="fin-name"><span class="dot" style="background:${r.color}"></span>${r.label}</span></td><td>${fmt(r.planned)}</td><td>${fmt(r.actual)}</td><td>${v>0?`<span class="positive">${fmt(v)}</span>`:'—'}</td></tr>`;
+  }).join('') + `<tr class="total-row"><td>Total Spend</td><td>${fmt(totalPlanned)}</td><td>${fmt(totalActual)}</td><td><span class="positive">${fmt(totalPlanned-totalActual)}</span></td></tr>`;
+
+  const CIRC = 2*Math.PI*58;
+  const withBudget = PPS.financials.filter(r=>r.planned>0);
+  let off=0;
+  const circles = withBudget.map(r => { const d=(r.planned/totalPlanned)*CIRC; const c=`<circle cx="80" cy="80" r="58" fill="none" stroke="${r.color}" stroke-width="28" stroke-dasharray="${d.toFixed(1)} ${(CIRC-d).toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" transform="rotate(-90 80 80)"/>`; off+=d; return c; }).join('');
+  const legend = withBudget.map(r=>`<div class="legend-item"><span class="legend-swatch" style="background:${r.color}"></span>${r.label}<span class="legend-amt">${fmt(r.planned)}</span></div>`).join('') + `<div class="legend-item"><span class="legend-swatch" style="background:var(--border)"></span>Remaining Budget<span class="legend-amt">${fmt(remaining)}</span></div>`;
+
+  const DAYS=31;
+  const ganttRows = PPS.scheduleActivities.slice(0,8).map(a => {
+    const l=((a.startDay/DAYS)*100).toFixed(1), w=Math.max(3,(a.durationDays/DAYS)*100).toFixed(1);
+    const sc=a.pctComplete===100?'s-done':(a.type==='Other'&&a.durationDays>5)?'s-issue':'s-track';
+    const sl=a.pctComplete===100?'Complete':(a.type==='Other'&&a.durationDays>5)?'Issue':'On Track';
+    return `<tr><td class="act-label">${a.name}</td><td class="act-type">${a.type}</td><td class="gantt-cell"><div class="bar" style="background:${typeColor[a.type]||'#6b7591'};left:${l}%;width:${w}%;">·</div></td><td class="pct-badge">${a.pctComplete}%</td><td><span class="status ${sc}">${sl}</span></td></tr>`;
+  }).join('');
+
+  return `
+  <div class="topbar">
+    <span class="page-title">Dashboard</span>
+    <span class="badge badge-blue">${PPS.project.name} · ${PPS.project.subtitle}</span>
+    <span class="badge badge-warn">Move Date: ${PPS.project.moveDate}</span>
+    <button class="btn btn-ghost">Export</button>
+    <button class="btn btn-primary">+ New Item</button>
+  </div>
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-card blue"><div class="stat-label">Total Budget</div><div class="stat-value">${fmtK(PPS.project.budget)}</div><div class="stat-sub">Approved budget</div></div>
+      <div class="stat-card warn"><div class="stat-label">Total Spend (Planned)</div><div class="stat-value">${fmtK(PPS.project.plannedSpend)}</div><div class="stat-sub">FF&amp;E + Other</div></div>
+      <div class="stat-card green"><div class="stat-label">FF&amp;E Items Tracked</div><div class="stat-value">${PPS.ffeItems.length}</div><div class="stat-sub">Across all modules</div></div>
+      <div class="stat-card red"><div class="stat-label">Open Issues</div><div class="stat-value">${issueCount}</div><div class="stat-sub">Active · Needs attention</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><span class="card-title">Financials: Planned vs Actual</span><span class="badge badge-blue">Budget Utilization</span></div><div class="card-body"><table class="fin-table"><thead><tr><th>Cost Area</th><th>Planned</th><th>Actual</th><th>Variance</th></tr></thead><tbody>${finRows}</tbody></table></div></div>
+      <div class="card"><div class="card-header"><span class="card-title">Budget Allocation</span><span class="badge badge-green">${fmtK(PPS.project.budget)} Total</span></div><div class="card-body"><div class="donut-wrap"><svg width="160" height="160" class="donut" viewBox="0 0 160 160"><circle cx="80" cy="80" r="58" fill="none" stroke="var(--surface2)" stroke-width="28"/>${circles}<text x="80" y="75" text-anchor="middle" fill="var(--text)" font-family="Inter" font-size="20" font-weight="800">${fmtK(totalPlanned)}</text><text x="80" y="93" text-anchor="middle" fill="var(--muted)" font-family="DM Mono" font-size="10">planned spend</text></svg><div style="width:100%;display:flex;flex-direction:column;gap:8px;">${legend}</div></div></div></div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">Schedule · Key Activities (Aug–Sep 2025)</span><span class="badge badge-warn">Move Horizon</span></div><div class="card-body" style="padding:16px 20px;"><div class="gantt-wrap"><table class="gantt-table"><thead><tr><th class="label-col">Activity</th><th>Type</th><th style="min-width:300px;text-align:left;padding-left:4px;">Aug 19 ──────────────────── Sep 19</th><th>% Done</th><th>Status</th></tr></thead><tbody>${ganttRows}</tbody></table></div></div></div>
+  </div>`;
+}
+
+// ── FF&E LIST ─────────────────────────────────────────────────
+function renderFFE() {
+  return `
+  <div class="topbar">
+    <span class="page-title">Master FF&amp;E List</span>
+    <span class="badge badge-blue" id="ffe-count-badge">${PPS.ffeItems.length} Items</span>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-ghost">Import CSV</button><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button>
+  </div>
+  <div class="toolbar">
+    <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, ID, room, vendor…"></div>
+    <div class="filter-chip active">All Types</div><div class="filter-chip">Furniture</div><div class="filter-chip">AV/Ed-Tech</div><div class="filter-chip">IT</div><div class="filter-chip">Other</div><div class="filter-chip">🚨 Issues Only</div>
+    <span class="count-label" id="ffe-count-label"></span>
+  </div>
+  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:1400px;">
+    <thead><tr><th>FF&amp;E ID</th><th>Item Name</th><th>Type</th><th>Vendor</th><th>Current Location</th><th>New Location</th><th>Room Type</th><th>Room No.</th><th>Proc. Method</th><th>Qty Needed</th><th>Qty Exist.</th><th>Qty New</th><th>Unit Price</th><th>Ext. Cost</th><th>Process Status</th><th>FF&amp;E Status</th><th>Condition</th><th>Priority</th><th>Swing?</th><th>Move ID</th><th></th></tr></thead>
+    <tbody id="ffe-tbody"></tbody>
+  </table></div>
+  <div class="pagination"><span class="page-info" id="ffe-info"></span></div>`;
+}
+function initFFE(c) {
+  wireFilters(c, ()=>PPS.ffeItems,
+    (i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.roomNo.toLowerCase().includes(q)||i.vendor.toLowerCase().includes(q),
+    ()=>{},
+    (items,filter)=>{
+      const f = filter==='Issues Only'?items.filter(i=>i.ffeStatus==='Issue'):filter!=='All Types'&&filter!=='All'?items.filter(i=>i.type===filter):items;
+      document.getElementById('ffe-count-badge').textContent=f.length+' Items';
+      document.getElementById('ffe-count-label').textContent=f.length+' items';
+      document.getElementById('ffe-info').textContent=f.length+' items';
+      document.getElementById('ffe-tbody').innerHTML=f.length===0?emptyRow(21,'No items match'):f.map(i=>`<tr>
+        <td class="id-cell">${i.id}</td><td><div class="item-name">${i.name}</div>${i.desc?`<div class="item-desc">${i.desc}</div>`:''}</td>
+        <td class="muted-cell">${i.type}</td><td>${i.vendor}</td><td>${i.locationCurrent}</td><td>${i.locationNew}</td>
+        <td class="muted-cell">${i.roomType}</td><td class="muted-cell">${i.roomNo}</td><td class="muted-cell">${i.procMethod}</td>
+        <td class="qty-cell">${i.qtyNeeded}</td><td class="qty-cell">${i.qtyExisting}</td><td class="qty-cell">${i.qtyNew}</td>
+        <td class="cost-cell">${fmt(i.unitPrice)}</td><td class="cost-cell">${fmt(i.extCost)}</td>
+        <td><span class="status ${processStatusClass[i.processStatus]||''}">${i.processStatus}</span></td>
+        <td><span class="ffe-status ${ffeStatusClass[i.ffeStatus]||''}">${i.ffeStatus}</span></td>
+        <td class="muted-cell">${i.condition}</td><td><span class="priority ${priorityClass[i.priority]||''}">${i.priority}</span></td>
+        <td class="muted-cell">${i.swing?'Yes':'No'}</td><td class="link-cell">${i.moveId}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+      </tr>`).join('');
+    });
+}
+
+// ── MOVE MANAGEMENT ───────────────────────────────────────────
+function renderMove() {
+  const r=PPS.moveRecords;
+  return `
+  <div class="topbar">
+    <span class="page-title">Move Management</span>
+    <span class="badge badge-blue" id="move-count-badge">${r.length} Moves</span>
+    <span class="badge badge-warn">Move Date: ${PPS.project.moveDate}</span>
+    <div class="topbar-spacer"></div>
+    <button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Move</button>
+  </div>
+  <div class="content" style="flex:1;overflow:auto;">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr);gap:14px;">
+      <div class="stat-card blue"><div class="stat-label">Total Moves</div><div class="stat-value" style="font-size:24px;">${r.length}</div><div class="stat-sub">All records</div></div>
+      <div class="stat-card green"><div class="stat-label">On Track</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='On Track').length}</div><div class="stat-sub">Scheduled · OK</div></div>
+      <div class="stat-card warn"><div class="stat-label">No Status</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='—').length}</div><div class="stat-sub">Needs update</div></div>
+      <div class="stat-card red"><div class="stat-label">Issues</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Issue').length}</div><div class="stat-sub">Active issues</div></div>
+      <div class="stat-card muted"><div class="stat-label">Completed</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Complete').length}</div><div class="stat-sub">Done</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Move Records</span><div style="display:flex;gap:8px;"><span class="badge badge-blue">Mover: ${PPS.project.mover} · POC: ${PPS.project.moverPOC}</span><span class="badge badge-warn">Sched. Date: ${PPS.project.moveDate}</span></div></div>
+      <div class="toolbar">
+        <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input placeholder="Search item, room, ID…"></div>
+        <div class="filter-chip active">All</div><div class="filter-chip green">Complete</div><div class="filter-chip">On Track</div><div class="filter-chip">Issues</div>
+        <span class="count-label" id="move-count-label"></span>
+      </div>
+      <div class="table-wrap"><table style="min-width:1200px;">
+        <thead><tr><th>Move ID</th><th>Item Being Moved</th><th>User/Group</th><th>From Floor</th><th>From Room</th><th>→ To Floor</th><th>→ To Room</th><th>Room Type</th><th>Move Date</th><th>Mover</th><th>Status</th><th>Swing?</th><th>FF&amp;E ID</th><th>SS ID</th><th>POC</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="move-tbody"></tbody>
+      </table></div>
+    </div>
+  </div>`;
+}
+function initMove(c) {
+  wireFilters(c, ()=>PPS.moveRecords,
+    (m,q)=>m.itemName.toLowerCase().includes(q)||m.id.toLowerCase().includes(q)||m.fromRoom.toLowerCase().includes(q)||m.toRoom.toLowerCase().includes(q),
+    ()=>{},
+    (items,filter)=>{
+      const f=filter==='Complete'?items.filter(m=>m.status==='Complete'):filter==='On Track'?items.filter(m=>m.status==='On Track'):filter==='Issues'?items.filter(m=>m.status==='Issue'):items;
+      document.getElementById('move-count-badge').textContent=f.length+' Moves';
+      document.getElementById('move-count-label').textContent=f.length+' moves';
+      document.getElementById('move-tbody').innerHTML=f.length===0?emptyRow(17,'No records match'):f.map(m=>{const os=m.toFloor!==m.fromFloor;return`<tr>
+        <td class="id-cell">${m.id}</td><td style="font-weight:600;">${m.itemName}</td><td class="muted-cell">${m.userGroup}</td>
+        <td class="muted-cell">${m.fromFloor}</td><td class="muted-cell">${m.fromRoom}</td>
+        <td class="${os?'':'muted-cell'}"${os?' style="color:var(--warn);"':''}>${m.toFloor}</td>
+        <td class="${os?'':'muted-cell'}"${os?' style="color:var(--warn);"':''}>${m.toRoom}</td>
+        <td class="muted-cell">${m.roomType}</td><td style="font-family:var(--mono);font-size:10px;">${m.moveDate}</td><td class="muted-cell">${m.mover}</td>
+        <td><span class="move-status ${moveStatusClass[m.status]||'ms-na'}">${m.status}</span></td>
+        <td class="muted-cell">${m.swing?'Yes':'No'}</td><td class="link-cell">${m.ffeId}</td><td class="link-cell">${m.ssId}</td>
+        <td class="muted-cell">${m.poc}</td><td class="note-cell">${m.notes||'—'}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+      </tr>`}).join('');
+    });
+}
+
+// ── SCHEDULE ──────────────────────────────────────────────────
+function renderSchedule() {
+  const DAYS=31;
+  const labels=PPS.scheduleActivities.map(a=>`<div class="gantt-row"><span class="act-name">${a.name}</span><span class="act-type-pill ${typePillClass[a.type]||''}">${a.type}</span></div>`).join('');
+  const bars=PPS.scheduleActivities.map(a=>{const l=((a.startDay/DAYS)*100).toFixed(1),w=Math.max(3,(a.durationDays/DAYS)*100).toFixed(1);return`<div class="gantt-bar-row"><div class="bar-item" style="background:${typeColor[a.type]||'#6b7591'};left:${l}%;width:${w}%;">${a.durationDays>3?a.name:'▌'}</div></div>`;}).join('');
+  const pcts=PPS.scheduleActivities.map(a=>`<div class="pct-row"><span class="pct-num" style="color:${a.pctComplete>0?'var(--accent2)':'var(--muted)'};">${a.pctComplete}%</span>${a.pctComplete>0?`<div class="pct-bar"><div class="pct-fill" style="width:${a.pctComplete}%"></div></div>`:''}</div>`).join('');
+  return `
+  <div class="topbar">
+    <span class="page-title">Schedule</span>
+    <span class="badge badge-blue">${PPS.scheduleActivities.length} Activities</span>
+    <span class="badge badge-warn">⚑ Move Date: ${PPS.project.moveDate}</span>
+    <div class="topbar-spacer"></div>
+    <div class="legend"><div class="leg-item"><div class="leg-dot" style="background:#4f9cf9"></div>Move Mgmt</div><div class="leg-item"><div class="leg-dot" style="background:#38d9a9"></div>FF&amp;E</div><div class="leg-item"><div class="leg-dot" style="background:#ffa94d"></div>Other</div><div class="leg-item"><div class="leg-dot" style="background:#6b7591"></div>Swing Space</div></div>
+    <button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Activity</button>
+  </div>
+  <div class="content" style="flex:1;overflow:auto;">
+    <div class="gantt-card">
+      <div class="gantt-header"><span class="gantt-title">Project Gantt — Aug 19 → Sep 19, 2025 (32 days)</span><div style="display:flex;gap:8px;"><button class="btn btn-ghost" style="font-size:10px;padding:5px 10px;">Week</button><button class="btn btn-ghost" style="font-size:10px;padding:5px 10px;border-color:var(--accent);color:var(--accent);">Day</button></div></div>
+      <div class="gantt-wrap"><div class="gantt-grid">
+        <div class="gantt-labels"><div class="gantt-label-header"><span class="header-txt">Activity</span></div>${labels}</div>
+        <div class="gantt-timeline" style="position:relative;">
+          <div class="gantt-dates"><div class="date-col">Aug 19</div><div class="date-col">Aug 23</div><div class="date-col">Aug 27</div><div class="date-col">Aug 31</div><div class="date-col">Sep 4</div><div class="date-col">Sep 8</div><div class="date-col">Sep 12</div><div class="date-col">Sep 16</div><div class="date-col">Sep 19</div></div>
+          ${bars}
+          <div class="today-line" style="left:99.5%;"></div><div class="milestone" style="position:absolute;right:6px;top:8px;"></div>
+        </div>
+        <div class="pct-col"><div class="pct-header"><span>%</span></div>${pcts}</div>
+      </div></div>
+    </div>
+  </div>`;
+}
+
+// ── SWING SPACE ───────────────────────────────────────────────
+function renderSwing() {
+  return `
+  <div class="topbar"><span class="page-title">Swing Space</span><span class="badge badge-blue" id="swing-count-badge">${PPS.swingSpaceItems.length} Items</span><span class="badge badge-warn">Move Date: ${PPS.project.moveDate}</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
+  <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, location, ID…"></div><div class="filter-chip active">All</div><div class="filter-chip">Active</div><div class="filter-chip">Vacated</div><div class="filter-chip">Pending</div><div class="filter-chip">🚨 Issues</div><span class="count-label" id="swing-count-label"></span></div>
+  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:1100px;"><thead><tr><th>SS ID</th><th>Item Name</th><th>Location</th><th>Room No.</th><th>Room Type</th><th>Assigned To</th><th>From Date</th><th>To Date</th><th>FF&amp;E ID</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="swing-tbody"></tbody></table></div>
+  <div class="pagination"><span class="page-info" id="swing-info"></span></div>`;
+}
+function initSwing(c) {
+  const sc={'Active':'ms-ontrack','Vacated':'ms-complete','Pending':'s-review','Issue':'ms-issue'};
+  wireFilters(c,()=>PPS.swingSpaceItems,(i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.location.toLowerCase().includes(q)||i.roomNo.toLowerCase().includes(q),()=>{},
+    (items,filter)=>{
+      const f=filter==='Issues'?items.filter(i=>i.status==='Issue'):filter!=='All'?items.filter(i=>i.status===filter):items;
+      document.getElementById('swing-count-badge').textContent=f.length+' Items';
+      document.getElementById('swing-count-label').textContent=f.length+' items';
+      document.getElementById('swing-tbody').innerHTML=f.length===0?emptyRow(12,'No items match — add records to PPS.swingSpaceItems in pps-data.js'):f.map(i=>`<tr><td class="id-cell">${i.id}</td><td><div class="item-name">${i.name}</div>${i.desc?`<div class="item-desc">${i.desc}</div>`:''}</td><td>${i.location}</td><td class="muted-cell">${i.roomNo}</td><td class="muted-cell">${i.roomType}</td><td class="muted-cell">${i.assignedTo}</td><td style="font-family:var(--mono);font-size:10px;">${i.fromDate}</td><td style="font-family:var(--mono);font-size:10px;">${i.toDate}</td><td class="link-cell">${i.ffeId}</td><td><span class="status ${sc[i.status]||''}">${i.status}</span></td><td class="muted-cell" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;">${i.notes||'—'}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td></tr>`).join('');
+    });
+}
+
+// ── TENANT IMPROVEMENT ────────────────────────────────────────
+function renderTI() {
+  return `
+  <div class="topbar"><span class="page-title">Tenant Improvement</span><span class="badge badge-blue" id="ti-count-badge">${PPS.tenantImprovementItems.length} Items</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
+  <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, scope, contractor…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip">Complete</div><div class="filter-chip">🚨 Issues</div><span class="count-label" id="ti-count-label"></span></div>
+  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:1200px;"><thead><tr><th>TI ID</th><th>Item Name</th><th>Scope</th><th>Location</th><th>Room No.</th><th>Contractor</th><th>Planned Cost</th><th>Actual Cost</th><th>Variance</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="ti-tbody"></tbody></table></div>
+  <div class="pagination"><span class="page-info" id="ti-info"></span></div>`;
+}
+function initTI(c) {
+  const tc={'Not Started':'s-quoted','In Progress':'s-ordered','Complete':'s-instock','Issue':'ms-issue'};
+  wireFilters(c,()=>PPS.tenantImprovementItems,(i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.scope.toLowerCase().includes(q)||i.contractor.toLowerCase().includes(q),()=>{},
+    (items,filter)=>{
+      const f=filter==='Issues'?items.filter(i=>i.status==='Issue'):filter!=='All'?items.filter(i=>i.status===filter):items;
+      document.getElementById('ti-count-badge').textContent=f.length+' Items';
+      document.getElementById('ti-count-label').textContent=f.length+' items';
+      document.getElementById('ti-tbody').innerHTML=f.length===0?emptyRow(14,'No items match — add records to PPS.tenantImprovementItems in pps-data.js'):f.map(i=>{const v=i.plannedCost-i.actualCost;return`<tr><td class="id-cell">${i.id}</td><td><div class="item-name">${i.name}</div>${i.desc?`<div class="item-desc">${i.desc}</div>`:''}</td><td class="muted-cell">${i.scope}</td><td>${i.location}</td><td class="muted-cell">${i.roomNo}</td><td class="muted-cell">${i.contractor}</td><td class="cost-cell">${fmt(i.plannedCost)}</td><td class="cost-cell">${fmt(i.actualCost)}</td><td class="cost-cell" style="${v>0?'color:var(--accent2)':v<0?'color:var(--danger)':''}">${v!==0?fmt(Math.abs(v)):'—'}</td><td style="font-family:var(--mono);font-size:10px;">${i.startDate}</td><td style="font-family:var(--mono);font-size:10px;">${i.endDate}</td><td><span class="status ${tc[i.status]||''}">${i.status}</span></td><td class="muted-cell" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;">${i.notes||'—'}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td></tr>`}).join('');
+    });
+}
+
+// ── ISSUE LOG ─────────────────────────────────────────────────
+function renderIssues() {
+  return `
+  <div class="topbar"><span class="page-title">Issue Log</span><span class="badge badge-red" id="issue-open-badge">0 Open</span><span class="badge badge-blue" id="issue-total-badge">0 Total</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Log Issue</button></div>
+  <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search issues, linked items…"></div><div class="filter-chip active">All</div><div class="filter-chip" style="color:var(--danger);border-color:var(--danger);">🔴 High</div><div class="filter-chip">Open</div><div class="filter-chip">In Progress</div><div class="filter-chip">Resolved</div><span class="count-label" id="issue-count-label"></span></div>
+  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:1100px;"><thead><tr><th>Issue ID</th><th>Title</th><th>Description</th><th>Linked To</th><th>Type</th><th>Severity</th><th>Status</th><th>Opened</th><th>Assigned To</th><th>Resolved</th><th>Notes</th><th></th></tr></thead><tbody id="issue-tbody"></tbody></table></div>
+  <div class="pagination"><span class="page-info" id="issue-info"></span></div>`;
+}
+function initIssues(c) {
+  const isc={'Open':'ms-issue','In Progress':'s-review','Resolved':'s-instock','Closed':'s-done'};
+  const isev={'High':'severity-high','Med':'severity-med','Low':'severity-low'};
+  wireFilters(c,()=>PPS.issues,(i,q)=>i.title.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.linkedId.toLowerCase().includes(q)||i.assignedTo.toLowerCase().includes(q),()=>{},
+    (items,filter)=>{
+      const f=filter==='High'||filter==='🔴 High'?items.filter(i=>i.severity==='High'):filter==='Open'?items.filter(i=>i.status==='Open'):filter==='In Progress'?items.filter(i=>i.status==='In Progress'):filter==='Resolved'?items.filter(i=>i.status==='Resolved'):items;
+      const open=f.filter(i=>i.status==='Open'||i.status==='In Progress').length;
+      document.getElementById('issue-open-badge').textContent=open+' Open';
+      document.getElementById('issue-total-badge').textContent=f.length+' Total';
+      document.getElementById('issue-count-label').textContent=f.length+' issues';
+      document.getElementById('issue-tbody').innerHTML=f.length===0?emptyRow(12,'No issues logged — add records to PPS.issues in pps-data.js'):f.map(i=>`<tr><td class="id-cell">${i.id}</td><td style="font-weight:600;font-size:12px;max-width:180px;white-space:normal;line-height:1.4;">${i.title}</td><td class="muted-cell" style="max-width:200px;white-space:normal;line-height:1.4;font-size:10px;">${i.description}</td><td class="link-cell">${i.linkedId}</td><td class="muted-cell">${i.linkedType}</td><td><span class="${isev[i.severity]||''}">${i.severity}</span></td><td><span class="status ${isc[i.status]||''}">${i.status}</span></td><td style="font-family:var(--mono);font-size:10px;">${i.openedDate}</td><td class="muted-cell">${i.assignedTo}</td><td style="font-family:var(--mono);font-size:10px;color:var(--muted);">${i.resolvedDate||'—'}</td><td class="muted-cell" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;">${i.notes||'—'}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">Resolve</button></div></td></tr>`).join('');
+    });
+}
+
+// ── PUNCH LIST ────────────────────────────────────────────────
+function renderPunchList() {
+  return `
+  <div class="topbar"><span class="page-title">Punch List</span><span class="badge badge-blue" id="pl-total-badge">0 Tasks</span><span class="badge badge-green" id="pl-complete-badge">0 Complete</span><span class="badge badge-warn" id="pl-pending-badge">0 Pending</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Task</button></div>
+  <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search tasks, linked items…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip green">Complete</div><div class="filter-chip">Blocked</div><span class="count-label" id="pl-count-label"></span></div>
+  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:1050px;"><thead><tr><th>PL ID</th><th>Task</th><th>Description</th><th>Linked To</th><th>Type</th><th>Due Date</th><th>Assigned To</th><th>Progress</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="pl-tbody"></tbody></table></div>
+  <div class="pagination"><span class="page-info" id="pl-info"></span></div>`;
+}
+function initPunchList(c) {
+  const psc={'Not Started':'s-quoted','In Progress':'s-ordered','Complete':'s-instock','Blocked':'ms-issue'};
+  wireFilters(c,()=>PPS.punchListItems,(i,q)=>i.task.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.linkedId.toLowerCase().includes(q)||i.assignedTo.toLowerCase().includes(q),()=>{},
+    (items,filter)=>{
+      const f=filter!=='All'?items.filter(i=>i.status===filter):items;
+      const done=f.filter(i=>i.status==='Complete').length;
+      document.getElementById('pl-total-badge').textContent=f.length+' Tasks';
+      document.getElementById('pl-complete-badge').textContent=done+' Complete';
+      document.getElementById('pl-pending-badge').textContent=(f.length-done)+' Pending';
+      document.getElementById('pl-count-label').textContent=f.length+' tasks';
+      document.getElementById('pl-tbody').innerHTML=f.length===0?emptyRow(11,'No tasks yet — add records to PPS.punchListItems in pps-data.js'):f.map(i=>`<tr><td class="id-cell">${i.id}</td><td style="font-weight:600;font-size:12px;max-width:180px;white-space:normal;line-height:1.4;">${i.task}</td><td class="muted-cell" style="max-width:180px;white-space:normal;font-size:10px;line-height:1.4;">${i.description}</td><td class="link-cell">${i.linkedId}</td><td class="muted-cell">${i.linkedType}</td><td style="font-family:var(--mono);font-size:10px;">${i.dueDate}</td><td class="muted-cell">${i.assignedTo}</td><td><div class="pct-inline"><div class="progress-bg" style="width:60px;"><div class="progress-fill" style="width:${i.pctComplete}%"></div></div><span class="pct-text">${i.pctComplete}%</span></div></td><td><span class="status ${psc[i.status]||''}">${i.status}</span></td><td class="muted-cell" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;">${i.notes||'—'}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">Complete</button></div></td></tr>`).join('');
+    });
+}
+
+// ── REPORTS ───────────────────────────────────────────────────
+function renderReports() {
+  const pbi=(icon,title,meta)=>`<div class="pbi-card"><div class="pbi-header"><div><div class="pbi-title">${title}</div><div class="pbi-meta">${meta}</div></div><span class="badge badge-blue">Power BI</span></div><div class="pbi-embed"><div class="pbi-icon">${icon}</div><div class="pbi-label">Power BI embed will appear here<br><strong>Configure report ID in Settings</strong></div></div><div class="pbi-footer"><button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;">Export XLSX</button><button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;">Export PDF</button><span style="margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--muted);">Last refresh: —</span></div></div>`;
+  return `
+  <div class="topbar"><span class="page-title">Reports &amp; Dashboards</span><span class="badge badge-blue">Power BI Embedded</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Refresh Data</button><button class="btn btn-primary">Open in Power BI ↗</button></div>
+  <div class="content">
+    <div class="export-panel"><div><div class="export-label">Export Project Data</div><div class="export-sub">Download current project data in your preferred format</div></div><div class="export-btns"><button class="export-btn">📋 FF&amp;E List <span class="ext">XLSX</span></button><button class="export-btn">🚚 Move Records <span class="ext">XLSX</span></button><button class="export-btn">📅 Schedule <span class="ext">XLSX</span></button><button class="export-btn">📄 Full Report <span class="ext">PDF</span></button></div></div>
+    <div class="reports-grid">${pbi('📊','Cost Summary','Planned vs Actual · All cost areas')}${pbi('🚚','Move Management Summary','Status breakdown · Timeline view')}${pbi('🛒','Procurement Spend','By vendor · By category · By status')}${pbi('📅','Schedule Variance','Planned vs Actual dates · % complete')}</div>
+  </div>`;
+}
+
+// ── ADMIN SETTINGS ────────────────────────────────────────────
+let ppsRoomTypes=['Storage','Office','Conf. Room','Break Room','Server Room','Open Office','Other'];
+let ppsProcMethods=['OFOI','New Purchase','Remanufactured','Donated','Lease'];
+let ppsProdCategories=['Furniture','AV/Ed-Tech','IT','Fixtures','Equipment','Other'];
+
+function renderLookupTags(id,arr) {
+  const el=document.getElementById(id); if(!el)return;
+  el.innerHTML=arr.map((v,i)=>`<span class="lookup-tag">${v}<span class="remove" onclick="removeLookupTag('${id}',${i})">×</span></span>`).join('');
+}
+function removeLookupTag(id,i){const map={'room-types-tags':ppsRoomTypes,'proc-methods-tags':ppsProcMethods,'prod-categories-tags':ppsProdCategories};map[id].splice(i,1);renderLookupTags(id,map[id]);}
+function addLookupTag(id,inputId,arr){const inp=document.getElementById(inputId);const val=inp.value.trim();if(val&&!arr.includes(val)){arr.push(val);renderLookupTags(id,arr);}inp.value='';}
+
+function renderSettings() {
+  return `
+  <div class="topbar"><span class="page-title">Admin &amp; Settings</span><span class="badge badge-warn">Admin Only</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Reset Defaults</button><button class="btn btn-primary">Save Changes</button></div>
+  <div class="content">
+    <div class="card"><div class="card-header"><span class="card-title">System Settings</span><span class="badge badge-blue">General</span></div><div class="card-body">
+      <div class="setting-row"><div><div class="setting-label">Application Name</div><div class="setting-desc">Displayed in browser tab and header</div></div><input class="setting-input" type="text" value="Plan Perfect Systems"></div>
+      <div class="setting-row"><div><div class="setting-label">Default Date Format</div><div class="setting-desc">Used across all date fields</div></div><select class="setting-select"><option selected>MMM DD, YYYY</option><option>MM/DD/YYYY</option><option>DD/MM/YYYY</option><option>YYYY-MM-DD</option></select></div>
+      <div class="setting-row"><div><div class="setting-label">Currency</div><div class="setting-desc">Used in all financial fields</div></div><select class="setting-select"><option selected>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option></select></div>
+      <div class="setting-row"><div><div class="setting-label">Audit Trail</div><div class="setting-desc">Log all user actions for compliance</div></div><div class="toggle-wrap"><div class="toggle on" onclick="this.classList.toggle('on')"></div><span class="toggle-label">Enabled</span></div></div>
+      <div class="setting-row"><div><div class="setting-label">Auto-save Interval</div><div class="setting-desc">How often drafts are auto-saved</div></div><select class="setting-select"><option>30 seconds</option><option selected>1 minute</option><option>5 minutes</option><option>Disabled</option></select></div>
+    </div></div>
+    <div class="settings-grid">
+      <div class="card"><div class="card-header"><span class="card-title">Power BI Integration</span><span class="badge badge-blue">Reports</span></div><div class="card-body">
+        <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:8px;"><div><div class="setting-label">Workspace ID</div><div class="setting-desc">Azure Power BI workspace</div></div><input class="setting-input" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" style="width:100%;"></div>
+        <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:8px;"><div><div class="setting-label">Report ID — Cost Summary</div></div><input class="setting-input" type="text" placeholder="Report ID" style="width:100%;"></div>
+        <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:8px;"><div><div class="setting-label">Report ID — Move Management</div></div><input class="setting-input" type="text" placeholder="Report ID" style="width:100%;"></div>
+        <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:8px;"><div><div class="setting-label">Report ID — Procurement Spend</div></div><input class="setting-input" type="text" placeholder="Report ID" style="width:100%;"></div>
+        <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:8px;border-bottom:none;"><div><div class="setting-label">Report ID — Schedule Variance</div></div><input class="setting-input" type="text" placeholder="Report ID" style="width:100%;"></div>
+      </div></div>
+      <div class="card"><div class="card-header"><span class="card-title">Lookup Tables</span><span class="badge badge-blue">Dropdowns</span></div><div class="card-body">
+        <div style="margin-bottom:20px;"><div class="setting-label" style="margin-bottom:8px;">Room Types</div><div id="room-types-tags"></div><div class="lookup-add"><input type="text" placeholder="Add room type…" id="room-type-input"><button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;" onclick="addLookupTag('room-types-tags','room-type-input',ppsRoomTypes)">+ Add</button></div></div>
+        <div style="margin-bottom:20px;"><div class="setting-label" style="margin-bottom:8px;">Procurement Methods</div><div id="proc-methods-tags"></div><div class="lookup-add"><input type="text" placeholder="Add method…" id="proc-method-input"><button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;" onclick="addLookupTag('proc-methods-tags','proc-method-input',ppsProcMethods)">+ Add</button></div></div>
+        <div><div class="setting-label" style="margin-bottom:8px;">Product Categories</div><div id="prod-categories-tags"></div><div class="lookup-add"><input type="text" placeholder="Add category…" id="prod-cat-input"><button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;" onclick="addLookupTag('prod-categories-tags','prod-cat-input',ppsProdCategories)">+ Add</button></div></div>
+      </div></div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">Recent Audit Log</span><button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;">View Full Log</button></div><div class="table-wrap"><table><thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Module</th><th>Record ID</th><th>Details</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted);font-family:var(--mono);font-size:11px;">No audit entries yet</td></tr></tbody></table></div></div>
+  </div>`;
+}
+function initSettings() {
+  renderLookupTags('room-types-tags',ppsRoomTypes);
+  renderLookupTags('proc-methods-tags',ppsProcMethods);
+  renderLookupTags('prod-categories-tags',ppsProdCategories);
+}
+
+// ── USER MANAGEMENT ───────────────────────────────────────────
+function renderUsers() {
+  return `
+  <div class="topbar"><span class="page-title">User Management</span><span class="badge badge-blue" id="user-total-badge">0 Users</span><span class="badge badge-green" id="user-active-badge">0 Active</span><span class="badge badge-warn">Admin Only</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Invite User</button></div>
+  <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, email, role…"></div><div class="filter-chip active">All</div><div class="filter-chip">Admin</div><div class="filter-chip">Project Manager</div><div class="filter-chip">Viewer</div><div class="filter-chip green">Active</div><span class="count-label" id="user-count-label"></span></div>
+  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:900px;"><thead><tr><th>User</th><th>Role</th><th>Projects</th><th>Status</th><th>Last Active</th><th></th></tr></thead><tbody id="user-tbody"></tbody></table></div>
+  <div class="pagination"><span class="page-info" id="user-info"></span></div>`;
+}
+function initUsers(c) {
+  const rc={'Admin':'role-admin','Project Manager':'role-pm','Viewer':'role-viewer'};
+  const usc={'Active':'u-active','Inactive':'u-inactive','Pending':'u-pending'};
+  wireFilters(c,()=>PPS.users,(u,q)=>u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q)||u.role.toLowerCase().includes(q),()=>{},
+    (items,filter)=>{
+      const f=filter==='Active'?items.filter(u=>u.status==='Active'):filter!=='All'?items.filter(u=>u.role===filter):items;
+      const active=f.filter(u=>u.status==='Active').length;
+      document.getElementById('user-total-badge').textContent=f.length+' Users';
+      document.getElementById('user-active-badge').textContent=active+' Active';
+      document.getElementById('user-count-label').textContent=f.length+' users';
+      document.getElementById('user-info').textContent=f.length+' users total';
+      document.getElementById('user-tbody').innerHTML=f.length===0?emptyRow(6,'No users yet — add records to PPS.users in pps-data.js'):f.map((u,i)=>`<tr><td><div class="user-cell"><div class="user-avatar" style="background:${avatarColors[i%avatarColors.length]}">${u.initials}</div><div><div class="user-cell-name">${u.name}</div><div class="user-cell-email">${u.email}</div></div></div></td><td><span class="${rc[u.role]||'role-viewer'}">${u.role}</span></td><td>${u.projects.map(p=>`<span class="proj-tag">${p}</span>`).join('')}</td><td><span class="status ${usc[u.status]||''}">${u.status}</span></td><td style="font-family:var(--mono);font-size:10px;color:var(--muted);">${u.lastActive}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">Permissions</button><button class="action-btn" style="color:var(--danger);">Deactivate</button></div></td></tr>`).join('');
+    });
+}
+
+// =============================================================
+// ROUTER
+// =============================================================
+const ROUTES = {
+  dashboard: { render:renderDashboard,  init:null           },
+  ffe:       { render:renderFFE,        init:initFFE        },
+  move:      { render:renderMove,       init:initMove       },
+  schedule:  { render:renderSchedule,   init:null           },
+  swing:     { render:renderSwing,      init:initSwing      },
+  ti:        { render:renderTI,         init:initTI         },
+  issues:    { render:renderIssues,     init:initIssues     },
+  punchlist: { render:renderPunchList,  init:initPunchList  },
+  reports:   { render:renderReports,    init:null           },
+  settings:  { render:renderSettings,   init:initSettings   },
+  users:     { render:renderUsers,      init:initUsers      },
+};
+
+function navigate(routeKey) {
+  const route = ROUTES[routeKey] || ROUTES.dashboard;
+  const container = document.getElementById('app-content');
+
+  // Update active nav state
+  document.querySelectorAll('.nav-item[data-route]').forEach(el => {
+    el.classList.toggle('active', el.dataset.route === routeKey);
+  });
+
+  // Render page HTML into the content area
+  container.innerHTML = `<main class="main page-enter">${route.render()}</main>`;
+
+  // Run initializer to wire interactivity
+  if (route.init) route.init(container);
+
+  // Sync URL hash
+  if (location.hash !== '#' + routeKey) history.replaceState(null, '', '#' + routeKey);
+}
+
+// Hash-based routing
+window.addEventListener('hashchange', () => navigate(location.hash.replace('#','') || 'dashboard'));
+
+// Nav click handlers
+document.querySelectorAll('.nav-item[data-route]').forEach(el => {
+  el.addEventListener('click', e => { e.preventDefault(); navigate(el.dataset.route); });
+});
+
+// Boot
+navigate(location.hash.replace('#','') || 'dashboard');
+</script>
 </body>
 </html>
