@@ -32,7 +32,7 @@
   --muted:    #6b7591;
 
   /* Typography */
-  --mono:     'DM Mono', monospace;
+  --mono:     'Segoe UI', semibold;
   --sans:     'Inter', sans-serif;
 }
 
