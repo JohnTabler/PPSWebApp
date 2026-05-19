@@ -78,6 +78,22 @@ svg.donut { overflow:visible; }
 
 /* ── PAGE-SPECIFIC EXTRAS ───────────────────────────────────── */
 .note-cell { color:var(--muted); font-size:10px; max-width:180px; overflow:hidden; text-overflow:ellipsis; }
+.item-desc { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px; color:var(--muted); font-size:10px; }
+.table-wrap thead th { position:sticky; top:0; z-index:10; background:var(--surface); }
+.sticky-scrollbar-wrap { position:sticky; bottom:0; overflow-x:auto; background:var(--surface); border-top:1px solid var(--border); z-index:9; }
+.sticky-scrollbar-inner { height:1px; }
+.ffe-detail-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:100; display:flex; align-items:center; justify-content:center; }
+.ffe-detail-modal { background:var(--surface); border:1px solid var(--border); border-radius:14px; width:680px; max-width:92vw; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; }
+.ffe-detail-header { padding:18px 24px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.ffe-detail-title { font-size:15px; font-weight:700; }
+.ffe-detail-subtitle { font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:3px; }
+.ffe-detail-close { background:none; border:none; font-size:18px; color:var(--muted); cursor:pointer; flex-shrink:0; padding:0; line-height:1; }
+.ffe-detail-close:hover { color:var(--text); }
+.ffe-detail-body { overflow-y:auto; padding:20px 24px; display:grid; grid-template-columns:1fr 1fr; gap:0; }
+.ffe-detail-field { padding:9px 0; border-bottom:1px solid var(--border); }
+.ffe-detail-field:nth-last-child(-n+2) { border-bottom:none; }
+.ffe-detail-key { font-family:var(--mono); font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:3px; }
+.ffe-detail-val { font-size:12px; font-weight:500; }
 .severity-high { color:var(--danger); font-family:var(--mono); font-size:9px; font-weight:700; }
 .severity-med  { color:var(--warn);   font-family:var(--mono); font-size:9px; font-weight:700; }
 .severity-low  { color:var(--muted);  font-family:var(--mono); font-size:9px; }
@@ -272,6 +288,41 @@ function wireFilters(container, getData, searchFn, filterFn, renderFn) {
   apply();
 }
 
+function showFFEDetail(id) {
+  const i = ACTIVE.ffeItems.find(x => x.id === id);
+  if (!i) return;
+  const fields = [
+    ['FF&E ID', i.id], ['Item Name', i.name],
+    ['Description', i.desc || '—'], ['Type', i.type],
+    ['Vendor', i.vendor], ['Proc. Method', i.procMethod],
+    ['Current Location', i.locationCurrent], ['New Location', i.locationNew],
+    ['Room Type', i.roomType], ['Room No.', i.roomNo],
+    ['Qty Needed', i.qtyNeeded], ['Qty Existing', i.qtyExisting],
+    ['Qty New', i.qtyNew], ['Unit Price', fmt(i.unitPrice)],
+    ['Ext. Cost', fmt(i.extCost)], ['Process Status', i.processStatus],
+    ['FF&E Status', i.ffeStatus], ['Condition', i.condition],
+    ['Priority', i.priority], ['Swing Space?', i.swing ? 'Yes' : 'No'],
+    ['Move ID', i.moveId || '—'], ['Notes', i.notes || '—'],
+  ];
+  const overlay = document.createElement('div');
+  overlay.className = 'ffe-detail-overlay';
+  overlay.innerHTML = `
+    <div class="ffe-detail-modal">
+      <div class="ffe-detail-header">
+        <div>
+          <div class="ffe-detail-title">${i.name}</div>
+          <div class="ffe-detail-subtitle">${i.id} · ${i.type}</div>
+        </div>
+        <button class="ffe-detail-close" onclick="this.closest('.ffe-detail-overlay').remove()">✕</button>
+      </div>
+      <div class="ffe-detail-body">
+        ${fields.map(([k,v]) => `<div class="ffe-detail-field"><div class="ffe-detail-key">${k}</div><div class="ffe-detail-val">${v}</div></div>`).join('')}
+      </div>
+    </div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
 function emptyRow(cols, msg) {
   return `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:var(--muted);font-family:var(--mono);font-size:11px;">${msg}</td></tr>`;
 }
@@ -343,13 +394,30 @@ function renderFFE() {
     <div class="filter-chip active">All Types</div><div class="filter-chip">Furniture</div><div class="filter-chip">AV/Ed-Tech</div><div class="filter-chip">IT</div><div class="filter-chip">Other</div><div class="filter-chip">🚨 Issues Only</div>
     <span class="count-label" id="ffe-count-label"></span>
   </div>
-  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:1400px;">
+  <div class="table-wrap" style="flex:1;overflow:auto;" id="ffe-table-wrap"><table style="min-width:1400px;" id="ffe-table">
     <thead><tr><th>FF&amp;E ID</th><th>Item Name</th><th>Type</th><th>Vendor</th><th>Current Location</th><th>New Location</th><th>Room Type</th><th>Room No.</th><th>Proc. Method</th><th>Qty Needed</th><th>Qty Exist.</th><th>Qty New</th><th>Unit Price</th><th>Ext. Cost</th><th>Process Status</th><th>FF&amp;E Status</th><th>Condition</th><th>Priority</th><th>Swing?</th><th>Move ID</th><th></th></tr></thead>
     <tbody id="ffe-tbody"></tbody>
   </table></div>
   <div class="pagination"><span class="page-info" id="ffe-info"></span></div>`;
 }
 function initFFE(c) {
+  // Sticky scrollbar mirror
+  requestAnimationFrame(() => {
+    const wrap = document.getElementById('ffe-table-wrap');
+    const tbl  = document.getElementById('ffe-table');
+    if (!wrap || !tbl) return;
+    const bar = document.createElement('div');
+    bar.className = 'sticky-scrollbar-wrap';
+    const inner = document.createElement('div');
+    inner.className = 'sticky-scrollbar-inner';
+    bar.appendChild(inner);
+    wrap.parentNode.insertBefore(bar, wrap.nextSibling);
+    function syncWidth() { inner.style.width = tbl.offsetWidth + 'px'; }
+    syncWidth();
+    bar.addEventListener('scroll', () => { wrap.scrollLeft = bar.scrollLeft; });
+    wrap.addEventListener('scroll', () => { bar.scrollLeft = wrap.scrollLeft; });
+    new ResizeObserver(syncWidth).observe(tbl);
+  });
   wireFilters(c, ()=>ACTIVE.ffeItems,
     (i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.roomNo.toLowerCase().includes(q)||i.vendor.toLowerCase().includes(q),
     ()=>{},
@@ -359,7 +427,7 @@ function initFFE(c) {
       document.getElementById('ffe-count-label').textContent=f.length+' items';
       document.getElementById('ffe-info').textContent=f.length+' items';
       document.getElementById('ffe-tbody').innerHTML=f.length===0?emptyRow(21,'No items match'):f.map(i=>`<tr>
-        <td class="id-cell">${i.id}</td><td><div class="item-name">${i.name}</div>${i.desc?`<div class="item-desc">${i.desc}</div>`:''}</td>
+        <td class="id-cell">${i.id}</td><td style="max-width:260px;"><span class="item-name" style="cursor:pointer;color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.name}</span>${i.desc?`<div class="item-desc">${i.desc}</div>`:''}</td>
         <td class="muted-cell">${i.type}</td><td>${i.vendor}</td><td>${i.locationCurrent}</td><td>${i.locationNew}</td>
         <td class="muted-cell">${i.roomType}</td><td class="muted-cell">${i.roomNo}</td><td class="muted-cell">${i.procMethod}</td>
         <td class="qty-cell">${i.qtyNeeded}</td><td class="qty-cell">${i.qtyExisting}</td><td class="qty-cell">${i.qtyNew}</td>
