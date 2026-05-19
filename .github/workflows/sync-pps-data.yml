@@ -6,7 +6,7 @@ on:
       xlsm_filename:
         description: "Excel filename in repo root (default: PPS_1450_Frazee_Sep_24_2025_Reference.xlsm)"
         required: false
-        default: "PPS_1450_Frazee_Sep_24_2025_Reference.xlsm"
+        default: "PPS 1450 Frazee Sep_24_2025 Reference.xlsm"
 
 jobs:
   sync:
