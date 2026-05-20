@@ -39,7 +39,8 @@
 
 /* ── RESET ────────────────────────────────────────────────── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; display: flex; }
+html { height: 100%; overflow: hidden; }
+body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); display: flex; overflow: hidden; }
 
 /* ── SIDEBAR ──────────────────────────────────────────────── */
 .sidebar {
@@ -81,7 +82,7 @@ a.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
 .user-role { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
 /* ── MAIN LAYOUT ──────────────────────────────────────────── */
-.main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+.main { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
 
 /* ── TOPBAR ───────────────────────────────────────────────── */
 .topbar {
