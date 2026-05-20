@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="pps-theme.css">
 <style>
 /* ── SPA SHELL ──────────────────────────────────────────────── */
-#app-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; margin-left: 220px; }
+#app-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow: visible; margin-left: 220px; }
 .page-enter { animation: fadeSlide 0.18s ease; }
 @keyframes fadeSlide { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 
@@ -80,7 +80,7 @@ svg.donut { overflow:visible; }
 .note-cell { color:var(--muted); font-size:10px; max-width:180px; overflow:hidden; text-overflow:ellipsis; }
 .item-desc { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px; color:var(--muted); font-size:10px; }
 .table-wrap { position:relative; }
-.table-wrap thead th { position:sticky; top:0; z-index:10; background:var(--surface2); box-shadow:0 1px 0 var(--border); }
+.table-wrap thead th { position:sticky; top:0; z-index:10; background:var(--surface2); box-shadow:0 1px 0 var(--border); will-change:transform; }
 .sticky-scrollbar-wrap { overflow-x:auto; overflow-y:hidden; height:14px; background:var(--surface); border-top:1px solid var(--border); }
 .sticky-scrollbar-inner { height:1px; pointer-events:none; }
 .ffe-detail-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:100; display:flex; align-items:center; justify-content:center; }
