@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="pps-theme.css">
 <style>
 /* ── SPA SHELL ──────────────────────────────────────────────── */
-#app-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; margin-left: 220px; }
+#app-content { flex: 1; display: flex; flex-direction: column; min-height: 100vh; margin-left: 220px; overflow: hidden; }
 .page-enter { animation: fadeSlide 0.18s ease; }
 @keyframes fadeSlide { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 
@@ -79,10 +79,9 @@ svg.donut { overflow:visible; }
 /* ── PAGE-SPECIFIC EXTRAS ───────────────────────────────────── */
 .note-cell { color:var(--muted); font-size:10px; max-width:180px; overflow:hidden; text-overflow:ellipsis; }
 .item-desc { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px; color:var(--muted); font-size:10px; }
-.table-wrap { position:relative; }
-.table-wrap thead th { position:sticky; top:0; z-index:10; background:var(--surface); box-shadow:0 2px 4px rgba(0,0,0,0.08), 0 1px 0 var(--border); will-change:transform; }
-.sticky-scrollbar-wrap { overflow-x:auto; overflow-y:hidden; height:14px; background:var(--surface); border-top:1px solid var(--border); }
-.sticky-scrollbar-inner { height:1px; pointer-events:none; }
+/* Table container: fixed height, own scroll context — sticky thead and always-visible scrollbar both work natively */
+.table-wrap { overflow:auto; flex:1; min-height:0; }
+.table-wrap thead th { position:sticky; top:0; z-index:10; background:var(--surface2); box-shadow:0 2px 0 var(--border); }
 .ffe-detail-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:100; display:flex; align-items:center; justify-content:center; }
 .ffe-detail-modal { background:var(--surface); border:1px solid var(--border); border-radius:14px; width:680px; max-width:92vw; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; }
 .ffe-detail-header { padding:18px 24px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
@@ -411,34 +410,13 @@ function renderFFE() {
     <div class="filter-chip active">All Types</div><div class="filter-chip">Furniture</div><div class="filter-chip">AV/Ed-Tech</div><div class="filter-chip">IT</div><div class="filter-chip">Other</div><div class="filter-chip">🚨 Issues Only</div>
     <span class="count-label" id="ffe-count-label"></span>
   </div>
-  <div class="table-wrap" style="flex:1;overflow:auto;" id="ffe-table-wrap"><table style="min-width:1400px;" id="ffe-table">
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="ffe-table-wrap"><table style="min-width:1400px;" id="ffe-table">
     <thead><tr><th>FF&amp;E ID</th><th>Item Name</th><th>Type</th><th>Vendor</th><th>Current Location</th><th>New Location</th><th>Room Type</th><th>Room No.</th><th>Proc. Method</th><th>Qty Needed</th><th>Qty Exist.</th><th>Qty New</th><th>Unit Price</th><th>Ext. Cost</th><th>Process Status</th><th>FF&amp;E Status</th><th>Condition</th><th>Priority</th><th>Swing?</th><th>Move ID</th><th></th></tr></thead>
     <tbody id="ffe-tbody"></tbody>
   </table></div>
   <div class="pagination"><span class="page-info" id="ffe-info"></span></div>`;
 }
-function wireStickyScrollbar(wrapId, tblId) {
-  requestAnimationFrame(() => {
-    const wrap = document.getElementById(wrapId);
-    const tbl  = document.getElementById(tblId);
-    if (!wrap || !tbl) return;
-    const bar = document.createElement('div');
-    bar.className = 'sticky-scrollbar-wrap';
-    const inner = document.createElement('div');
-    inner.className = 'sticky-scrollbar-inner';
-    bar.appendChild(inner);
-    wrap.parentNode.insertBefore(bar, wrap.nextSibling);
-    function syncWidth() { inner.style.width = tbl.scrollWidth + 'px'; }
-    syncWidth();
-    let syncing = false;
-    bar.addEventListener('scroll', () => { if (!syncing) { syncing=true; wrap.scrollLeft = bar.scrollLeft; syncing=false; } });
-    wrap.addEventListener('scroll', () => { if (!syncing) { syncing=true; bar.scrollLeft = wrap.scrollLeft; syncing=false; } });
-    new ResizeObserver(syncWidth).observe(tbl);
-  });
-}
-
 function initFFE(c) {
-  wireStickyScrollbar('ffe-table-wrap', 'ffe-table');
   wireFilters(c, ()=>ACTIVE.ffeItems,
     (i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.roomNo.toLowerCase().includes(q)||i.vendor.toLowerCase().includes(q),
     ()=>{},
@@ -473,7 +451,7 @@ function renderMove() {
     <div class="topbar-spacer"></div>
     <button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Move</button>
   </div>
-  <div class="content" style="flex:1;overflow:auto;">
+  <div style="padding:20px 32px 12px;flex-shrink:0;">
     <div class="stats-row" style="grid-template-columns:repeat(5,1fr);gap:14px;">
       <div class="stat-card blue"><div class="stat-label">Total Moves</div><div class="stat-value" style="font-size:24px;">${r.length}</div><div class="stat-sub">All records</div></div>
       <div class="stat-card green"><div class="stat-label">On Track</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='On Track').length}</div><div class="stat-sub">Scheduled · OK</div></div>
@@ -481,19 +459,17 @@ function renderMove() {
       <div class="stat-card red"><div class="stat-label">Issues</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Issue').length}</div><div class="stat-sub">Active issues</div></div>
       <div class="stat-card muted"><div class="stat-label">Completed</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Complete').length}</div><div class="stat-sub">Done</div></div>
     </div>
-    <div class="card">
-      <div class="card-header"><span class="card-title">Move Records</span><div style="display:flex;gap:8px;"><span class="badge badge-blue">Mover: ${ACTIVE.project.mover} · POC: ${ACTIVE.project.moverPOC}</span><span class="badge badge-warn">Sched. Date: ${ACTIVE.project.moveDate}</span></div></div>
-      <div class="toolbar">
-        <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input placeholder="Search item, room, ID…"></div>
-        <div class="filter-chip active">All</div><div class="filter-chip green">Complete</div><div class="filter-chip">On Track</div><div class="filter-chip">Issues</div>
-        <span class="count-label" id="move-count-label"></span>
-      </div>
-      <div class="table-wrap"><table style="min-width:1200px;">
-        <thead><tr><th>Move ID</th><th>Item Being Moved</th><th>User/Group</th><th>From Floor</th><th>From Room</th><th>→ To Floor</th><th>→ To Room</th><th>Room Type</th><th>Move Date</th><th>Mover</th><th>Status</th><th>Swing?</th><th>FF&amp;E ID</th><th>SS ID</th><th>POC</th><th>Notes</th><th></th></tr></thead>
-        <tbody id="move-tbody"></tbody>
-      </table></div>
-    </div>
-  </div>`;
+  </div>
+  <div class="toolbar" style="border-top:1px solid var(--border);">
+    <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input placeholder="Search item, room, ID…"></div>
+    <div class="filter-chip active">All</div><div class="filter-chip green">Complete</div><div class="filter-chip">On Track</div><div class="filter-chip">Issues</div>
+    <span class="count-label" id="move-count-label"></span>
+  </div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1200px;">
+    <thead><tr><th>Move ID</th><th>Item Being Moved</th><th>User/Group</th><th>From Floor</th><th>From Room</th><th>→ To Floor</th><th>→ To Room</th><th>Room Type</th><th>Move Date</th><th>Mover</th><th>Status</th><th>Swing?</th><th>FF&amp;E ID</th><th>SS ID</th><th>POC</th><th>Notes</th><th></th></tr></thead>
+    <tbody id="move-tbody"></tbody>
+  </table></div>
+  <div class="pagination"><span class="badge badge-blue" style="margin-right:8px;">Mover: ${ACTIVE.project.mover} · POC: ${ACTIVE.project.moverPOC}</span><span class="page-info" id="move-info"></span></div>`;
 }
 function initMove(c) {
   wireFilters(c, ()=>ACTIVE.moveRecords,
@@ -553,11 +529,10 @@ function renderSwing() {
   return `
   <div class="topbar"><span class="page-title">Swing Space</span><span class="badge badge-blue" id="swing-count-badge">${ACTIVE.swingSpaceItems.length} Items</span><span class="badge badge-warn">Move Date: ${ACTIVE.project.moveDate}</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, location, ID…"></div><div class="filter-chip active">All</div><div class="filter-chip">Active</div><div class="filter-chip">Vacated</div><div class="filter-chip">Pending</div><div class="filter-chip">🚨 Issues</div><span class="count-label" id="swing-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;overflow:auto;" id="swing-table-wrap"><table style="min-width:1100px;" id="swing-table"><thead><tr><th>SS ID</th><th>Item Name</th><th>Location</th><th>Room No.</th><th>Room Type</th><th>Assigned To</th><th>From Date</th><th>To Date</th><th>FF&amp;E ID</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="swing-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="swing-table-wrap"><table style="min-width:1100px;" id="swing-table"><thead><tr><th>SS ID</th><th>Item Name</th><th>Location</th><th>Room No.</th><th>Room Type</th><th>Assigned To</th><th>From Date</th><th>To Date</th><th>FF&amp;E ID</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="swing-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="swing-info"></span></div>`;
 }
 function initSwing(c) {
-  wireStickyScrollbar('swing-table-wrap', 'swing-table');
   const sc={'Active':'ms-ontrack','Vacated':'ms-complete','Pending':'s-review','Issue':'ms-issue'};
   wireFilters(c,()=>ACTIVE.swingSpaceItems,(i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.location.toLowerCase().includes(q)||i.roomNo.toLowerCase().includes(q),()=>{},
     (items,filter)=>{
@@ -573,11 +548,10 @@ function renderTI() {
   return `
   <div class="topbar"><span class="page-title">Tenant Improvement</span><span class="badge badge-blue" id="ti-count-badge">${ACTIVE.tenantImprovementItems.length} Items</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, scope, contractor…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip">Complete</div><div class="filter-chip">🚨 Issues</div><span class="count-label" id="ti-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;overflow:auto;" id="ti-table-wrap"><table style="min-width:1200px;" id="ti-table"><thead><tr><th>TI ID</th><th>Item Name</th><th>Scope</th><th>Location</th><th>Room No.</th><th>Contractor</th><th>Planned Cost</th><th>Actual Cost</th><th>Variance</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="ti-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="ti-table-wrap"><table style="min-width:1200px;" id="ti-table"><thead><tr><th>TI ID</th><th>Item Name</th><th>Scope</th><th>Location</th><th>Room No.</th><th>Contractor</th><th>Planned Cost</th><th>Actual Cost</th><th>Variance</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="ti-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="ti-info"></span></div>`;
 }
 function initTI(c) {
-  wireStickyScrollbar('ti-table-wrap', 'ti-table');
   const tc={'Not Started':'s-quoted','In Progress':'s-ordered','Complete':'s-instock','Issue':'ms-issue'};
   wireFilters(c,()=>ACTIVE.tenantImprovementItems,(i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.scope.toLowerCase().includes(q)||i.contractor.toLowerCase().includes(q),()=>{},
     (items,filter)=>{
@@ -593,7 +567,7 @@ function renderIssues() {
   return `
   <div class="topbar"><span class="page-title">Issue Log</span><span class="badge badge-red" id="issue-open-badge">0 Open</span><span class="badge badge-blue" id="issue-total-badge">0 Total</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Log Issue</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search issues, linked items…"></div><div class="filter-chip active">All</div><div class="filter-chip" style="color:var(--danger);border-color:var(--danger);">🔴 High</div><div class="filter-chip">Open</div><div class="filter-chip">In Progress</div><div class="filter-chip">Resolved</div><span class="count-label" id="issue-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:1100px;"><thead><tr><th>Issue ID</th><th>Title</th><th>Description</th><th>Linked To</th><th>Type</th><th>Severity</th><th>Status</th><th>Opened</th><th>Assigned To</th><th>Resolved</th><th>Notes</th><th></th></tr></thead><tbody id="issue-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1100px;"><thead><tr><th>Issue ID</th><th>Title</th><th>Description</th><th>Linked To</th><th>Type</th><th>Severity</th><th>Status</th><th>Opened</th><th>Assigned To</th><th>Resolved</th><th>Notes</th><th></th></tr></thead><tbody id="issue-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="issue-info"></span></div>`;
 }
 function initIssues(c) {
@@ -615,7 +589,7 @@ function renderPunchList() {
   return `
   <div class="topbar"><span class="page-title">Punch List</span><span class="badge badge-blue" id="pl-total-badge">0 Tasks</span><span class="badge badge-green" id="pl-complete-badge">0 Complete</span><span class="badge badge-warn" id="pl-pending-badge">0 Pending</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Task</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search tasks, linked items…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip green">Complete</div><div class="filter-chip">Blocked</div><span class="count-label" id="pl-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:1050px;"><thead><tr><th>PL ID</th><th>Task</th><th>Description</th><th>Linked To</th><th>Type</th><th>Due Date</th><th>Assigned To</th><th>Progress</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="pl-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1050px;"><thead><tr><th>PL ID</th><th>Task</th><th>Description</th><th>Linked To</th><th>Type</th><th>Due Date</th><th>Assigned To</th><th>Progress</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="pl-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="pl-info"></span></div>`;
 }
 function initPunchList(c) {
@@ -694,7 +668,7 @@ function renderUsers() {
   return `
   <div class="topbar"><span class="page-title">User Management</span><span class="badge badge-blue" id="user-total-badge">0 Users</span><span class="badge badge-green" id="user-active-badge">0 Active</span><span class="badge badge-warn">Admin Only</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Invite User</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, email, role…"></div><div class="filter-chip active">All</div><div class="filter-chip">Admin</div><div class="filter-chip">Project Manager</div><div class="filter-chip">Viewer</div><div class="filter-chip green">Active</div><span class="count-label" id="user-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;overflow:auto;"><table style="min-width:900px;"><thead><tr><th>User</th><th>Role</th><th>Projects</th><th>Status</th><th>Last Active</th><th></th></tr></thead><tbody id="user-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:900px;"><thead><tr><th>User</th><th>Role</th><th>Projects</th><th>Status</th><th>Last Active</th><th></th></tr></thead><tbody id="user-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="user-info"></span></div>`;
 }
 function initUsers(c) {

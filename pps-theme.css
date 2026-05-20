@@ -81,7 +81,7 @@ a.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
 .user-role { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
 /* ── MAIN LAYOUT ──────────────────────────────────────────── */
-.main { flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-x: clip; overflow-y: visible; }
+.main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
 /* ── TOPBAR ───────────────────────────────────────────────── */
 .topbar {
@@ -153,7 +153,7 @@ a.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
 .p-low    { color: #6b7591; }
 
 /* ── TABLE SHARED ─────────────────────────────────────────── */
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow: auto; }
 table { width: 100%; border-collapse: collapse; }
 thead { position: sticky; top: 0; z-index: 10; background: var(--surface2); }
 th { background: var(--surface2); border-bottom: 2px solid var(--border); padding: 10px 14px; font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; text-align: left; white-space: nowrap; font-weight: 400; }
