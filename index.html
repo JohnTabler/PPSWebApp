@@ -451,21 +451,21 @@ function renderMove() {
     <div class="topbar-spacer"></div>
     <button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Move</button>
   </div>
-  <div style="padding:20px 32px 12px;flex-shrink:0;">
-    <div class="stats-row" style="grid-template-columns:repeat(5,1fr);gap:14px;">
-      <div class="stat-card blue"><div class="stat-label">Total Moves</div><div class="stat-value" style="font-size:24px;">${r.length}</div><div class="stat-sub">All records</div></div>
-      <div class="stat-card green"><div class="stat-label">On Track</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='On Track').length}</div><div class="stat-sub">Scheduled · OK</div></div>
-      <div class="stat-card warn"><div class="stat-label">No Status</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='—').length}</div><div class="stat-sub">Needs update</div></div>
-      <div class="stat-card red"><div class="stat-label">Issues</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Issue').length}</div><div class="stat-sub">Active issues</div></div>
-      <div class="stat-card muted"><div class="stat-label">Completed</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Complete').length}</div><div class="stat-sub">Done</div></div>
-    </div>
-  </div>
   <div class="toolbar" style="border-top:1px solid var(--border);">
     <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input placeholder="Search item, room, ID…"></div>
     <div class="filter-chip active">All</div><div class="filter-chip green">Complete</div><div class="filter-chip">On Track</div><div class="filter-chip">Issues</div>
     <span class="count-label" id="move-count-label"></span>
   </div>
   <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1200px;">
+    <caption style="caption-side:top;padding:20px 32px 16px;text-align:left;background:var(--bg);border-bottom:1px solid var(--border);">
+      <div class="stats-row" style="grid-template-columns:repeat(5,1fr);gap:14px;">
+        <div class="stat-card blue"><div class="stat-label">Total Moves</div><div class="stat-value" style="font-size:24px;">${r.length}</div><div class="stat-sub">All records</div></div>
+        <div class="stat-card green"><div class="stat-label">On Track</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='On Track').length}</div><div class="stat-sub">Scheduled · OK</div></div>
+        <div class="stat-card warn"><div class="stat-label">No Status</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='—').length}</div><div class="stat-sub">Needs update</div></div>
+        <div class="stat-card red"><div class="stat-label">Issues</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Issue').length}</div><div class="stat-sub">Active issues</div></div>
+        <div class="stat-card muted"><div class="stat-label">Completed</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Complete').length}</div><div class="stat-sub">Done</div></div>
+      </div>
+    </caption>
     <thead><tr><th>Move ID</th><th>Item Being Moved</th><th>User/Group</th><th>From Floor</th><th>From Room</th><th>→ To Floor</th><th>→ To Room</th><th>Room Type</th><th>Move Date</th><th>Mover</th><th>Status</th><th>Swing?</th><th>FF&amp;E ID</th><th>SS ID</th><th>POC</th><th>Notes</th><th></th></tr></thead>
     <tbody id="move-tbody"></tbody>
   </table></div>
