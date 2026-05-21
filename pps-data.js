@@ -378,7 +378,7 @@ const PPS_2 = {
 
   project: {
     name:         "SDCCD Mission Valley Campus",
-    subtitle:     "Admin Building Renovation",
+    subtitle:     "Building Renovation",
     moveDate:     "Nov 3, 2025",
     budget:       525000,
     plannedSpend: 472300,
