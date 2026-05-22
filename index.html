@@ -182,6 +182,8 @@ svg.donut { overflow:visible; }
     <a class="nav-item" href="#schedule"   data-route="schedule">  <span class="icon">📅</span> Schedule</a>
     <a class="nav-item" href="#issues"     data-route="issues">    <span class="icon">🚨</span> Issue Log</a>
     <a class="nav-item" href="#punchlist"  data-route="punchlist"> <span class="icon">✅</span> Punch List</a>
+    <a class="nav-item" href="#sspunchlist" data-route="sspunchlist"><span class="icon">📦</span> SS Punch List</a>
+    <a class="nav-item" href="#budget"      data-route="budget">     <span class="icon">💰</span> Budget &amp; Costs</a>
     <a class="nav-item" href="#reports"    data-route="reports">   <span class="icon">📊</span> Reports</a>
     <div style="flex:1;min-height:80px;"></div>
     <div class="nav-section">Admin</div>
@@ -225,7 +227,7 @@ function mergeFinancials(a, b) {
 }
 
 const PPS_ALL = {
-    project: {
+  project: {
     name: 'All Projects',
     subtitle: 'Combined View',
     moveDate: '—',
@@ -242,6 +244,9 @@ const PPS_ALL = {
   tenantImprovementItems: [...PPS.tenantImprovementItems, ...PPS_2.tenantImprovementItems],
   issues: [...PPS.issues, ...PPS_2.issues],
   punchListItems: [...PPS.punchListItems, ...PPS_2.punchListItems],
+  ssPunchListItems: [...(PPS.ssPunchListItems||[]), ...(PPS_2.ssPunchListItems||[])],
+  budgetItems: [...(PPS.budgetItems||[]), ...(PPS_2.budgetItems||[])],
+  budgetSummary: { ffebudget: PPS.project.budget + PPS_2.project.budget, contingencyPct:0.10, totalFFEBudget: PPS.project.budget + PPS_2.project.budget, plannedGrandTotal: PPS.project.plannedSpend + PPS_2.project.plannedSpend, actualGrandTotal: 0 },
 };
 
 // ── Active Project ────────────────────────────────────────────
@@ -406,35 +411,56 @@ function renderFFE() {
     <button class="btn btn-ghost">Import CSV</button><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button>
   </div>
   <div class="toolbar">
-    <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, ID, room, vendor…"></div>
+    <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, ID, room, vendor, user group…"></div>
     <div class="filter-chip active">All Types</div><div class="filter-chip">Furniture</div><div class="filter-chip">AV/Ed-Tech</div><div class="filter-chip">IT</div><div class="filter-chip">Other</div><div class="filter-chip">🚨 Issues Only</div>
     <span class="count-label" id="ffe-count-label"></span>
   </div>
-  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="ffe-table-wrap"><table style="min-width:1400px;" id="ffe-table">
-    <thead><tr><th>FF&amp;E ID</th><th>Item Name</th><th>Type</th><th>Vendor</th><th>Current Location</th><th>New Location</th><th>Room Type</th><th>Room No.</th><th>Proc. Method</th><th>Qty Needed</th><th>Qty Exist.</th><th>Qty New</th><th>Unit Price</th><th>Ext. Cost</th><th>Process Status</th><th>FF&amp;E Status</th><th>Condition</th><th>Priority</th><th>Swing?</th><th>Move ID</th><th></th></tr></thead>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="ffe-table-wrap"><table style="min-width:2000px;" id="ffe-table">
+    <thead><tr>
+      <th>FF&amp;E ID</th><th>Item Name</th><th>Type</th><th>Vendor</th><th>Vendor POC</th><th>User/Group</th>
+      <th>Cur. Building</th><th>Cur. Floor</th><th>Cur. Room Type</th><th>Cur. Room No.</th>
+      <th>New Building</th><th>New Floor</th><th>New Room Type</th><th>New Room No.</th>
+      <th>Proc. Method</th><th>Funding</th>
+      <th>Dimensions</th><th>Power</th><th>Data</th><th>Mounting</th>
+      <th>Qty Needed</th><th>Qty Exist.</th><th>Qty New</th><th>UOM</th><th>Unit Price</th><th>Ext. Cost</th>
+      <th>ETA</th><th>Process Status</th><th>FF&amp;E Status</th><th>Condition</th>
+      <th>Warranty</th><th>Priority</th><th>Swing?</th><th>Punch List?</th>
+      <th>Move ID</th><th>SS ID</th><th>Notes</th><th></th>
+    </tr></thead>
     <tbody id="ffe-tbody"></tbody>
   </table></div>
   <div class="pagination"><span class="page-info" id="ffe-info"></span></div>`;
 }
 function initFFE(c) {
   wireFilters(c, ()=>ACTIVE.ffeItems,
-    (i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.roomNo.toLowerCase().includes(q)||i.vendor.toLowerCase().includes(q),
+    (i,q)=>i.name.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||(i.curRoomNo||'').toLowerCase().includes(q)||(i.newRoomNo||'').toLowerCase().includes(q)||i.vendor.toLowerCase().includes(q)||(i.userGroup||'').toLowerCase().includes(q),
     ()=>{},
     (items,filter)=>{
-      const f = filter==='Issues Only'?items.filter(i=>i.ffeStatus==='Issue'):filter!=='All Types'&&filter!=='All'?items.filter(i=>i.type===filter):items;
+      const f = filter==='Issues Only'?items.filter(i=>i.ffeStatus==='Issue'):filter!=='All Types'&&filter!=='All'?items.filter(i=>i.type.toLowerCase().includes(filter.toLowerCase())):items;
       document.getElementById('ffe-count-badge').textContent=f.length+' Items';
       document.getElementById('ffe-count-label').textContent=f.length+' items';
       document.getElementById('ffe-info').textContent=f.length+' items';
-      document.getElementById('ffe-tbody').innerHTML=f.length===0?emptyRow(21,'No items match'):f.map(i=>`<tr>
-        <td class="id-cell">${i.id}</td><td style="max-width:260px;"><span class="item-name" style="cursor:pointer;color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.name}</span>${i.desc?`<div class="item-desc">${i.desc}</div>`:''}</td>
-        <td class="muted-cell">${i.type}</td><td>${i.vendor}</td><td>${i.locationCurrent}</td><td>${i.locationNew}</td>
-        <td class="muted-cell">${i.roomType}</td><td class="muted-cell">${i.roomNo}</td><td class="muted-cell">${i.procMethod}</td>
-        <td class="qty-cell">${i.qtyNeeded}</td><td class="qty-cell">${i.qtyExisting}</td><td class="qty-cell">${i.qtyNew}</td>
+      document.getElementById('ffe-tbody').innerHTML=f.length===0?emptyRow(38,'No items match'):f.map(i=>`<tr>
+        <td class="id-cell">${i.id}</td>
+        <td style="max-width:220px;"><span class="item-name" style="cursor:pointer;color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.name}</span>${i.desc&&i.desc!==i.name?`<div class="item-desc">${i.desc}</div>`:''}</td>
+        <td class="muted-cell" style="max-width:140px;white-space:normal;">${i.type}</td>
+        <td>${i.vendor||'—'}</td><td class="muted-cell">${i.vendorPOC||'—'}</td><td class="muted-cell">${i.userGroup||'—'}</td>
+        <td class="muted-cell">${i.curBuilding||'—'}</td><td class="muted-cell">${i.curFloor||'—'}</td><td class="muted-cell">${i.curRoomType||'—'}</td><td class="muted-cell">${i.curRoomNo||'—'}</td>
+        <td class="muted-cell">${i.newBuilding||'—'}</td><td class="muted-cell">${i.newFloor||'—'}</td><td class="muted-cell">${i.newRoomType||'—'}</td><td class="muted-cell">${i.newRoomNo||'—'}</td>
+        <td class="muted-cell">${i.procMethod||'—'}</td><td class="muted-cell">${i.fundingSource||'—'}</td>
+        <td class="muted-cell">${i.dimensions||'—'}</td><td class="muted-cell">${i.powerType||'—'}</td><td class="muted-cell">${i.dataType||'—'}</td><td class="muted-cell">${i.mountingType||'—'}</td>
+        <td class="qty-cell">${i.qtyNeeded}</td><td class="qty-cell">${i.qtyExisting}</td><td class="qty-cell">${i.qtyNew}</td><td class="muted-cell">${i.uom||'—'}</td>
         <td class="cost-cell">${fmt(i.unitPrice)}</td><td class="cost-cell">${fmt(i.extCost)}</td>
-        <td><span class="status ${processStatusClass[i.processStatus]||''}">${i.processStatus}</span></td>
-        <td><span class="ffe-status ${ffeStatusClass[i.ffeStatus]||''}">${i.ffeStatus}</span></td>
-        <td class="muted-cell">${i.condition}</td><td><span class="priority ${priorityClass[i.priority]||''}">${i.priority}</span></td>
-        <td class="muted-cell">${i.swing?'Yes':'No'}</td><td class="link-cell">${i.moveId}</td>
+        <td class="muted-cell" style="font-family:var(--mono);font-size:10px;">${i.eta||'—'}</td>
+        <td><span class="status ${processStatusClass[i.processStatus]||''}">${i.processStatus||'—'}</span></td>
+        <td><span class="ffe-status ${ffeStatusClass[i.ffeStatus]||''}">${i.ffeStatus||'—'}</span></td>
+        <td class="muted-cell">${i.condition||'—'}</td>
+        <td class="muted-cell">${i.warranty||'—'}</td>
+        <td><span class="priority ${priorityClass[i.priority]||''}">${i.priority||'—'}</span></td>
+        <td class="muted-cell">${i.swing?'Yes':'No'}</td>
+        <td class="muted-cell">${i.punchListItem?'Yes':'—'}</td>
+        <td class="link-cell">${i.moveId||'—'}</td><td class="link-cell">${i.ssId||'—'}</td>
+        <td class="note-cell">${i.notes||'—'}</td>
         <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
       </tr>`).join('');
     });
@@ -466,7 +492,7 @@ function renderMove() {
         <div class="stat-card muted"><div class="stat-label">Completed</div><div class="stat-value" style="font-size:24px;">${r.filter(m=>m.status==='Complete').length}</div><div class="stat-sub">Done</div></div>
       </div>
     </caption>
-    <thead><tr><th>Move ID</th><th>Item Being Moved</th><th>User/Group</th><th>From Floor</th><th>From Room</th><th>→ To Floor</th><th>→ To Room</th><th>Room Type</th><th>Move Date</th><th>Mover</th><th>Status</th><th>Swing?</th><th>FF&amp;E ID</th><th>SS ID</th><th>POC</th><th>Notes</th><th></th></tr></thead>
+    <thead><tr><th>Move ID</th><th>Item Being Moved</th><th>User/Group</th><th>From Building</th><th>From Floor</th><th>From Room</th><th>→ To Building</th><th>→ To Floor</th><th>→ To Room</th><th>Room Type</th><th>Sched. Move Date</th><th>Date Moved</th><th>No. Boxes</th><th>Box Tags</th><th>Mover</th><th>Mover POC</th><th>Status</th><th>Move Cost</th><th>Swing?</th><th>FF&amp;E ID</th><th>SS ID</th><th>POC</th><th>Notes</th><th></th></tr></thead>
     <tbody id="move-tbody"></tbody>
   </table></div>
   <div class="pagination"><span class="badge badge-blue" style="margin-right:8px;">Mover: ${ACTIVE.project.mover} · POC: ${ACTIVE.project.moverPOC}</span><span class="page-info" id="move-info"></span></div>`;
@@ -529,7 +555,7 @@ function renderSwing() {
   return `
   <div class="topbar"><span class="page-title">Swing Space</span><span class="badge badge-blue" id="swing-count-badge">${ACTIVE.swingSpaceItems.length} Items</span><span class="badge badge-warn">Move Date: ${ACTIVE.project.moveDate}</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, location, ID…"></div><div class="filter-chip active">All</div><div class="filter-chip">Active</div><div class="filter-chip">Vacated</div><div class="filter-chip">Pending</div><div class="filter-chip">🚨 Issues</div><span class="count-label" id="swing-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="swing-table-wrap"><table style="min-width:1100px;" id="swing-table"><thead><tr><th>SS ID</th><th>Item Name</th><th>Location</th><th>Room No.</th><th>Room Type</th><th>Assigned To</th><th>From Date</th><th>To Date</th><th>FF&amp;E ID</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="swing-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="swing-table-wrap"><table style="min-width:1100px;" id="swing-table"><thead><tr><th>SS ID</th><th>User/Group</th><th>Phase</th><th>FF&amp;E Needs</th><th>Tech Needs</th><th>Facility Needs</th><th>No. Boxes</th><th>Cur. Floor</th><th>Cur. Room</th><th>Move to Swing</th><th>Moved to Swing</th><th>Swing Bldg</th><th>Swing Floor</th><th>Swing Room Type</th><th>Swing Room No.</th><th>Move to New</th><th>Moved to New</th><th>New Floor</th><th>New Room</th><th>Status</th><th>Swing Cost</th><th>PL Item?</th><th>FF&amp;E ID</th><th>Move ID</th><th>POC</th><th>Notes</th><th></th></tr></thead><tbody id="swing-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="swing-info"></span></div>`;
 }
 function initSwing(c) {
@@ -539,7 +565,27 @@ function initSwing(c) {
       const f=filter==='Issues'?items.filter(i=>i.status==='Issue'):filter!=='All'?items.filter(i=>i.status===filter):items;
       document.getElementById('swing-count-badge').textContent=f.length+' Items';
       document.getElementById('swing-count-label').textContent=f.length+' items';
-      document.getElementById('swing-tbody').innerHTML=f.length===0?emptyRow(12,'No items match — add records to ACTIVE.swingSpaceItems in pps-data.js'):f.map(i=>`<tr><td class="id-cell">${i.id}</td><td style="max-width:260px;"><span class="item-name" style="cursor:pointer;color:var(--accent);" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.ffeNeeds||'—'}</span>${i.phase?`<div class="item-desc">${i.phase}</div>`:''}</td><td>${[i.swingBldg,i.swingFloor,i.swingRoom].filter(Boolean).join(' · ')}</td><td class="muted-cell">${i.swingRoom||'—'}</td><td class="muted-cell">${i.swingRoomType||'—'}</td><td class="muted-cell">${i.userGroup||'—'}</td><td style="font-family:var(--mono);font-size:10px;">${i.moveToSwingDate?i.moveToSwingDate.split(' ')[0]:'—'}</td><td style="font-family:var(--mono);font-size:10px;">${i.moveToNewDate?i.moveToNewDate.split(' ')[0]:'—'}</td><td class="link-cell">${i.ffeId||'—'}</td><td><span class="status ${sc[i.status]||''}">${i.status}</span></td><td class="muted-cell" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;">${i.notes||'—'}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td></tr>`).join('');
+      document.getElementById('swing-tbody').innerHTML=f.length===0?emptyRow(27,'No items match — add records to ACTIVE.swingSpaceItems in pps-data.js'):f.map(i=>`<tr>
+        <td class="id-cell">${i.id}</td><td class="muted-cell">${i.userGroup||'—'}</td>
+        <td><span class="status ${sc[i.phase]||sc[i.status]||''}">${i.phase||'—'}</span></td>
+        <td style="font-weight:600;">${i.ffeNeeds||'—'}</td><td class="muted-cell">${i.techNeeds||'—'}</td><td class="muted-cell">${i.facilityNeeds||'—'}</td>
+        <td class="qty-cell">${i.noBoxes||'—'}</td>
+        <td class="muted-cell">${i.curFloor||'—'}</td><td class="muted-cell">${i.curRoomNo||'—'}</td>
+        <td style="font-family:var(--mono);font-size:10px;">${i.scheduledMoveToSwing||'—'}</td>
+        <td style="font-family:var(--mono);font-size:10px;color:var(--muted);">${i.dateMoveToSwing||'—'}</td>
+        <td class="muted-cell">${i.swingBuilding||'—'}</td><td class="muted-cell">${i.swingFloor||'—'}</td>
+        <td class="muted-cell">${i.swingRoomType||'—'}</td><td class="muted-cell">${i.swingRoomNo||'—'}</td>
+        <td style="font-family:var(--mono);font-size:10px;">${i.scheduledMoveToNew||'—'}</td>
+        <td style="font-family:var(--mono);font-size:10px;color:var(--muted);">${i.dateMoveToNew||'—'}</td>
+        <td class="muted-cell">${i.newFloor||'—'}</td><td class="muted-cell">${i.newRoomNo||'—'}</td>
+        <td><span class="status ${sc[i.status]||''}">${i.status}</span></td>
+        <td class="cost-cell">${i.swingCost>0?fmt(i.swingCost):'—'}</td>
+        <td class="muted-cell">${i.punchListItem?'Yes':'—'}</td>
+        <td class="link-cell">${i.ffeId||'—'}</td><td class="link-cell">${i.moveId||'—'}</td>
+        <td class="muted-cell">${i.poc||'—'}</td>
+        <td class="note-cell">${i.notes||'—'}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+      </tr>`).join('');
     });
 }
 
@@ -548,7 +594,7 @@ function renderTI() {
   return `
   <div class="topbar"><span class="page-title">Tenant Improvement</span><span class="badge badge-blue" id="ti-count-badge">${ACTIVE.tenantImprovementItems.length} Items</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, scope, contractor…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip">Complete</div><div class="filter-chip">🚨 Issues</div><span class="count-label" id="ti-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="ti-table-wrap"><table style="min-width:1200px;" id="ti-table"><thead><tr><th>TI ID</th><th>Item Name</th><th>Scope</th><th>Location</th><th>Room No.</th><th>Contractor</th><th>Planned Cost</th><th>Actual Cost</th><th>Variance</th><th>Start Date</th><th>End Date</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="ti-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="ti-table-wrap"><table style="min-width:1200px;" id="ti-table"><thead><tr><th>TI ID</th><th>Facility/Space Needs</th><th>Trade</th><th>Building</th><th>Floor</th><th>Room Type</th><th>Room No.</th><th>Status</th><th>Action Owner</th><th>Priority</th><th>Vendor</th><th>Vendor POC</th><th>Client POC</th><th>Quoted Cost</th><th>Notes</th><th></th></tr></thead><tbody id="ti-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="ti-info"></span></div>`;
 }
 function initTI(c) {
@@ -558,7 +604,21 @@ function initTI(c) {
       const f=filter==='Issues'?items.filter(i=>i.status==='Issue'):filter!=='All'?items.filter(i=>i.status===filter):items;
       document.getElementById('ti-count-badge').textContent=f.length+' Items';
       document.getElementById('ti-count-label').textContent=f.length+' items';
-      document.getElementById('ti-tbody').innerHTML=f.length===0?emptyRow(14,'No items match — add records to ACTIVE.tenantImprovementItems in pps-data.js'):f.map(i=>{const v=i.plannedCost-i.actualCost;return`<tr><td class="id-cell">${i.id}</td><td style="max-width:260px;"><span class="item-name" style="cursor:pointer;color:var(--accent);" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.name}</span>${i.desc?`<div class="item-desc">${i.desc}</div>`:''}</td><td class="muted-cell">${i.scope}</td><td>${i.location}</td><td class="muted-cell">${i.roomNo}</td><td class="muted-cell">${i.contractor}</td><td class="cost-cell">${fmt(i.plannedCost)}</td><td class="cost-cell">${fmt(i.actualCost)}</td><td class="cost-cell" style="${v>0?'color:var(--accent2)':v<0?'color:var(--danger)':''}">${v!==0?fmt(Math.abs(v)):'—'}</td><td style="font-family:var(--mono);font-size:10px;">${i.startDate}</td><td style="font-family:var(--mono);font-size:10px;">${i.endDate}</td><td><span class="status ${tc[i.status]||''}">${i.status}</span></td><td class="muted-cell" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;">${i.notes||'—'}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td></tr>`}).join('');
+      document.getElementById('ti-tbody').innerHTML=f.length===0?emptyRow(16,'No items match — add records to ACTIVE.tenantImprovementItems in pps-data.js'):f.map(i=>`<tr>
+        <td class="id-cell">${i.id}</td>
+        <td style="max-width:240px;white-space:normal;"><span class="item-name" style="cursor:pointer;color:var(--accent);" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.facilityNeeds||i.name||'—'}</span></td>
+        <td class="muted-cell">${i.trade||'—'}</td>
+        <td>${i.building||i.location||'—'}</td><td class="muted-cell">${i.floor||'—'}</td>
+        <td class="muted-cell">${i.roomType||'—'}</td><td class="muted-cell">${i.roomNo||'—'}</td>
+        <td><span class="status ${tc[i.status]||''}">${i.status}</span></td>
+        <td class="muted-cell">${i.actionOwner||'—'}</td>
+        <td><span class="priority ${priorityClass[i.priority]||''}">${i.priority||'—'}</span></td>
+        <td class="muted-cell">${i.vendor||i.contractor||'—'}</td><td class="muted-cell">${i.vendorPOC||'—'}</td>
+        <td class="muted-cell">${i.clientPOC||'—'}</td>
+        <td class="cost-cell">${fmt(i.quotedCost||i.plannedCost||0)}</td>
+        <td class="note-cell">${i.notes||'—'}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
+      </tr>`).join('');
     });
 }
 
@@ -567,20 +627,41 @@ function renderIssues() {
   return `
   <div class="topbar"><span class="page-title">Issue Log</span><span class="badge badge-red" id="issue-open-badge">0 Open</span><span class="badge badge-blue" id="issue-total-badge">0 Total</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Log Issue</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search issues, linked items…"></div><div class="filter-chip active">All</div><div class="filter-chip" style="color:var(--danger);border-color:var(--danger);">🔴 High</div><div class="filter-chip">Open</div><div class="filter-chip">In Progress</div><div class="filter-chip">Resolved</div><span class="count-label" id="issue-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1100px;"><thead><tr><th>Issue ID</th><th>Title</th><th>Description</th><th>Linked To</th><th>Type</th><th>Severity</th><th>Status</th><th>Opened</th><th>Assigned To</th><th>Resolved</th><th>Notes</th><th></th></tr></thead><tbody id="issue-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1100px;"><thead><tr><th>Issue ID</th><th>Item Name</th><th>Product Type</th><th>Issue Type</th><th>Status</th><th>Items w/ Issue</th><th>Items Resolved</th><th>Description</th><th>Resolution</th><th>Vendor</th><th>Vendor POC</th><th>Building</th><th>Room Type</th><th>Room No.</th><th>Proc. Method</th><th>Warranty</th><th>Priority</th><th>FF&amp;E ID</th><th>Move ID</th><th>SS ID</th><th>Notes</th><th></th></tr></thead><tbody id="issue-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="issue-info"></span></div>`;
 }
 function initIssues(c) {
   const isc={'Open':'ms-issue','In Progress':'s-review','Resolved':'s-instock','Closed':'s-done'};
   const isev={'High':'severity-high','Med':'severity-med','Low':'severity-low'};
-  wireFilters(c,()=>ACTIVE.issues,(i,q)=>i.title.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.linkedId.toLowerCase().includes(q)||i.assignedTo.toLowerCase().includes(q),()=>{},
+  wireFilters(c,()=>ACTIVE.issues,(i,q)=>(i.itemName||i.title||'').toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||(i.ffeId||i.linkedId||'').toLowerCase().includes(q)||(i.vendor||'').toLowerCase().includes(q),()=>{},
     (items,filter)=>{
-      const f=filter==='High'||filter==='🔴 High'?items.filter(i=>i.severity==='High'):filter==='Open'?items.filter(i=>i.status==='Open'):filter==='In Progress'?items.filter(i=>i.status==='In Progress'):filter==='Resolved'?items.filter(i=>i.status==='Resolved'):items;
-      const open=f.filter(i=>i.status==='Open'||i.status==='In Progress').length;
+      const f=filter==='Open'?items.filter(i=>i.status==='Active'||i.status==='Open'):filter==='Resolved'?items.filter(i=>i.status==='Resolved'):items;
+      const open=f.filter(i=>i.status==='Active'||i.status==='Open').length;
       document.getElementById('issue-open-badge').textContent=open+' Open';
       document.getElementById('issue-total-badge').textContent=f.length+' Total';
       document.getElementById('issue-count-label').textContent=f.length+' issues';
-      document.getElementById('issue-tbody').innerHTML=f.length===0?emptyRow(12,'No issues logged — add records to ACTIVE.issues in pps-data.js'):f.map(i=>`<tr><td class="id-cell">${i.id}</td><td style="font-weight:600;font-size:12px;max-width:180px;white-space:normal;line-height:1.4;">${i.title}</td><td class="muted-cell" style="max-width:200px;white-space:normal;line-height:1.4;font-size:10px;">${i.description}</td><td class="link-cell">${i.linkedId}</td><td class="muted-cell">${i.linkedType}</td><td><span class="${isev[i.severity]||''}">${i.severity}</span></td><td><span class="status ${isc[i.status]||''}">${i.status}</span></td><td style="font-family:var(--mono);font-size:10px;">${i.openedDate}</td><td class="muted-cell">${i.assignedTo}</td><td style="font-family:var(--mono);font-size:10px;color:var(--muted);">${i.resolvedDate||'—'}</td><td class="muted-cell" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;">${i.notes||'—'}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">Resolve</button></div></td></tr>`).join('');
+      document.getElementById('issue-tbody').innerHTML=f.length===0?emptyRow(22,'No issues logged — add records to ACTIVE.issues in pps-data.js'):f.map(i=>`<tr>
+        <td class="id-cell">${i.id}</td>
+        <td style="font-weight:600;font-size:12px;max-width:180px;white-space:normal;line-height:1.4;">${i.itemName||i.title||'—'}</td>
+        <td class="muted-cell" style="max-width:140px;white-space:normal;font-size:10px;">${i.productType||i.linkedType||'—'}</td>
+        <td class="muted-cell">${i.issueType||'—'}</td>
+        <td><span class="status ${isc[i.status]||''}">${i.status}</span></td>
+        <td class="qty-cell">${i.noItemsIssue??'—'}</td>
+        <td class="qty-cell">${i.noItemsResolved??'—'}</td>
+        <td class="muted-cell" style="max-width:200px;white-space:normal;line-height:1.4;font-size:10px;">${i.description||'—'}</td>
+        <td class="muted-cell" style="max-width:180px;white-space:normal;font-size:10px;">${i.resolution||'—'}</td>
+        <td class="muted-cell">${i.vendor||'—'}</td><td class="muted-cell">${i.vendorPOC||'—'}</td>
+        <td class="muted-cell">${i.building||'—'}</td>
+        <td class="muted-cell">${i.roomType||'—'}</td><td class="muted-cell">${i.roomNo||'—'}</td>
+        <td class="muted-cell">${i.procMethod||'—'}</td>
+        <td class="muted-cell">${i.warranty||'—'}</td>
+        <td><span class="priority ${priorityClass[i.priority]||''}">${i.priority||'—'}</span></td>
+        <td class="link-cell">${i.ffeId||i.linkedId||'—'}</td>
+        <td class="link-cell">${i.moveId||'—'}</td>
+        <td class="link-cell">${i.ssId||'—'}</td>
+        <td class="note-cell">${i.notes||'—'}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">Resolve</button></div></td>
+      </tr>`).join('');
     });
 }
 
@@ -589,12 +670,12 @@ function renderPunchList() {
   return `
   <div class="topbar"><span class="page-title">Punch List</span><span class="badge badge-blue" id="pl-total-badge">0 Tasks</span><span class="badge badge-green" id="pl-complete-badge">0 Complete</span><span class="badge badge-warn" id="pl-pending-badge">0 Pending</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Task</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search tasks, linked items…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip green">Complete</div><div class="filter-chip">Blocked</div><span class="count-label" id="pl-count-label"></span></div>
-  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1050px;"><thead><tr><th>PL ID</th><th>Task</th><th>Description</th><th>Linked To</th><th>Type</th><th>Due Date</th><th>Assigned To</th><th>Progress</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="pl-tbody"></tbody></table></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1050px;"><thead><tr><th>PL ID</th><th>Item Name</th><th>Description</th><th>Product Type</th><th>Remaining Tasks & Corrections</th><th>Status</th><th>Vendor</th><th>Vendor POC</th><th>Building</th><th>Floor</th><th>Room Type</th><th>Room No.</th><th>Proc. Method</th><th>Action Owner</th><th>Priority</th><th>Notes</th><th></th></tr></thead><tbody id="pl-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="pl-info"></span></div>`;
 }
 function initPunchList(c) {
   const psc={'Not Started':'s-quoted','In Progress':'s-ordered','Complete':'s-instock','Blocked':'ms-issue'};
-  wireFilters(c,()=>ACTIVE.punchListItems,(i,q)=>i.task.toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||i.linkedId.toLowerCase().includes(q)||i.assignedTo.toLowerCase().includes(q),()=>{},
+  wireFilters(c,()=>ACTIVE.punchListItems,(i,q)=>(i.itemName||i.task||'').toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||(i.ffeId||i.linkedId||'').toLowerCase().includes(q)||(i.actionOwner||i.assignedTo||'').toLowerCase().includes(q),()=>{},
     (items,filter)=>{
       const f=filter!=='All'?items.filter(i=>i.status===filter):items;
       const done=f.filter(i=>i.status==='Complete').length;
@@ -602,7 +683,22 @@ function initPunchList(c) {
       document.getElementById('pl-complete-badge').textContent=done+' Complete';
       document.getElementById('pl-pending-badge').textContent=(f.length-done)+' Pending';
       document.getElementById('pl-count-label').textContent=f.length+' tasks';
-      document.getElementById('pl-tbody').innerHTML=f.length===0?emptyRow(11,'No tasks yet — add records to ACTIVE.punchListItems in pps-data.js'):f.map(i=>`<tr><td class="id-cell">${i.id}</td><td style="font-weight:600;font-size:12px;max-width:180px;white-space:normal;line-height:1.4;">${i.task}</td><td class="muted-cell" style="max-width:180px;white-space:normal;font-size:10px;line-height:1.4;">${i.description}</td><td class="link-cell">${i.linkedId}</td><td class="muted-cell">${i.linkedType}</td><td style="font-family:var(--mono);font-size:10px;">${i.dueDate}</td><td class="muted-cell">${i.assignedTo}</td><td><div class="pct-inline"><div class="progress-bg" style="width:60px;"><div class="progress-fill" style="width:${i.pctComplete}%"></div></div><span class="pct-text">${i.pctComplete}%</span></div></td><td><span class="status ${psc[i.status]||''}">${i.status}</span></td><td class="muted-cell" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;">${i.notes||'—'}</td><td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">Complete</button></div></td></tr>`).join('');
+      document.getElementById('pl-tbody').innerHTML=f.length===0?emptyRow(17,'No tasks yet — add records to ACTIVE.punchListItems in pps-data.js'):f.map(i=>`<tr>
+        <td class="id-cell">${i.id}</td>
+        <td style="font-weight:600;font-size:12px;max-width:180px;white-space:normal;line-height:1.4;">${i.itemName||i.task||'—'}</td>
+        <td class="muted-cell" style="max-width:160px;white-space:normal;font-size:10px;line-height:1.4;">${i.itemDesc||i.description||'—'}</td>
+        <td class="muted-cell" style="max-width:120px;white-space:normal;font-size:10px;">${i.productType||i.linkedType||'—'}</td>
+        <td style="max-width:240px;white-space:normal;font-size:10px;line-height:1.4;">${i.remainingTasks||i.task||'—'}</td>
+        <td><span class="status ${psc[i.status]||''}">${i.status}</span></td>
+        <td class="muted-cell">${i.vendor||'—'}</td><td class="muted-cell">${i.vendorPOC||'—'}</td>
+        <td class="muted-cell">${i.building||'—'}</td><td class="muted-cell">${i.floor||'—'}</td>
+        <td class="muted-cell">${i.roomType||'—'}</td><td class="muted-cell">${i.roomNo||'—'}</td>
+        <td class="muted-cell">${i.procMethod||'—'}</td>
+        <td class="muted-cell">${i.actionOwner||i.assignedTo||'—'}</td>
+        <td><span class="priority ${priorityClass[i.priority]||''}">${i.priority||'—'}</span></td>
+        <td class="note-cell">${i.notes||'—'}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">Complete</button></div></td>
+      </tr>`).join('');
     });
 }
 
@@ -689,18 +785,103 @@ function initUsers(c) {
 // =============================================================
 // ROUTER
 // =============================================================
+// ── SS PUNCH LIST ─────────────────────────────────────────────
+function renderSSPunchList() {
+  return `
+  <div class="topbar"><span class="page-title">Swing Space Punch List</span><span class="badge badge-blue" id="sspl-total-badge">0 Tasks</span><span class="badge badge-green" id="sspl-complete-badge">0 Complete</span><span class="badge badge-warn" id="sspl-pending-badge">0 Pending</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Task</button></div>
+  <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search tasks, items, rooms…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip green">Complete</div><div class="filter-chip">Blocked</div><span class="count-label" id="sspl-count-label"></span></div>
+  <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1100px;"><thead><tr><th>SSPL ID</th><th>User/Group</th><th>FF&amp;E Needs</th><th>Tech Needs</th><th>Facility Needs</th><th>Swing Building</th><th>Swing Floor</th><th>Swing Room Type</th><th>Swing Room No.</th><th>Remaining Tasks</th><th>Status</th><th>Action Owner</th><th>Priority</th><th>Notes</th><th></th></tr></thead><tbody id="sspl-tbody"></tbody></table></div>
+  <div class="pagination"><span class="page-info" id="sspl-info"></span></div>`;
+}
+function initSSPunchList(c) {
+  const psc={'Not Started':'s-quoted','In Progress':'s-ordered','Complete':'s-instock','Blocked':'ms-issue'};
+  wireFilters(c,()=>ACTIVE.ssPunchListItems||[],(i,q)=>(i.ffeNeeds||'').toLowerCase().includes(q)||i.id.toLowerCase().includes(q)||(i.swingRoomNo||'').toLowerCase().includes(q)||(i.actionOwner||'').toLowerCase().includes(q),()=>{},
+    (items,filter)=>{
+      const f=filter!=='All'?items.filter(i=>i.status===filter):items;
+      const done=f.filter(i=>i.status==='Complete').length;
+      document.getElementById('sspl-total-badge').textContent=f.length+' Tasks';
+      document.getElementById('sspl-complete-badge').textContent=done+' Complete';
+      document.getElementById('sspl-pending-badge').textContent=(f.length-done)+' Pending';
+      document.getElementById('sspl-count-label').textContent=f.length+' tasks';
+      document.getElementById('sspl-tbody').innerHTML=f.length===0?emptyRow(15,'No swing space punch list tasks'):f.map(i=>`<tr>
+        <td class="id-cell">${i.id}</td><td class="muted-cell">${i.userGroup||'—'}</td>
+        <td style="font-weight:600;">${i.ffeNeeds||'—'}</td><td class="muted-cell">${i.techNeeds||'—'}</td><td class="muted-cell">${i.facilityNeeds||'—'}</td>
+        <td class="muted-cell">${i.swingBuilding||'—'}</td><td class="muted-cell">${i.swingFloor||'—'}</td>
+        <td class="muted-cell">${i.swingRoomType||'—'}</td><td class="muted-cell">${i.swingRoomNo||'—'}</td>
+        <td style="max-width:240px;white-space:normal;font-size:10px;line-height:1.4;">${i.remainingTasks||'—'}</td>
+        <td><span class="status ${psc[i.status]||''}">${i.status}</span></td>
+        <td class="muted-cell">${i.actionOwner||'—'}</td>
+        <td><span class="priority ${priorityClass[i.priority]||''}">${i.priority||'—'}</span></td>
+        <td class="note-cell">${i.notes||'—'}</td>
+        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">Complete</button></div></td>
+      </tr>`).join('');
+    });
+}
+
+// ── BUDGET & COSTS ────────────────────────────────────────────
+function renderBudget() {
+  const items = ACTIVE.budgetItems || [];
+  const summary = ACTIVE.budgetSummary || {};
+  const totalQuote  = items.reduce((s,r)=>s+(r.quoteAmount||0),0);
+  const totalActual = items.reduce((s,r)=>s+(r.actualSpend||0),0);
+  const variance = totalQuote - totalActual;
+  return `
+  <div class="topbar"><span class="page-title">Budget &amp; Costs</span><span class="badge badge-blue" id="budget-count-badge">${items.length} Line Items</span><span class="badge badge-green">Budget: ${fmt(summary.ffebudget||0)}</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
+  <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by ID, vendor, item…"></div><div class="filter-chip active">All</div><div class="filter-chip">FF&amp;E</div><div class="filter-chip">TI</div><div class="filter-chip">Move</div><span class="count-label" id="budget-count-label"></span></div>
+  <div class="content" style="flex:1;overflow:auto;">
+    <div class="stats-row" style="grid-template-columns:repeat(5,1fr);gap:14px;">
+      <div class="stat-card blue"><div class="stat-label">FF&amp;E Budget</div><div class="stat-value" style="font-size:22px;">${fmt(summary.ffebudget||0)}</div><div class="stat-sub">Approved</div></div>
+      <div class="stat-card warn"><div class="stat-label">Contingency (10%)</div><div class="stat-value" style="font-size:22px;">${fmt(Math.round((summary.ffebudget||0)*0.1))}</div><div class="stat-sub">Reserved</div></div>
+      <div class="stat-card blue"><div class="stat-label">Total FF&amp;E Budget</div><div class="stat-value" style="font-size:22px;">${fmt(summary.totalFFEBudget||0)}</div><div class="stat-sub">Incl. contingency</div></div>
+      <div class="stat-card warn"><div class="stat-label">Planned Grand Total</div><div class="stat-value" style="font-size:22px;">${fmt(summary.plannedGrandTotal||0)}</div><div class="stat-sub">FF&amp;E lists</div></div>
+      <div class="stat-card green"><div class="stat-label">Actual Grand Total</div><div class="stat-value" style="font-size:22px;">${fmt(summary.actualGrandTotal||0)}</div><div class="stat-sub">Spent to date</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Line Item Detail</span>
+        <span class="badge badge-blue">${items.length} items</span>
+      </div>
+      <div class="table-wrap" style="max-height:420px;overflow:auto;">
+        <table><thead><tr><th>ID</th><th>Vendor</th><th>Cost Area</th><th>Item</th><th>Quote Amount</th><th>Actual Spend</th><th>Variance</th><th>Comments</th><th></th></tr></thead>
+        <tbody id="budget-tbody">
+          ${items.length===0?emptyRow(9,'No budget items — add records to ACTIVE.budgetItems in pps-data.js'):items.map(i=>{const v=i.quoteAmount-(i.actualSpend||0);return`<tr>
+            <td class="id-cell">${i.id}</td><td class="muted-cell">${i.vendor||'—'}</td>
+            <td class="muted-cell" style="max-width:160px;white-space:normal;font-size:10px;">${i.costArea||'—'}</td>
+            <td style="font-weight:600;">${i.item||'—'}</td>
+            <td class="cost-cell">${fmt(i.quoteAmount||0)}</td>
+            <td class="cost-cell">${fmt(i.actualSpend||0)}</td>
+            <td class="cost-cell" style="${v>0?'color:var(--accent2)':v<0?'color:var(--danger)':''}">${v!==0?fmt(Math.abs(v)):'—'}</td>
+            <td class="note-cell">${i.comments||'—'}</td>
+            <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
+          </tr>`;}).join('')}
+          <tr style="background:var(--surface2);border-top:2px solid var(--border);">
+            <td colspan="4" style="font-weight:700;font-size:12px;padding:10px 14px;">Totals</td>
+            <td class="cost-cell" style="font-weight:700;">${fmt(totalQuote)}</td>
+            <td class="cost-cell" style="font-weight:700;">${fmt(totalActual)}</td>
+            <td class="cost-cell" style="font-weight:700;${variance>0?'color:var(--accent2)':variance<0?'color:var(--danger)':''}">${variance!==0?fmt(Math.abs(variance)):'—'}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
 const ROUTES = {
-  dashboard: { render:renderDashboard,  init:null           },
-  ffe:       { render:renderFFE,        init:initFFE        },
-  move:      { render:renderMove,       init:initMove       },
-  schedule:  { render:renderSchedule,   init:null           },
-  swing:     { render:renderSwing,      init:initSwing      },
-  ti:        { render:renderTI,         init:initTI         },
-  issues:    { render:renderIssues,     init:initIssues     },
-  punchlist: { render:renderPunchList,  init:initPunchList  },
-  reports:   { render:renderReports,    init:null           },
-  settings:  { render:renderSettings,   init:initSettings   },
-  users:     { render:renderUsers,      init:initUsers      },
+  dashboard:   { render:renderDashboard,    init:null              },
+  ffe:         { render:renderFFE,          init:initFFE           },
+  move:        { render:renderMove,         init:initMove          },
+  schedule:    { render:renderSchedule,     init:null              },
+  swing:       { render:renderSwing,        init:initSwing         },
+  ti:          { render:renderTI,           init:initTI            },
+  issues:      { render:renderIssues,       init:initIssues        },
+  punchlist:   { render:renderPunchList,    init:initPunchList     },
+  sspunchlist: { render:renderSSPunchList,  init:initSSPunchList   },
+  budget:      { render:renderBudget,       init:null              },
+  reports:     { render:renderReports,      init:null              },
+  settings:    { render:renderSettings,     init:initSettings      },
+  users:       { render:renderUsers,        init:initUsers         },
 };
 
 function navigate(routeKey) {

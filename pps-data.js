@@ -1,12 +1,22 @@
 // =============================================================
 // PPS DATA — Central Data Layer
-// Plan Perfect Systems · v2.0
+// Plan Perfect Systems · v2.1
 //
 // HOW TO UPDATE DATA:
 // - Edit this file only. All pages read from here automatically.
-// - project:    project metadata shown in sidebar + topbar
-// - user:       logged-in user shown in sidebar
-// - ffeItems:   all FF&E records (drives 02_ffe_list.html)
+// - project:                 project metadata shown in sidebar + topbar
+// - user:                    logged-in user shown in sidebar
+// - ffeItems:                all FF&E records — expanded schema v2
+// - moveRecords:             move management records — expanded schema v2
+// - swingSpaceItems:         swing space records — expanded schema v2
+// - tenantImprovementItems:  TI records — expanded schema v2
+// - issues:                  issue log records — expanded schema v2
+// - punchListItems:          FF&E punch list items
+// - sssPunchListItems:       swing space punch list items (separate)
+// - budgetItems:             budget & costs line items
+// - scheduleActivities:      schedule / gantt data
+// - financials:              summary financial data for dashboard
+// - users:                   user accounts
 // =============================================================
 
 const PPS = {
@@ -24,348 +34,198 @@ const PPS = {
     moverPOC:     "Steve"
   },
 
-  
   // ── LOGGED-IN USER ─────────────────────────────────────────
   user: {
     name:    "John Tabler",
     initials:"JT",
-    role:    "Project Dad"
+    role:    "Work Dad"
   },
 
   // ── FF&E ITEMS ─────────────────────────────────────────────
-  // Fields:
-  //   id, name, desc, type, vendor, locationCurrent, locationNew,
-  //   roomType, roomNo, procMethod, qtyNeeded, qtyExisting, qtyNew,
-  //   unitPrice, extCost, processStatus, ffeStatus, condition,
-  //   priority, swing, moveId
+  // Schema v2 — full field set matching Excel source
   //
-  // processStatus values: "In Stock" | "Ordered" | "Review" | "Quoted" | "Delivered"
-  // ffeStatus values:     "On Track" | "Issue" | "N/A"
-  // priority values:      "High" | "Med" | "Low"
+  // processStatus:  "In Stock" | "Ordered" | "Review" | "Quoted" | "Delivered"
+  // ffeStatus:      "On Track" | "Issue" | "N/A"
+  // condition:      "Used (Existing Item)" | "New" | "Remanufactured"
+  // priority:       "High" | "Medium" | "Low"
+  // warranty:       "Yes" | "No" | "TBD"
+  // procMethod:     "OFOI" | "OFCI" | "New Purchase" | "Remanufactured" | "Donated" | "Lease"
 
   ffeItems: [
-    {
-      id: "FFE-1",
-      name: "Credenza",
-      desc: "",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 5th",
-      locationNew: "1450 Frazee · 5th",
-      roomType: "Storage",
-      roomNo: "568",
-      procMethod: "OFOI",
-      qtyNeeded: 1, qtyExisting: 1, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-1"
-    },
-    {
-      id: "FFE-2",
-      name: "Guest Chair",
-      desc: "",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 2nd",
-      locationNew: "1450 Frazee · 2nd",
-      roomType: "Other",
-      roomNo: "Open Office",
-      procMethod: "OFOI",
-      qtyNeeded: 3, qtyExisting: 3, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-2"
-    },
-    {
-      id: "FFE-9",
-      name: "24\" Dell Monitors",
-      desc: "Server Room equipment",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 5th",
-      locationNew: "1450 Frazee · 5th",
-      roomType: "Server Room",
-      roomNo: "553",
-      procMethod: "OFOI",
-      qtyNeeded: 7, qtyExisting: 7, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-9"
-    },
-    {
-      id: "FFE-11",
-      name: "Conference Chair",
-      desc: "",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 5th",
-      locationNew: "1450 Frazee · 5th",
-      roomType: "Conf. Room",
-      roomNo: "566",
-      procMethod: "OFOI",
-      qtyNeeded: 16, qtyExisting: 16, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-11"
-    },
-    {
-      id: "FFE-12",
-      name: "Conference Table",
-      desc: "189W × 47.5D",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 2nd",
-      locationNew: "1450 Frazee · 5th",
-      roomType: "Conf. Room",
-      roomNo: "Conf. Rm 501",
-      procMethod: "OFOI",
-      qtyNeeded: 1, qtyExisting: 1, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-12"
-    },
-    {
-      id: "FFE-13",
-      name: "Newline Touch Screen TV",
-      desc: "97\" Diagonal · Wall mount · 120V",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 2nd",
-      locationNew: "1450 Frazee · 5th",
-      roomType: "Conf. Room",
-      roomNo: "Conf. Rm 501",
-      procMethod: "OFOI",
-      qtyNeeded: 1, qtyExisting: 1, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-13"
-    },
-    {
-      id: "FFE-18",
-      name: "Round Table",
-      desc: "41.5\" Diameter",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 2nd",
-      locationNew: "1450 Frazee · 5th",
-      roomType: "Break Room",
-      roomNo: "559",
-      procMethod: "OFOI",
-      qtyNeeded: 3, qtyExisting: 3, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-18"
-    },
-    {
-      id: "FFE-20",
-      name: "Barstools",
-      desc: "",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 2nd",
-      locationNew: "1450 Frazee · 2nd",
-      roomType: "Break Room",
-      roomNo: "Break Room",
-      procMethod: "OFOI",
-      qtyNeeded: 6, qtyExisting: 6, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-20"
-    },
-    {
-      id: "FFE-21",
-      name: "Refrigerator",
-      desc: "120V power required",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 2nd",
-      locationNew: "1450 Frazee · 5th",
-      roomType: "Break Room",
-      roomNo: "559",
-      procMethod: "OFOI",
-      qtyNeeded: 1, qtyExisting: 1, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-21"
-    },
-    {
-      id: "FFE-38",
-      name: "Desk HAT",
-      desc: "70W × 29D · 120V hard-wired",
-      type: "Furniture",
-      vendor: "SDCCD / Molly Gardner",
-      locationCurrent: "1450 Frazee · 2nd",
-      locationNew: "1450 Frazee · 5th",
-      roomType: "Office",
-      roomNo: "527/528 Steve/Ben",
-      procMethod: "OFOI",
-      qtyNeeded: 2, qtyExisting: 2, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "N/A",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-38"
-    }
+    { id:"FFE-1",  name:"Credenza",                        desc:"Credenza",                            type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Storage",          curRoomNo:"568",                     newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Storage",          newRoomNo:"568",                    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-1",  ssId:"SS-1",  relatedDocs:"", notes:"" },
+    { id:"FFE-2",  name:"Guest Chair",                     desc:"Guest Chair",                         type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Other",             curRoomNo:"Open Office Area",        newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Other",             newRoomNo:"Open Office Area",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:3,  qtyExisting:3,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-2",  ssId:"SS-2",  relatedDocs:"", notes:"Transfer to Warehouse" },
+    { id:"FFE-3",  name:"Plants",                          desc:"Plants",                              type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Office",            curRoomNo:"Offices",                 newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Offices",                procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:3,  qtyExisting:3,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-3",  ssId:"SS-3",  relatedDocs:"", notes:"" },
+    { id:"FFE-4",  name:"Office H",                        desc:"Office H",                            type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"60W X 30D", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Cummings",                newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Break Room",        newRoomNo:"Break Room",             procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:2,  qtyExisting:2,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-4",  ssId:"SS-4",  relatedDocs:"", notes:"" },
+    { id:"FFE-5",  name:"Office Small Desk",               desc:"Office Small Desk",                   type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"60W x 30D", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Cummings",                newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Other",             newRoomNo:"Open Office Area",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-5",  ssId:"SS-5",  relatedDocs:"", notes:"" },
+    { id:"FFE-6",  name:"Office White Board",              desc:"Office White Board",                  type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Office",            curRoomNo:"503",                     newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"503",                    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-6",  ssId:"SS-6",  relatedDocs:"", notes:"" },
+    { id:"FFE-7",  name:"Task Chair",                      desc:"Task Chair",                          type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Office",            curRoomNo:"503",                     newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"503",                    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:2,  qtyExisting:2,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-7",  ssId:"SS-7",  relatedDocs:"", notes:"" },
+    { id:"FFE-8",  name:"Data Rack",                       desc:"Data Rack",                           type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Server Room",       curRoomNo:"553",                     newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Server Room",       newRoomNo:"553",                    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-8",  ssId:"SS-8",  relatedDocs:"", notes:"" },
+    { id:"FFE-9",  name:'24" Dell Monitors',               desc:'24" Dell Monitors',                   type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"Hard-wired", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Server Room",       curRoomNo:"553",                     newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Server Room",       newRoomNo:"553",                    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:7,  qtyExisting:7,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-9",  ssId:"SS-9",  relatedDocs:"", notes:"" },
+    { id:"FFE-10", name:"Carrier Split AC System",         desc:"Carrier Split AC System",             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Server Room",       curRoomNo:"553",                     newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Server Room",       newRoomNo:"553",                    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-10", ssId:"SS-10", relatedDocs:"", notes:"" },
+    { id:"FFE-11", name:"Conference Chair",                desc:"Conference Chair",                    type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Conference Room",   curRoomNo:"566",                     newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Conference Room",   newRoomNo:"566",                    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:16, qtyExisting:16, qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-11", ssId:"SS-11", relatedDocs:"", notes:"" },
+    { id:"FFE-12", name:"Conference Table",                desc:"Conference Table",                    type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'189W X 47.5D', weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Conference Room",   curRoomNo:"Large Conference Room",   newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Conference Room",   newRoomNo:"Conference Room 501",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-12", ssId:"SS-12", relatedDocs:"", notes:"" },
+    { id:"FFE-13", name:"Newline Touch Screen TV",         desc:'Newline Touch Screen TV',             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'97" Diagonal', weight:"N/A", powerType:"120V", dataType:"Hard-wired", mountingType:"Wall", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Conference Room",   curRoomNo:"Large Conference Room",   newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Conference Room",   newRoomNo:"Conference Room 501",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:true,  swing:true,  moveId:"MM-13", ssId:"SS-13", relatedDocs:"", notes:"" },
+    { id:"FFE-14", name:"Glass Dry Erase Boards",         desc:"Glass Dry Erase Boards",              type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'72W x 36H', weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"Wall", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Conference Room",   curRoomNo:"Large Conference Room",   newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Conference Room",   newRoomNo:"Conference Room 501",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:3,  qtyExisting:3,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-14", ssId:"SS-14", relatedDocs:"", notes:"" },
+    { id:"FFE-15", name:"BenQ Instahow Data port",        desc:"BenQ Instahow Data port",             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Conference Room",   curRoomNo:"Large Conference Room",   newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Conference Room",   newRoomNo:"Conference Room 501",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-15", ssId:"SS-15", relatedDocs:"", notes:"" },
+    { id:"FFE-16", name:"Logi Keyboard and Mouse",        desc:"Logi Keyboard and Mouse",             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Conference Room",   curRoomNo:"Large Conference Room",   newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Conference Room",   newRoomNo:"Conference Room 501",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-16", ssId:"SS-16", relatedDocs:"", notes:"" },
+    { id:"FFE-17", name:"Old Dell screen/keyboard boxes", desc:"Old Dell screen and keyboard boxes",  type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Conference Room",   curRoomNo:"Large Conference Room",   newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Conference Room",   newRoomNo:"Conference Room 501",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:0,  qtyExisting:0,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-17", ssId:"SS-17", relatedDocs:"", notes:"" },
+    { id:"FFE-18", name:"Round Table",                    desc:"Round Table",                         type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'41.5" Diameter', weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Break Room",        newRoomNo:"Break Room 559",         procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:3,  qtyExisting:3,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-18", ssId:"SS-18", relatedDocs:"", notes:"" },
+    { id:"FFE-19", name:"Chair",                          desc:"Chair",                               type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Break Room",        newRoomNo:"Break Room 559",         procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:12, qtyExisting:12, qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-19", ssId:"SS-19", relatedDocs:"", notes:"" },
+    { id:"FFE-20", name:"Barstools",                      desc:"Barstools",                           type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Break Room",        newRoomNo:"Break Room",             procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:6,  qtyExisting:6,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-20", ssId:"SS-20", relatedDocs:"", notes:"" },
+    { id:"FFE-21", name:"Refrigerator",                   desc:"Refrigerator",                        type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"120V", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Break Room",        newRoomNo:"Break Room 559",         procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-21", ssId:"SS-21", relatedDocs:"", notes:"120V power required" },
+    { id:"FFE-22", name:"Water Filter/Dispenser",         desc:"Water Filter/Dispenser",              type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Break Room",        newRoomNo:"Break Room 559",         procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-22", ssId:"SS-22", relatedDocs:"", notes:"" },
+    { id:"FFE-23", name:"Keurig Coffee Machine",          desc:"Keurig Coffee Machine",               type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Break Room",        newRoomNo:"Break Room 559",         procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-23", ssId:"SS-23", relatedDocs:"", notes:"" },
+    { id:"FFE-24", name:"Microwave",                      desc:"Microwave",                           type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Break Room",        newRoomNo:"Break Room 559",         procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-24", ssId:"SS-24", relatedDocs:"", notes:"" },
+    { id:"FFE-25", name:"Dishwasher",                     desc:"Dishwasher",                          type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Break Room",        newRoomNo:"Break Room",             procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-25", ssId:"SS-25", relatedDocs:"", notes:"" },
+    { id:"FFE-26", name:"Cabinets",                       desc:"Cabinets",                            type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Break Room",        curRoomNo:"Break Room",              newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Break Room",        newRoomNo:"Break Room 559",         procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:0,  qtyExisting:1,  qtyNew:-1, unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-26", ssId:"SS-26", relatedDocs:"", notes:"" },
+    { id:"FFE-27", name:"Office Desk",                    desc:"Office Desk",                         type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"72W X 36D Dbl pedestal", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 531 Aurora",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-27", ssId:"SS-27", relatedDocs:"", notes:"" },
+    { id:"FFE-28", name:"Round Meeting Table",            desc:"Round Table",                         type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'36" Diameter', weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Office",            newRoomNo:"Office # 1 Aurora",      procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-28", ssId:"SS-28", relatedDocs:"", notes:"" },
+    { id:"FFE-29", name:"Round Table Chair",              desc:"Round Table Chair",                   type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Other",             newRoomNo:"Open Office Area",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:3,  qtyExisting:3,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-29", ssId:"SS-29", relatedDocs:"", notes:"" },
+    { id:"FFE-30", name:"Office Credenza",                desc:"Office Credenza",                     type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 531 Aurora",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-30", ssId:"SS-30", relatedDocs:"", notes:"" },
+    { id:"FFE-31", name:"Office Wardrobe Cabinet",        desc:"Office Wardrobe Cabinet",             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 531 Aurora",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-31", ssId:"SS-31", relatedDocs:"", notes:"" },
+    { id:"FFE-32", name:"Task Chair",                     desc:"Task Chair",                          type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 531 Aurora",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-32", ssId:"SS-32", relatedDocs:"", notes:"" },
+    { id:"FFE-34", name:"Monitor",                        desc:"Monitor",                             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 531 Aurora",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:2,  qtyExisting:2,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-34", ssId:"SS-34", relatedDocs:"", notes:"" },
+    { id:"FFE-35", name:"Printer",                        desc:"Printer",                             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 531 Aurora",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-35", ssId:"SS-35", relatedDocs:"", notes:"" },
+    { id:"FFE-36", name:"Laptop",                         desc:"Laptop",                              type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 531 Aurora",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-36", ssId:"SS-36", relatedDocs:"", notes:"" },
+    { id:"FFE-37", name:"Glass Dry Erase Boards",         desc:"Glass Dry Erase Boards",              type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'48W X 36D', weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"Wall", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 1 Aurora",       newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 531 Aurora",    procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-37", ssId:"SS-37", relatedDocs:"", notes:"" },
+    { id:"FFE-38", name:"Desk HAT",                       desc:"Desk HAT",                            type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"70W X 29D", weight:"N/A", powerType:"120V", dataType:"Hard-wired", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 2 Steve/Ben",    newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 527/528",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:2,  qtyExisting:2,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-38", ssId:"SS-38", relatedDocs:"", notes:"120V hard-wired" },
+    { id:"FFE-39", name:"Wardrobe Cabinet",               desc:"Wardrobe Cabinet",                    type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"24W x 24D 72H", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 2 Steve/Ben",    newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 527/528",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-39", ssId:"SS-39", relatedDocs:"", notes:"" },
+    { id:"FFE-40", name:"Task Chair",                     desc:"Task Chair",                          type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 2 Steve/Ben",    newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 527/528",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:3,  qtyExisting:3,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-40", ssId:"SS-40", relatedDocs:"", notes:"" },
+    { id:"FFE-41", name:"Mobile Pedestal Drawer",         desc:"Mobile Pedestal Drawer",              type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"16W x 18D x 22H", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 2 Steve/Ben",    newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 527/528",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:2,  qtyExisting:2,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-41", ssId:"SS-41", relatedDocs:"", notes:"" },
+    { id:"FFE-42", name:'Dell 24" Monitor',               desc:'Dell 24" monitor',                    type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 2 Steve/Ben",    newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 527/528",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-42", ssId:"SS-42", relatedDocs:"", notes:"" },
+    { id:"FFE-43", name:"Laptop and Monitor",             desc:"Laptop and Monitor",                  type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 2 Steve/Ben",    newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 527/528",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-43", ssId:"SS-43", relatedDocs:"", notes:"" },
+    { id:"FFE-44", name:"Monitor",                        desc:"Monitor",                             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 2 Steve/Ben",    newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 527/528",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:2,  qtyExisting:2,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-44", ssId:"SS-44", relatedDocs:"", notes:"" },
+    { id:"FFE-45", name:"Glass Dry Erase Boards",         desc:"Glass Dry Erase Boards",              type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'48W X 36D', weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"Wall", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 3 Dr Peterson",  newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 508 Dr Peterson", procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true, moveId:"MM-45", ssId:"SS-45", relatedDocs:"", notes:"" },
+    { id:"FFE-46", name:"Desk HAT",                       desc:"Desk HAT",                            type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"120V", dataType:"Hard-wired", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 3 Dr Peterson",  newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 508 Dr Peterson", procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true, moveId:"MM-46", ssId:"SS-46", relatedDocs:"", notes:"120V hard-wired" },
+    { id:"FFE-47", name:"Task Chair",                     desc:"Task Chair",                          type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 3 Dr Peterson",  newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 508 Dr Peterson", procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true, moveId:"MM-47", ssId:"SS-47", relatedDocs:"", notes:"" },
+    { id:"FFE-48", name:"Mini Fridge",                    desc:"Mini Fridge",                         type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 3 Dr Peterson",  newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 508 Dr Peterson", procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true, moveId:"MM-48", ssId:"SS-48", relatedDocs:"", notes:"" },
+    { id:"FFE-49", name:"File Cabinet",                   desc:"File Cabinet",                        type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 3 Dr Peterson",  newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 508 Dr Peterson", procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true, moveId:"MM-49", ssId:"SS-49", relatedDocs:"", notes:"" },
+    { id:"FFE-50", name:"Printer",                        desc:"Printer",                             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Office",            curRoomNo:"Office # 3 Dr Peterson",  newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",            newRoomNo:"Office # 508 Dr Peterson", procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:1,  qtyExisting:1,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true, moveId:"MM-50", ssId:"SS-50", relatedDocs:"", notes:"" },
+    { id:"FFE-61", name:"Guest Chair",                    desc:"Guest Chair",                         type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"SDCCD", vendorPOC:"Molly Gardner", userGroup:"Facilities Dept", actionOwner:"", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:"", weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Other",             curRoomNo:"Open Office Area",        newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Other",             newRoomNo:"Open Office Area",       procMethod:"OFOI", fundingSource:"TBD", qtyNeeded:2,  qtyExisting:2,  qtyNew:0,  unitPrice:0, uom:"Each", extCost:0, eta:"N/A", processStatus:"In Stock", ffeStatus:"N/A", condition:"Used (Existing Item)", warranty:"TBD", warrantyType:"N/A", priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-61", ssId:"SS-61", relatedDocs:"", notes:"" }
   ],
 
   // ── MOVE RECORDS ───────────────────────────────────────────
-  // status values: "On Track" | "Complete" | "Issue" | "—"
+  // Schema v2 — expanded fields
+  // status: "On Track" | "Complete" | "Issue" | "—"
 
   moveRecords: [
-    { id: "MM-1",  itemName: "Credenza",               userGroup: "Facilities Dept", fromFloor: "5th", fromRoom: "568 (Storage)",      toFloor: "5th", toRoom: "568 (Storage)",      roomType: "Storage",    moveDate: "Sep 19, 2025", mover: "Alexander's", status: "On Track", swing: true, ffeId: "FFE-1",  ssId: "SS-1",  poc: "Molly G.", notes: "" },
-    { id: "MM-2",  itemName: "Guest Chair",             userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Open Office Area",   toFloor: "2nd", toRoom: "Open Office Area",   roomType: "Other",      moveDate: "Sep 19, 2025", mover: "Alexander's", status: "Complete", swing: true, ffeId: "FFE-2",  ssId: "SS-2",  poc: "Molly G.", notes: "Transfer to Warehouse" },
-    { id: "MM-11", itemName: "Conference Chair",        userGroup: "Facilities Dept", fromFloor: "5th", fromRoom: "566 (Conf. Rm)",     toFloor: "5th", toRoom: "566 (Conf. Rm)",     roomType: "Conf. Room", moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-11", ssId: "SS-11", poc: "Molly G.", notes: "" },
-    { id: "MM-12", itemName: "Conference Table",        userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Large Conf. Rm",     toFloor: "5th", toRoom: "Conf. Rm 501",       roomType: "Conf. Room", moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-12", ssId: "SS-12", poc: "Molly G.", notes: "" },
-    { id: "MM-13", itemName: "Newline Touch Screen TV", userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Large Conf. Rm",     toFloor: "5th", toRoom: "Conf. Rm 501",       roomType: "Conf. Room", moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-13", ssId: "SS-13", poc: "Molly G.", notes: "" },
-    { id: "MM-27", itemName: "Office Desk",             userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Office #1 Aurora",   toFloor: "5th", toRoom: "Office #531 Aurora",  roomType: "Office",     moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-27", ssId: "SS-27", poc: "Molly G.", notes: "" },
-    { id: "MM-51", itemName: "Conference Table",        userGroup: "Facilities Dept", fromFloor: "2nd", fromRoom: "Dr Peterson Office", toFloor: "3rd", toRoom: "3375 Camino Del Rio S", roomType: "Office",   moveDate: "Sep 19, 2025", mover: "Alexander's", status: "—",        swing: true, ffeId: "FFE-51", ssId: "SS-51", poc: "Molly G.", notes: "Off-site destination" }
+    { id:"MM-1",  itemName:"Credenza",               userGroup:"Facilities Dept", fromBuilding:"1450 Frazee", fromFloor:"5th", fromRoom:"568",                    fromRoomType:"Storage",      toBuilding:"1450 Frazee", toFloor:"5th", toRoom:"568",                   toRoomType:"Storage",      scheduledMoveDate:"Sep 20, 2025", dateMoved:"",         noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Alexander's", moverPOC:"Steve", status:"On Track", moveCost:0, swing:true,  ffeId:"FFE-1",  ssId:"SS-1",  poc:"Molly G.", notes:"" },
+    { id:"MM-2",  itemName:"Guest Chair",             userGroup:"Facilities Dept", fromBuilding:"1450 Frazee", fromFloor:"2nd", fromRoom:"Open Office Area",        fromRoomType:"Other",        toBuilding:"1450 Frazee", toFloor:"2nd", toRoom:"Open Office Area",      toRoomType:"Other",        scheduledMoveDate:"Sep 20, 2025", dateMoved:"",         noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Alexander's", moverPOC:"Steve", status:"Complete", moveCost:0, swing:true,  ffeId:"FFE-2",  ssId:"SS-2",  poc:"Molly G.", notes:"Transfer to Warehouse" },
+    { id:"MM-11", itemName:"Conference Chair",        userGroup:"Facilities Dept", fromBuilding:"1450 Frazee", fromFloor:"5th", fromRoom:"566",                    fromRoomType:"Conference Room", toBuilding:"1450 Frazee", toFloor:"5th", toRoom:"566",                   toRoomType:"Conference Room", scheduledMoveDate:"Sep 20, 2025", dateMoved:"",       noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Alexander's", moverPOC:"Steve", status:"—",       moveCost:0, swing:true,  ffeId:"FFE-11", ssId:"SS-11", poc:"Molly G.", notes:"" },
+    { id:"MM-12", itemName:"Conference Table",        userGroup:"Facilities Dept", fromBuilding:"1450 Frazee", fromFloor:"2nd", fromRoom:"Large Conference Room",   fromRoomType:"Conference Room", toBuilding:"1450 Frazee", toFloor:"5th", toRoom:"Conference Room 501",   toRoomType:"Conference Room", scheduledMoveDate:"Sep 20, 2025", dateMoved:"",       noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Alexander's", moverPOC:"Steve", status:"—",       moveCost:0, swing:true,  ffeId:"FFE-12", ssId:"SS-12", poc:"Molly G.", notes:"" },
+    { id:"MM-13", itemName:"Newline Touch Screen TV", userGroup:"Facilities Dept", fromBuilding:"1450 Frazee", fromFloor:"2nd", fromRoom:"Large Conference Room",   fromRoomType:"Conference Room", toBuilding:"1450 Frazee", toFloor:"5th", toRoom:"Conference Room 501",   toRoomType:"Conference Room", scheduledMoveDate:"Sep 20, 2025", dateMoved:"",       noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Alexander's", moverPOC:"Steve", status:"—",       moveCost:0, swing:true,  ffeId:"FFE-13", ssId:"SS-13", poc:"Molly G.", notes:"" },
+    { id:"MM-27", itemName:"Office Desk",             userGroup:"Facilities Dept", fromBuilding:"1450 Frazee", fromFloor:"2nd", fromRoom:"Office # 1 Aurora",       fromRoomType:"Office",       toBuilding:"1450 Frazee", toFloor:"5th", toRoom:"Office # 531 Aurora",   toRoomType:"Office",       scheduledMoveDate:"Sep 20, 2025", dateMoved:"",         noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Alexander's", moverPOC:"Steve", status:"—",       moveCost:0, swing:true,  ffeId:"FFE-27", ssId:"SS-27", poc:"Molly G.", notes:"" },
+    { id:"MM-38", itemName:"Desk HAT",                userGroup:"Facilities Dept", fromBuilding:"1450 Frazee", fromFloor:"2nd", fromRoom:"Office # 2 Steve/Ben",    fromRoomType:"Office",       toBuilding:"1450 Frazee", toFloor:"5th", toRoom:"Office # 527/528",      toRoomType:"Office",       scheduledMoveDate:"Sep 20, 2025", dateMoved:"",         noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Alexander's", moverPOC:"Steve", status:"—",       moveCost:0, swing:true,  ffeId:"FFE-38", ssId:"SS-38", poc:"Molly G.", notes:"120V hard-wired" },
+    { id:"MM-51", itemName:"Conference Table",        userGroup:"Facilities Dept", fromBuilding:"1450 Frazee", fromFloor:"2nd", fromRoom:"Dr Peterson Office",      fromRoomType:"Office",       toBuilding:"3375 Camino Del Rio S", toFloor:"3rd", toRoom:"Off-site Delivery", toRoomType:"Office", scheduledMoveDate:"Sep 20, 2025", dateMoved:"",         noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Alexander's", moverPOC:"Steve", status:"—",       moveCost:0, swing:true,  ffeId:"FFE-51", ssId:"SS-51", poc:"Molly G.", notes:"Off-site destination" }
   ],
 
   // ── SCHEDULE ACTIVITIES ─────────────────────────────────────
   // startDay: days from Aug 19 (day 0). Timeline = 32 days total.
-  // type values: "Move" | "FF&E" | "Swing" | "Other"
+  // type: "Move" | "FF&E" | "Swing" | "Other"
 
   scheduleActivities: [
-    { id: "SA-1",  name: "Mover Packing Material & Labels",     type: "Move",  startDay: 0,  durationDays: 1,  pctComplete: 0  },
-    { id: "SA-2",  name: "Confirm Move Order / Sequence",       type: "Move",  startDay: 0,  durationDays: 1,  pctComplete: 50 },
-    { id: "SA-3",  name: "Swing Space Liquidation Sale",        type: "Swing", startDay: 13, durationDays: 1,  pctComplete: 0  },
-    { id: "SA-4",  name: "Verkpleys Order Delivered",           type: "FF&E",  startDay: 13, durationDays: 1,  pctComplete: 0  },
-    { id: "SA-5",  name: "Verkpleys Move Swing Space Furn.",    type: "Move",  startDay: 13, durationDays: 1,  pctComplete: 0  },
-    { id: "SA-6",  name: "Verkpleys New Order Move",            type: "Move",  startDay: 13, durationDays: 1,  pctComplete: 0  },
-    { id: "SA-7",  name: "Prime Electrical Clearance",          type: "Other", startDay: 13, durationDays: 18, pctComplete: 0  },
-    { id: "SA-8",  name: "Swing Space Staff Pack",              type: "Move",  startDay: 15, durationDays: 4,  pctComplete: 0  },
-    { id: "SA-9",  name: "New Printers Delivery & Install",     type: "FF&E",  startDay: 16, durationDays: 1,  pctComplete: 0  },
-    { id: "SA-10", name: "Seismic / Earthquake Retrofit",       type: "Other", startDay: 16, durationDays: 1,  pctComplete: 0  },
-    { id: "SA-11", name: "Fire Safety Requirements",            type: "Other", startDay: 16, durationDays: 1,  pctComplete: 0  },
-    { id: "SA-12", name: "Fire Extinguisher Locations",         type: "Other", startDay: 16, durationDays: 1,  pctComplete: 0  },
-    { id: "SA-13", name: "Fire Extinguisher Expiration Review", type: "Other", startDay: 16, durationDays: 1,  pctComplete: 0  }
+    { id:"SA-1",  name:"Mover Packing Material & Labels",     type:"Move",  plannedStart:"Aug 19, 2025", plannedFinish:"Aug 19, 2025", actualStart:"", actualFinish:"", startDay:0,  durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-2",  name:"Confirm Move Order / Sequence",       type:"Move",  plannedStart:"Aug 19, 2025", plannedFinish:"Aug 19, 2025", actualStart:"", actualFinish:"", startDay:0,  durationDays:1,  variance:0, pctComplete:50 },
+    { id:"SA-3",  name:"Swing Space Liquidation Sale",        type:"Swing", plannedStart:"Sep 1, 2025",  plannedFinish:"Sep 1, 2025",  actualStart:"", actualFinish:"", startDay:13, durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-4",  name:"Verkpleys Order Delivered",           type:"FF&E",  plannedStart:"Sep 1, 2025",  plannedFinish:"Sep 1, 2025",  actualStart:"", actualFinish:"", startDay:13, durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-5",  name:"Verkpleys Move Swing Space Furn.",    type:"Move",  plannedStart:"Sep 1, 2025",  plannedFinish:"Sep 1, 2025",  actualStart:"", actualFinish:"", startDay:13, durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-6",  name:"Verkpleys New Order Move",            type:"Move",  plannedStart:"Sep 1, 2025",  plannedFinish:"Sep 1, 2025",  actualStart:"", actualFinish:"", startDay:13, durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-7",  name:"Prime Electrical Clearance",          type:"Other", plannedStart:"Sep 1, 2025",  plannedFinish:"Sep 19, 2025", actualStart:"", actualFinish:"", startDay:13, durationDays:18, variance:0, pctComplete:0  },
+    { id:"SA-8",  name:"Swing Space Staff Pack",              type:"Move",  plannedStart:"Sep 3, 2025",  plannedFinish:"Sep 6, 2025",  actualStart:"", actualFinish:"", startDay:15, durationDays:4,  variance:0, pctComplete:0  },
+    { id:"SA-9",  name:"New Printers Delivery & Install",     type:"FF&E",  plannedStart:"Sep 4, 2025",  plannedFinish:"Sep 4, 2025",  actualStart:"", actualFinish:"", startDay:16, durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-10", name:"Seismic / Earthquake Retrofit",       type:"Other", plannedStart:"Sep 4, 2025",  plannedFinish:"Sep 4, 2025",  actualStart:"", actualFinish:"", startDay:16, durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-11", name:"Fire Safety Requirements",            type:"Other", plannedStart:"Sep 4, 2025",  plannedFinish:"Sep 4, 2025",  actualStart:"", actualFinish:"", startDay:16, durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-12", name:"Fire Extinguisher Locations",         type:"Other", plannedStart:"Sep 4, 2025",  plannedFinish:"Sep 4, 2025",  actualStart:"", actualFinish:"", startDay:16, durationDays:1,  variance:0, pctComplete:0  },
+    { id:"SA-13", name:"Fire Extinguisher Expiration Review", type:"Other", plannedStart:"Sep 4, 2025",  plannedFinish:"Sep 4, 2025",  actualStart:"", actualFinish:"", startDay:16, durationDays:1,  variance:0, pctComplete:0  }
   ],
 
   // ── FINANCIALS ─────────────────────────────────────────────
-  // color: dot indicator hex. planned/actual in dollars.
-
   financials: [
-    { label: "FF&E (Non Ed-Tech/IT)", color: "#4f9cf9", planned: 225209, actual: 0 },
-    { label: "Other",                 color: "#38d9a9", planned: 83819,  actual: 0 },
-    { label: "IT",                    color: "#6b7591", planned: 0,      actual: 0 },
-    { label: "AV/Ed-Tech",            color: "#6b7591", planned: 0,      actual: 0 },
-    { label: "Move Management",       color: "#6b7591", planned: 0,      actual: 0 },
-    { label: "Swing Space",           color: "#6b7591", planned: 0,      actual: 0 },
-    { label: "Tenant Improvement",    color: "#ffa94d", planned: 0,      actual: 0 }
+    { label:"FF&E (Non Ed-Tech/IT)", color:"#4f9cf9", planned:225209, actual:0 },
+    { label:"Other",                 color:"#38d9a9", planned:83819,  actual:0 },
+    { label:"IT",                    color:"#6b7591", planned:0,      actual:0 },
+    { label:"AV/Ed-Tech",            color:"#6b7591", planned:0,      actual:0 },
+    { label:"Move Management",       color:"#6b7591", planned:0,      actual:0 },
+    { label:"Swing Space",           color:"#6b7591", planned:0,      actual:0 },
+    { label:"Tenant Improvement",    color:"#ffa94d", planned:0,      actual:0 }
   ],
 
   // ── SWING SPACE ITEMS ──────────────────────────────────────
-  // Fields: id, name, desc, location, roomNo, roomType,
-  //   assignedTo, fromDate, toDate, status, ffeId, notes
-  // status values: "Active" | "Vacated" | "Pending" | "Issue"
+  // Schema v2 — full field set
+  // status: "On Track" | "In Swing" | "Vacated" | "Pending" | "Issue"
 
   swingSpaceItems: [
-    // Add swing space records here
-    // Example:
-    // { id: "SS-1", name: "Credenza", desc: "", location: "1450 Frazee · 3rd",
-    //   roomNo: "301", roomType: "Storage", assignedTo: "Facilities Dept",
-    //   fromDate: "Aug 19, 2025", toDate: "Sep 19, 2025",
-    //   status: "Active", ffeId: "FFE-1", notes: "" }
+    { id:"SS-1",  userGroup:"Facilities Dept", phase:"In Swing", noOccupants:"", ffeNeeds:"Credenza",    techNeeds:"", facilityNeeds:"", noBoxes:"", boxTags:"", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Storage",       curRoomNo:"568",                   scheduledMoveToSwing:"N/A", dateMoveToSwing:"Apr 1, 2025", swingBuilding:"1450 Frazee", swingFloor:"2nd", swingRoomType:"Reception Area",  swingRoomNo:"Reception", scheduledMoveToNew:"Sep 20, 2025", dateMoveToNew:"", newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Storage",    newRoomNo:"568",                   status:"On Track", swingCost:0, punchListItem:false, ffeId:"FFE-1",  moveId:"MM-1",  poc:"Molly G.", notes:"" },
+    { id:"SS-2",  userGroup:"Facilities Dept", phase:"In Swing", noOccupants:"", ffeNeeds:"Guest Chair", techNeeds:"", facilityNeeds:"", noBoxes:"", boxTags:"", curBuilding:"1450 Frazee", curFloor:"2nd", curRoomType:"Other",          curRoomNo:"Open Office Area",      scheduledMoveToSwing:"N/A", dateMoveToSwing:"Apr 1, 2025", swingBuilding:"1450 Frazee", swingFloor:"2nd", swingRoomType:"Reception Area",  swingRoomNo:"Reception", scheduledMoveToNew:"Sep 20, 2025", dateMoveToNew:"", newBuilding:"1450 Frazee", newFloor:"2nd", newRoomType:"Other",      newRoomNo:"Open Office Area",      status:"On Track", swingCost:0, punchListItem:false, ffeId:"FFE-2",  moveId:"MM-2",  poc:"Molly G.", notes:"" },
+    { id:"SS-3",  userGroup:"Facilities Dept", phase:"In Swing", noOccupants:"", ffeNeeds:"Plants",      techNeeds:"", facilityNeeds:"", noBoxes:"", boxTags:"", curBuilding:"1450 Frazee", curFloor:"5th", curRoomType:"Office",         curRoomNo:"Offices",               scheduledMoveToSwing:"N/A", dateMoveToSwing:"Apr 1, 2025", swingBuilding:"1450 Frazee", swingFloor:"2nd", swingRoomType:"Reception Area",  swingRoomNo:"Reception", scheduledMoveToNew:"Sep 20, 2025", dateMoveToNew:"", newBuilding:"1450 Frazee", newFloor:"5th", newRoomType:"Office",     newRoomNo:"Offices",               status:"On Track", swingCost:0, punchListItem:false, ffeId:"FFE-3",  moveId:"MM-3",  poc:"Molly G.", notes:"" }
   ],
 
   // ── TENANT IMPROVEMENT ITEMS ───────────────────────────────
-  // Fields: id, name, desc, scope, location, roomNo, contractor,
-  //   plannedCost, actualCost, startDate, endDate, status, notes
-  // status values: "Not Started" | "In Progress" | "Complete" | "Issue"
+  // Schema v2 — full field set
+  // status: "Not Started" | "In Progress" | "Complete" | "Issue"
 
   tenantImprovementItems: [
-    // Add TI records here
-    // Example:
-    // { id: "TI-1", name: "Electrical Upgrade", desc: "120V circuits added",
-    //   scope: "Electrical", location: "1450 Frazee · 5th", roomNo: "553",
-    //   contractor: "Prime Electric", plannedCost: 12000, actualCost: 0,
-    //   startDate: "Aug 19, 2025", endDate: "Sep 10, 2025",
-    //   status: "In Progress", notes: "Pending clearance" }
+    { id:"TI-1",  userGroup:"Facilities Dept", facilityNeeds:"Electrical upgrade for server room", trade:"Electrical", building:"1450 Frazee", floor:"5th", roomType:"Server Room", roomNo:"553", status:"In Progress", actionOwner:"Molly Gardner", priority:"High",   vendor:"Prime Electric", vendorPOC:"TBD", clientPOC:"Molly G.", quotedCost:0, notes:"Pending permit sign-off" },
+    { id:"TI-2",  userGroup:"Facilities Dept", facilityNeeds:"Fire suppression system inspection",  trade:"Fire/Safety", building:"1450 Frazee", floor:"5th", roomType:"Server Room", roomNo:"553", status:"Not Started", actionOwner:"Molly Gardner", priority:"High", vendor:"TBD",           vendorPOC:"TBD", clientPOC:"Molly G.", quotedCost:0, notes:"Required before occupancy" },
+    { id:"TI-3",  userGroup:"Facilities Dept", facilityNeeds:"New flooring — Break Room 559",       trade:"Flooring",   building:"1450 Frazee", floor:"5th", roomType:"Break Room",   roomNo:"559", status:"Not Started", actionOwner:"",              priority:"Medium", vendor:"TBD",          vendorPOC:"TBD", clientPOC:"Molly G.", quotedCost:0, notes:"" }
   ],
 
   // ── ISSUES ────────────────────────────────────────────────
-  // Fields: id, title, description, linkedId, linkedType,
-  //   severity, status, openedDate, assignedTo, resolvedDate, notes
-  // severity values: "High" | "Med" | "Low"
-  // status values:   "Open" | "In Progress" | "Resolved" | "Closed"
-  // linkedType values: "FFE" | "Move" | "Schedule" | "TI" | "General"
+  // Schema v2 — expanded fields
+  // severity: "High" | "Med" | "Low"
+  // status:   "Active" | "Resolved"
+  // issueType: "Delivery" | "Installation" | "Damage" | "Access" | "Other"
 
   issues: [
-    // Add issue records here
-    // Example:
-    // { id: "ISS-1", title: "Prime Electrical clearance delayed",
-    //   description: "Electrical contractor has not received permit sign-off.",
-    //   linkedId: "SA-7", linkedType: "Schedule",
-    //   severity: "High", status: "Open",
-    //   openedDate: "Aug 25, 2025", assignedTo: "Molly G.", resolvedDate: "", notes: "" }
+    { id:"ISS-1",  itemName:"Ice Machine / Water Cooler",          productType:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", issueType:"Other", status:"Resolved",    noItemsIssue:1, noItemsResolved:1, description:"6/25/2025 OAC Open item. Need Vendor, POC, Budget, Delivery info confirmed.", resolution:"Resolved via OAC coordination.", vendor:"TBD", vendorPOC:"TBD", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", dimensions:"TBD", building:"N/A", floor:"N/A", roomType:"Break Room",  roomNo:"559", procMethod:"OFCI", warranty:"TBD", warrantyType:"N/A", priority:"", ffeId:"FFE-421", moveId:"MM-421", ssId:"",       notes:"" },
+    { id:"ISS-2",  itemName:"Access Control Cabinets / Card Readers", productType:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", issueType:"Other", status:"Active",   noItemsIssue:1, noItemsResolved:0, description:"6/25/2025 OAC Open item. Need Vendor, POC, Budget, Delivery info confirmed.", resolution:"",                                  vendor:"TBD", vendorPOC:"TBD", manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", dimensions:"TBD", building:"N/A", floor:"N/A", roomType:"Server Room", roomNo:"553", procMethod:"OFCI", warranty:"TBD", warrantyType:"N/A", priority:"", ffeId:"FFE-422", moveId:"MM-422", ssId:"",       notes:"" },
+    { id:"ISS-3",  itemName:"Network Equipment",                   productType:"IT",                                              issueType:"Other", status:"Resolved",    noItemsIssue:1, noItemsResolved:1, description:"Facilities to process Order. July 1st price increase per Rob.",             resolution:"Order processed prior to deadline.", vendor:"",    vendorPOC:"",    manufacturer:"", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", dimensions:"TBD", building:"N/A", floor:"N/A", roomType:"Server Room", roomNo:"553", procMethod:"OFCI", warranty:"TBD", warrantyType:"N/A", priority:"", ffeId:"FFE-423", moveId:"MM-423", ssId:"",       notes:"" }
   ],
 
-  // ── PUNCH LIST ────────────────────────────────────────────
-  // Fields: id, task, description, linkedId, linkedType,
-  //   dueDate, assignedTo, pctComplete, status, notes
-  // status values: "Not Started" | "In Progress" | "Complete" | "Blocked"
+  // ── PUNCH LIST — FF&E ─────────────────────────────────────
+  // status: "Not Started" | "In Progress" | "Complete" | "Blocked"
 
   punchListItems: [
-    // Add punch list tasks here
-    // Example:
-    // { id: "PL-1", task: "Confirm all TVs wall-mounted",
-    //   description: "Verify Newline screens in Conf. Rm 501 are secured.",
-    //   linkedId: "FFE-13", linkedType: "FFE",
-    //   dueDate: "Sep 19, 2025", assignedTo: "Molly G.",
-    //   pctComplete: 0, status: "Not Started", notes: "" }
+    { id:"PL-1",  itemName:"Newline Touch Screen TV", itemDesc:"Newline Touch Screen TV", productType:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", remainingTasks:"Verify wall mount is secure and TV powers on. Test HDMI input.", status:"Not Started", vendor:"SDCCD", vendorPOC:"Molly Gardner", manufacturer:"Newline", productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'97" Diagonal', weight:"N/A", powerType:"120V", dataType:"Hard-wired", mountingType:"Wall", building:"1450 Frazee", floor:"5th", roomType:"Conference Room", roomNo:"Conference Room 501", procMethod:"OFOI", actionOwner:"Molly G.", priority:"High",   notes:"" },
+    { id:"PL-2",  itemName:"Glass Dry Erase Boards",  itemDesc:"Glass Dry Erase Boards",  productType:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", remainingTasks:"Confirm all boards are wall-mounted level and clips are secure.", status:"Not Started", vendor:"SDCCD", vendorPOC:"Molly Gardner", manufacturer:"",       productLink:"N/A", modelNo:"N/A", equipNo:"N/A", skuCode:"N/A", assetTag:"TBD", dimensions:'72W x 36H',    weight:"N/A", powerType:"N/A", dataType:"N/A", mountingType:"Wall", building:"1450 Frazee", floor:"5th", roomType:"Conference Room", roomNo:"Conference Room 501", procMethod:"OFOI", actionOwner:"Molly G.", priority:"Medium", notes:"" }
   ],
 
-  // ── USERS ────────────────────────────────────────────────
-  // Fields: id, name, initials, email, role, projects,
-  //   status, lastActive
-  // role values:   "Admin" | "Project Manager" | "Viewer"
-  // status values: "Active" | "Inactive" | "Pending"
+  // ── PUNCH LIST — SWING SPACE ──────────────────────────────
+  // Separate list per Excel source (Swing Space Punch List sheet)
+  // status: "Not Started" | "In Progress" | "Complete" | "Blocked"
 
+  ssPunchListItems: [
+    { id:"SSPL-1", userGroup:"Facilities Dept", ffeNeeds:"Credenza",    techNeeds:"", facilityNeeds:"", swingBuilding:"1450 Frazee", swingFloor:"2nd", swingRoomType:"Reception Area", swingRoomNo:"Reception", remainingTasks:"Confirm item is correctly positioned in swing space and tagged.", status:"Not Started", actionOwner:"Molly G.", priority:"Medium", notes:"" },
+    { id:"SSPL-2", userGroup:"Facilities Dept", ffeNeeds:"Guest Chair", techNeeds:"", facilityNeeds:"", swingBuilding:"1450 Frazee", swingFloor:"2nd", swingRoomType:"Reception Area", swingRoomNo:"Reception", remainingTasks:"Confirm all guest chairs have been tagged with SS ID labels.",       status:"Not Started", actionOwner:"Molly G.", priority:"Low",    notes:"" }
+  ],
+
+  // ── BUDGET & COSTS ────────────────────────────────────────
+  // costArea matches financial categories for rollup
+  // quoteAmount / actualSpend in dollars
+
+  budgetItems: [
+    { id:"FFE-1",  vendor:"SDCCD", costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Credenza",                   quoteAmount:0, actualSpend:0, comments:"" },
+    { id:"FFE-2",  vendor:"SDCCD", costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Guest Chair",                quoteAmount:0, actualSpend:0, comments:"" },
+    { id:"FFE-3",  vendor:"SDCCD", costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Plants",                     quoteAmount:0, actualSpend:0, comments:"" },
+    { id:"FFE-11", vendor:"SDCCD", costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Conference Chair",           quoteAmount:0, actualSpend:0, comments:"" },
+    { id:"FFE-12", vendor:"SDCCD", costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Conference Table",           quoteAmount:0, actualSpend:0, comments:"" },
+    { id:"FFE-13", vendor:"SDCCD", costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Newline Touch Screen TV",    quoteAmount:0, actualSpend:0, comments:"" },
+    { id:"FFE-21", vendor:"SDCCD", costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Refrigerator",               quoteAmount:0, actualSpend:0, comments:"" },
+    { id:"FFE-38", vendor:"SDCCD", costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Desk HAT",                   quoteAmount:0, actualSpend:0, comments:"" }
+  ],
+
+  budgetSummary: {
+    ffebudget:          330000,
+    contingencyPct:     0.10,
+    totalFFEBudget:     330000,
+    plannedGrandTotal:  309028,
+    actualGrandTotal:   0
+  },
+
+  // ── USERS ─────────────────────────────────────────────────
   users: [
-    { id: "USR-1", name: "John Tabler",  initials: "JT", email: "jtabler@sdccd.edu",
-      role: "Work Dad", projects: ["SDCCD 1450 Frazee"],
-      status: "Active", lastActive: "Today" },
-    { id: "USR-2", name: "Admin User",     initials: "AU", email: "admin@pps.app",
-      role: "Admin", projects: ["All Projects"],
-      status: "Active", lastActive: "Today" }
+    { id:"USR-1", name:"John Tabler",  initials:"JT", email:"jtabler@sdccd.edu", role:"Work Dad", projects:["SDCCD 1450 Frazee"], status:"Active", lastActive:"Today" },
+    { id:"USR-2", name:"Admin User",   initials:"AU", email:"admin@pps.app",     role:"Admin",    projects:["All Projects"],       status:"Active", lastActive:"Today" }
   ]
 
 };
@@ -395,215 +255,64 @@ const PPS_2 = {
   },
 
   ffeItems: [
-    {
-      id: "FFE-101",
-      name: "Sit-Stand Desk",
-      desc: "72W × 30D · Electric height adjustable",
-      type: "Furniture",
-      vendor: "Steelcase",
-      locationCurrent: "Mission Valley · Bldg A",
-      locationNew: "Mission Valley · Admin",
-      roomType: "Office",
-      roomNo: "201",
-      procMethod: "Purchased",
-      qtyNeeded: 10, qtyExisting: 2, qtyNew: 8,
-      unitPrice: 850, extCost: 6800,
-      processStatus: "Ordered",
-      ffeStatus: "On Track",
-      condition: "New",
-      priority: "High",
-      swing: false,
-      moveId: "MM-101"
-    },
-    {
-      id: "FFE-102",
-      name: "Ergonomic Task Chair",
-      desc: "Mesh back · adjustable arms",
-      type: "Furniture",
-      vendor: "Herman Miller",
-      locationCurrent: "Warehouse",
-      locationNew: "Mission Valley · Admin",
-      roomType: "Office",
-      roomNo: "Open Office",
-      procMethod: "Purchased",
-      qtyNeeded: 25, qtyExisting: 0, qtyNew: 25,
-      unitPrice: 620, extCost: 15500,
-      processStatus: "Quoted",
-      ffeStatus: "On Track",
-      condition: "New",
-      priority: "High",
-      swing: false,
-      moveId: "MM-102"
-    },
-    {
-      id: "FFE-103",
-      name: "Conference Table (Large)",
-      desc: "14' table · integrated power",
-      type: "Furniture",
-      vendor: "Haworth",
-      locationCurrent: "Mission Valley · Old Admin",
-      locationNew: "Mission Valley · Admin",
-      roomType: "Conf. Room",
-      roomNo: "301",
-      procMethod: "Reuse",
-      qtyNeeded: 1, qtyExisting: 1, qtyNew: 0,
-      unitPrice: 0, extCost: 0,
-      processStatus: "In Stock",
-      ffeStatus: "On Track",
-      condition: "Used",
-      priority: "Med",
-      swing: true,
-      moveId: "MM-103"
-    },
-    {
-      id: "FFE-104",
-      name: "Break Room Cabinets",
-      desc: "Upper & lower set",
-      type: "Furniture",
-      vendor: "IKEA",
-      locationCurrent: "Vendor",
-      locationNew: "Mission Valley · Admin",
-      roomType: "Break Room",
-      roomNo: "150",
-      procMethod: "Purchased",
-      qtyNeeded: 1, qtyExisting: 0, qtyNew: 1,
-      unitPrice: 4200, extCost: 4200,
-      processStatus: "Delivered",
-      ffeStatus: "On Track",
-      condition: "New",
-      priority: "Med",
-      swing: false,
-      moveId: "MM-104"
-    },
-    {
-      id: "FFE-105",
-      name: "Wall-Mounted TV",
-      desc: "75\" · HDMI + wireless casting",
-      type: "AV",
-      vendor: "Best Buy Business",
-      locationCurrent: "Vendor",
-      locationNew: "Mission Valley · Admin",
-      roomType: "Conf. Room",
-      roomNo: "301",
-      procMethod: "Purchased",
-      qtyNeeded: 2, qtyExisting: 0, qtyNew: 2,
-      unitPrice: 1200, extCost: 2400,
-      processStatus: "Ordered",
-      ffeStatus: "On Track",
-      condition: "New",
-      priority: "High",
-      swing: false,
-      moveId: "MM-105"
-    }
+    { id:"FFE-101", name:"Sit-Stand Desk",          desc:"72W × 30D · Electric height adjustable", type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"Steelcase",          vendorPOC:"Rep TBD",   userGroup:"Admin Staff", actionOwner:"", manufacturer:"Steelcase", productLink:"", modelNo:"",    equipNo:"", skuCode:"", assetTag:"", dimensions:"72W x 30D", weight:"", powerType:"120V", dataType:"N/A", mountingType:"N/A", curBuilding:"Mission Valley", curFloor:"Warehouse", curRoomType:"Storage",  curRoomNo:"Storage",      newBuilding:"Mission Valley", newFloor:"2nd", newRoomType:"Office",   newRoomNo:"201",    procMethod:"New Purchase",  fundingSource:"Capital", qtyNeeded:10, qtyExisting:2, qtyNew:8,  unitPrice:850, uom:"Each", extCost:6800, eta:"Oct 15, 2025", processStatus:"Ordered",    ffeStatus:"On Track", condition:"New",                  warranty:"Yes", warrantyType:"Manufacturer", priority:"High",   punchListItem:false, swing:false, moveId:"MM-101", ssId:"",       relatedDocs:"", notes:"" },
+    { id:"FFE-102", name:"Ergonomic Task Chair",    desc:"Mesh back · adjustable arms",             type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"Herman Miller",      vendorPOC:"Rep TBD",   userGroup:"Admin Staff", actionOwner:"", manufacturer:"HM",        productLink:"", modelNo:"",    equipNo:"", skuCode:"", assetTag:"", dimensions:"",         weight:"", powerType:"N/A", dataType:"N/A", mountingType:"N/A", curBuilding:"Warehouse",       curFloor:"Warehouse",  curRoomType:"Storage",  curRoomNo:"Warehouse",    newBuilding:"Mission Valley", newFloor:"2nd", newRoomType:"Office",   newRoomNo:"Open Office", procMethod:"New Purchase",  fundingSource:"Capital", qtyNeeded:25, qtyExisting:0, qtyNew:25, unitPrice:620, uom:"Each", extCost:15500, eta:"Oct 20, 2025", processStatus:"Quoted",   ffeStatus:"On Track", condition:"New",                  warranty:"Yes", warrantyType:"Manufacturer", priority:"High",   punchListItem:false, swing:false, moveId:"MM-102", ssId:"",       relatedDocs:"", notes:"" },
+    { id:"FFE-103", name:"Conference Table (Large)",desc:"14 ft table · integrated power",          type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"Haworth",            vendorPOC:"Rep TBD",   userGroup:"Admin Staff", actionOwner:"", manufacturer:"Haworth",   productLink:"", modelNo:"",    equipNo:"", skuCode:"", assetTag:"", dimensions:"168W x 48D", weight:"", powerType:"120V", dataType:"N/A", mountingType:"N/A", curBuilding:"Mission Valley", curFloor:"1st",      curRoomType:"Conference Room", curRoomNo:"Old Admin Conf.", newBuilding:"Mission Valley", newFloor:"3rd", newRoomType:"Conference Room", newRoomNo:"301", procMethod:"Reuse",         fundingSource:"Capital", qtyNeeded:1,  qtyExisting:1, qtyNew:0,  unitPrice:0,   uom:"Each", extCost:0,     eta:"N/A",          processStatus:"In Stock",   ffeStatus:"On Track", condition:"Used (Existing Item)", warranty:"No",  warrantyType:"N/A",          priority:"Medium", punchListItem:false, swing:true,  moveId:"MM-103", ssId:"SS-103", relatedDocs:"", notes:"Requires disassembly" },
+    { id:"FFE-105", name:"Wall-Mounted TV",         desc:'75" · HDMI + wireless casting',           type:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", vendor:"Best Buy Business",  vendorPOC:"Rep TBD",   userGroup:"Admin Staff", actionOwner:"", manufacturer:"Samsung",   productLink:"", modelNo:"",    equipNo:"", skuCode:"", assetTag:"", dimensions:"75\" Diagonal", weight:"", powerType:"120V", dataType:"N/A", mountingType:"Wall", curBuilding:"Vendor",         curFloor:"Vendor",     curRoomType:"Vendor",   curRoomNo:"Vendor",       newBuilding:"Mission Valley", newFloor:"3rd", newRoomType:"Conference Room", newRoomNo:"301", procMethod:"New Purchase",  fundingSource:"Capital", qtyNeeded:2,  qtyExisting:0, qtyNew:2,  unitPrice:1200, uom:"Each", extCost:2400, eta:"Oct 25, 2025", processStatus:"Ordered",  ffeStatus:"On Track", condition:"New",                  warranty:"Yes", warrantyType:"Manufacturer", priority:"High",   punchListItem:true,  swing:false, moveId:"MM-105", ssId:"",       relatedDocs:"", notes:"" }
   ],
 
   moveRecords: [
-    { id: "MM-101", itemName: "Sit-Stand Desk", userGroup: "Admin Staff",
-      fromFloor: "Warehouse", fromRoom: "Storage",
-      toFloor: "2nd", toRoom: "Office 201",
-      roomType: "Office", moveDate: "Nov 3, 2025",
-      mover: "Bekins Moving Solutions", status: "On Track",
-      swing: false, ffeId: "FFE-101", ssId: "SS-101",
-      poc: "James O.", notes: "" },
-
-    { id: "MM-103", itemName: "Conference Table (Large)", userGroup: "Admin Staff",
-      fromFloor: "1st", fromRoom: "Old Admin Conf.",
-      toFloor: "3rd", toRoom: "Room 301",
-      roomType: "Conf. Room", moveDate: "Nov 3, 2025",
-      mover: "Bekins Moving Solutions", status: "On Track",
-      swing: true, ffeId: "FFE-103", ssId: "SS-103",
-      poc: "James O.", notes: "Requires disassembly" }
+    { id:"MM-101", itemName:"Sit-Stand Desk",          userGroup:"Admin Staff", fromBuilding:"Warehouse",      fromFloor:"Warehouse", fromRoom:"Storage",          fromRoomType:"Storage",       toBuilding:"Mission Valley", toFloor:"2nd", toRoom:"Office 201",           toRoomType:"Office",       scheduledMoveDate:"Nov 3, 2025", dateMoved:"", noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Bekins Moving Solutions", moverPOC:"Laura Kim", status:"On Track", moveCost:0, swing:false, ffeId:"FFE-101", ssId:"",       poc:"James O.", notes:"" },
+    { id:"MM-103", itemName:"Conference Table (Large)",userGroup:"Admin Staff", fromBuilding:"Mission Valley", fromFloor:"1st",       fromRoom:"Old Admin Conf.",   fromRoomType:"Conference Room", toBuilding:"Mission Valley", toFloor:"3rd", toRoom:"Room 301",             toRoomType:"Conference Room", scheduledMoveDate:"Nov 3, 2025", dateMoved:"", noOccupants:"N/A", noBoxes:"", boxTags:"", mover:"Bekins Moving Solutions", moverPOC:"Laura Kim", status:"On Track", moveCost:0, swing:true,  ffeId:"FFE-103", ssId:"SS-103", poc:"James O.", notes:"Requires disassembly" }
   ],
 
   scheduleActivities: [
-    { id: "SA-101", name: "Furniture Delivery", type: "FF&E", startDay: 5, durationDays: 2, pctComplete: 20 },
-    { id: "SA-102", name: "IT Setup", type: "Other", startDay: 8, durationDays: 3, pctComplete: 0 },
-    { id: "SA-103", name: "Final Move", type: "Move", startDay: 12, durationDays: 1, pctComplete: 0 }
+    { id:"SA-101", name:"Furniture Delivery", type:"FF&E",  plannedStart:"Oct 8, 2025",  plannedFinish:"Oct 9, 2025",  actualStart:"", actualFinish:"", startDay:5,  durationDays:2, variance:0, pctComplete:20 },
+    { id:"SA-102", name:"IT Setup",           type:"Other", plannedStart:"Oct 11, 2025", plannedFinish:"Oct 13, 2025", actualStart:"", actualFinish:"", startDay:8,  durationDays:3, variance:0, pctComplete:0  },
+    { id:"SA-103", name:"Final Move",         type:"Move",  plannedStart:"Oct 15, 2025", plannedFinish:"Oct 15, 2025", actualStart:"", actualFinish:"", startDay:12, durationDays:1, variance:0, pctComplete:0  }
   ],
 
   financials: [
-    { label: "FF&E (Non Ed-Tech/IT)", color: "#4f9cf9", planned: 280000, actual: 0 },
-    { label: "Construction", color: "#ffa94d", planned: 192300, actual: 0 },
-    { label: "IT", color: "#38d9a9", planned: 50000, actual: 0 }
+    { label:"FF&E (Non Ed-Tech/IT)", color:"#4f9cf9", planned:280000, actual:0 },
+    { label:"Construction",          color:"#ffa94d", planned:192300, actual:0 },
+    { label:"IT",                    color:"#38d9a9", planned:50000,  actual:0 }
   ],
 
   swingSpaceItems: [
-    {
-      id: "SS-101",
-      name: "Sit-Stand Desk",
-      desc: "",
-      location: "Temp Offices · Bldg B",
-      roomNo: "110",
-      roomType: "Office",
-      assignedTo: "Admin Staff",
-      fromDate: "Oct 1, 2025",
-      toDate: "Nov 3, 2025",
-      status: "Active",
-      ffeId: "FFE-101",
-      notes: ""
-    }
+    { id:"SS-103", userGroup:"Admin Staff", phase:"In Swing", noOccupants:"", ffeNeeds:"Conference Table (Large)", techNeeds:"", facilityNeeds:"", noBoxes:"", boxTags:"", curBuilding:"Mission Valley", curFloor:"1st", curRoomType:"Conference Room", curRoomNo:"Old Admin Conf.", scheduledMoveToSwing:"Oct 1, 2025", dateMoveToSwing:"Oct 1, 2025", swingBuilding:"Mission Valley", swingFloor:"1st", swingRoomType:"Storage", swingRoomNo:"Temp Storage", scheduledMoveToNew:"Nov 3, 2025", dateMoveToNew:"", newBuilding:"Mission Valley", newFloor:"3rd", newRoomType:"Conference Room", newRoomNo:"301", status:"On Track", swingCost:0, punchListItem:false, ffeId:"FFE-103", moveId:"MM-103", poc:"James O.", notes:"" }
   ],
 
   tenantImprovementItems: [
-    {
-      id: "TI-101",
-      name: "Electrical Upgrade",
-      desc: "New circuits for workstations",
-      scope: "Electrical",
-      location: "Mission Valley · Admin",
-      roomNo: "2nd Floor",
-      contractor: "Prime Electric",
-      plannedCost: 25000,
-      actualCost: 0,
-      startDate: "Oct 1, 2025",
-      endDate: "Oct 20, 2025",
-      status: "In Progress",
-      notes: ""
-    }
+    { id:"TI-101", userGroup:"Admin Staff", facilityNeeds:"New circuits for workstations", trade:"Electrical", building:"Mission Valley", floor:"2nd", roomType:"Office", roomNo:"Open Office", status:"In Progress", actionOwner:"James O.", priority:"High", vendor:"Prime Electric", vendorPOC:"TBD", clientPOC:"James O.", quotedCost:25000, notes:"Permit approved" }
   ],
 
   issues: [
-    {
-      id: "ISS-101",
-      title: "Delayed Chair Shipment",
-      description: "Vendor pushed delivery by 1 week",
-      linkedId: "FFE-102",
-      linkedType: "FFE",
-      severity: "Med",
-      status: "Open",
-      openedDate: "Oct 10, 2025",
-      assignedTo: "James O.",
-      resolvedDate: "",
-      notes: ""
-    }
+    { id:"ISS-101", itemName:"Ergonomic Task Chair", productType:"Furniture", issueType:"Delivery", status:"Active", noItemsIssue:25, noItemsResolved:0, description:"Vendor pushed delivery by 1 week due to supply chain delay.", resolution:"", vendor:"Herman Miller", vendorPOC:"Rep TBD", manufacturer:"HM", productLink:"", modelNo:"", equipNo:"", skuCode:"", dimensions:"", building:"Mission Valley", floor:"N/A", roomType:"N/A", roomNo:"N/A", procMethod:"New Purchase", warranty:"Yes", warrantyType:"Manufacturer", priority:"Med", ffeId:"FFE-102", moveId:"", ssId:"", notes:"Follow up with vendor weekly." }
   ],
 
   punchListItems: [
-    {
-      id: "PL-101",
-      task: "Install TVs",
-      description: "Mount and test all conference TVs",
-      linkedId: "FFE-105",
-      linkedType: "FFE",
-      dueDate: "Nov 3, 2025",
-      assignedTo: "IT Team",
-      pctComplete: 0,
-      status: "Not Started",
-      notes: ""
-    }
+    { id:"PL-101", itemName:"Wall-Mounted TV", itemDesc:'75" TV', productType:"Furniture", remainingTasks:"Mount and test all conference TVs. Verify wireless casting works.", status:"Not Started", vendor:"Best Buy Business", vendorPOC:"Rep TBD", manufacturer:"Samsung", productLink:"", modelNo:"", equipNo:"", skuCode:"", assetTag:"", dimensions:'75" Diagonal', weight:"", powerType:"120V", dataType:"N/A", mountingType:"Wall", building:"Mission Valley", floor:"3rd", roomType:"Conference Room", roomNo:"301", procMethod:"New Purchase", actionOwner:"IT Team", priority:"High", notes:"" }
   ],
 
+  ssPunchListItems: [],
+
+  budgetItems: [
+    { id:"FFE-101", vendor:"Steelcase",         costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Sit-Stand Desk",          quoteAmount:6800,  actualSpend:0, comments:"" },
+    { id:"FFE-102", vendor:"Herman Miller",      costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Ergonomic Task Chair",    quoteAmount:15500, actualSpend:0, comments:"" },
+    { id:"FFE-105", vendor:"Best Buy Business",  costArea:"Furniture-Fixtures-Equip (Non AV/Ed-Tech & IT)", item:"Wall-Mounted TV",         quoteAmount:2400,  actualSpend:0, comments:"" },
+    { id:"TI-101",  vendor:"Prime Electric",     costArea:"Tenant Improvement",                             item:"Electrical Upgrade",      quoteAmount:25000, actualSpend:0, comments:"" }
+  ],
+
+  budgetSummary: {
+    ffebudget:          525000,
+    contingencyPct:     0.10,
+    totalFFEBudget:     525000,
+    plannedGrandTotal:  472300,
+    actualGrandTotal:   0
+  },
+
   users: [
-    {
-      id: "USR-101",
-      name: "John Tabler",
-      initials: "JT",
-      email: "jtabler@sdccd.edu",
-      role: "Project Manager",
-      projects: ["SDCCD City College Campus"],
-      status: "Active",
-      lastActive: "Today"
-    }
+    { id:"USR-101", name:"John Tabler", initials:"JT", email:"jtabler@sdccd.edu", role:"Project Manager", projects:["SDCCD MV Campus"], status:"Active", lastActive:"Today" }
   ]
 
 };
@@ -617,13 +326,7 @@ const PROJECTS = [PPS, PPS_2];
 // GLOBAL USERS — shared across all projects
 // =============================================================
 const USERS = [
-  { id: "USR-1", name: "John Tabler", initials: "JT", email: "jtabler@sdccd.edu",
-    role: "Work Dad", projects: ["SDCCD 1450 Frazee", "SDCCD City College Campus"],
-    status: "Active", lastActive: "Today" },
-  { id: "USR-2", name: "Admin User", initials: "AU", email: "admin@pps.app",
-    role: "Admin", projects: ["All Projects"],
-    status: "Active", lastActive: "Today" },
-  { id: "USR-3", name: "K. Grace Chan", initials: "GC", email: "test@pps.app",
-    role: "Admin", projects: ["All Projects"],
-    status: "Active", lastActive: "Today" }
+  { id:"USR-1", name:"John Tabler",   initials:"JT", email:"jtabler@sdccd.edu", role:"Work Dad", projects:["SDCCD 1450 Frazee","SDCCD MV Campus"], status:"Active", lastActive:"Today" },
+  { id:"USR-2", name:"Admin User",    initials:"AU", email:"admin@pps.app",     role:"Admin",    projects:["All Projects"],                         status:"Active", lastActive:"Today" },
+  { id:"USR-3", name:"K. Grace Chan", initials:"GC", email:"test@pps.app",      role:"Admin",    projects:["All Projects"],                         status:"Active", lastActive:"Today" }
 ];
