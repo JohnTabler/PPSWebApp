@@ -1,0 +1,614 @@
+<!-- =============================================================
+     PPS MODAL FORMS — All 8 modules
+     
+     FIND & REPLACE ANCHOR in index.html:
+     Find:    </body>
+     Replace: [paste this entire block, then </body> after it]
+     ============================================================= -->
+
+
+<!-- ── FF&E Modal ──────────────────────────────────────────── -->
+<div class="pps-modal-overlay" id="modal-ffe">
+  <div class="pps-modal">
+    <div class="pps-modal-header">
+      <h2>Add FF&amp;E Item</h2>
+      <button class="pps-modal-close" onclick="closeModal('modal-ffe')">&times;</button>
+    </div>
+    <div class="pps-modal-tabs">
+      <button class="pps-tab-btn active" onclick="switchTab('modal-ffe',0)">General Info</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-ffe',1)">Location</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-ffe',2)">Procurement &amp; Cost</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-ffe',3)">Status &amp; Flags</button>
+    </div>
+    <div class="pps-modal-body">
+      <!-- Tab 0: General Info -->
+      <div class="pps-tab-panel active">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>FF&amp;E ID (auto)</label><input type="text" id="ffe-id" readonly></div>
+          <div class="pps-field"><label>Item Name *</label><input type="text" id="ffe-name"></div>
+          <div class="pps-field full-width"><label>Description</label><input type="text" id="ffe-desc"></div>
+          <div class="pps-field full-width"><label>Product Type</label>
+            <select id="ffe-type">
+              <option>Furniture-Fixtures-Equip (Non AV/Ed-Tech &amp; IT)</option>
+              <option>AV / Ed-Tech</option>
+              <option>IT</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Vendor / Supplier</label><input type="text" id="ffe-vendor"></div>
+          <div class="pps-field"><label>Vendor POC</label><input type="text" id="ffe-vendorPOC"></div>
+          <div class="pps-field"><label>User / User Group</label><input type="text" id="ffe-userGroup"></div>
+          <div class="pps-field"><label>Current Action Owner</label><input type="text" id="ffe-actionOwner"></div>
+          <div class="pps-field"><label>Manufacturer</label><input type="text" id="ffe-manufacturer"></div>
+          <div class="pps-field"><label>Product Link</label><input type="text" id="ffe-productLink"></div>
+          <div class="pps-field"><label>Model No.</label><input type="text" id="ffe-modelNo"></div>
+          <div class="pps-field"><label>Equip No.</label><input type="text" id="ffe-equipNo"></div>
+          <div class="pps-field"><label>Product / SKU Code</label><input type="text" id="ffe-skuCode"></div>
+          <div class="pps-field"><label>Client Asset Tag</label><input type="text" id="ffe-assetTag"></div>
+          <div class="pps-field"><label>Ext. Dimensions</label><input type="text" id="ffe-dimensions"></div>
+          <div class="pps-field"><label>Weight</label><input type="text" id="ffe-weight"></div>
+          <div class="pps-field"><label>Power Type Required</label><input type="text" id="ffe-powerType"></div>
+          <div class="pps-field"><label>Data Type Required</label><input type="text" id="ffe-dataType"></div>
+          <div class="pps-field"><label>Mounting Type</label><input type="text" id="ffe-mountingType"></div>
+        </div>
+      </div>
+      <!-- Tab 1: Location -->
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-form-section-label">Current Location</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="ffe-curBuilding"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="ffe-curFloor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="ffe-curRoomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="ffe-curRoomNo"></div>
+          <div class="pps-form-section-label">New Location</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="ffe-newBuilding"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="ffe-newFloor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="ffe-newRoomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="ffe-newRoomNo"></div>
+        </div>
+      </div>
+      <!-- Tab 2: Procurement & Cost -->
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Procurement Method</label>
+            <select id="ffe-procMethod">
+              <option>OFOI</option><option>OFCI</option><option>New Purchase</option>
+              <option>Remanufactured</option><option>Donated</option><option>Lease</option><option>Reuse</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Funding Source</label><input type="text" id="ffe-fundingSource"></div>
+          <div class="pps-field"><label>Total Qty Needed</label><input type="number" id="ffe-qtyNeeded" min="0" value="0"></div>
+          <div class="pps-field"><label>Existing Qty (Re-used)</label><input type="number" id="ffe-qtyExisting" min="0" value="0"></div>
+          <div class="pps-field"><label>New Item Qty (To Order)</label><input type="number" id="ffe-qtyNew" min="0" value="0"></div>
+          <div class="pps-field"><label>Unit Price</label><input type="number" id="ffe-unitPrice" min="0" step="0.01" value="0"></div>
+          <div class="pps-field"><label>Unit of Measure</label>
+            <select id="ffe-uom"><option>Each</option><option>Lot</option><option>Linear Ft</option><option>Sq Ft</option></select>
+          </div>
+          <div class="pps-field"><label>ETA</label><input type="text" id="ffe-eta" placeholder="e.g. Oct 25, 2025"></div>
+        </div>
+      </div>
+      <!-- Tab 3: Status & Flags -->
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Process Status</label>
+            <select id="ffe-processStatus">
+              <option>In Stock</option><option>Ordered</option><option>Review</option>
+              <option>Quoted</option><option>Delivered</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>FF&amp;E Item Status</label>
+            <select id="ffe-ffeStatus">
+              <option>On Track</option><option>Issue</option><option>N/A</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Item Condition</label>
+            <select id="ffe-condition">
+              <option>Used (Existing Item)</option><option>New</option><option>Remanufactured</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Priority</label>
+            <select id="ffe-priority"><option>High</option><option selected>Medium</option><option>Low</option></select>
+          </div>
+          <div class="pps-field"><label>Warranty</label>
+            <select id="ffe-warranty"><option>Yes</option><option>No</option><option selected>TBD</option></select>
+          </div>
+          <div class="pps-field"><label>Warranty Type</label><input type="text" id="ffe-warrantyType"></div>
+          <div class="pps-field"><label>Punch List Item</label>
+            <select id="ffe-punchListItem"><option value="false">No</option><option value="true">Yes</option></select>
+          </div>
+          <div class="pps-field"><label>Swing Space Item</label>
+            <select id="ffe-swing"><option value="false">No</option><option value="true">Yes</option></select>
+          </div>
+          <div class="pps-field"><label>Associated Move Management ID</label><input type="text" id="ffe-moveId"></div>
+          <div class="pps-field"><label>Associated Swing Space ID</label><input type="text" id="ffe-ssId"></div>
+          <div class="pps-field full-width"><label>Notes</label><textarea id="ffe-notes"></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="pps-modal-footer">
+      <span class="pps-modal-status" id="ffe-status"></span>
+      <button class="pps-btn-cancel" onclick="closeModal('modal-ffe')">Cancel</button>
+      <button class="pps-btn-save"   onclick="submitForm('ffe')" id="ffe-save-btn">Save Item</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Issues Modal ─────────────────────────────────────────── -->
+<div class="pps-modal-overlay" id="modal-issues">
+  <div class="pps-modal">
+    <div class="pps-modal-header">
+      <h2>Add Issue</h2>
+      <button class="pps-modal-close" onclick="closeModal('modal-issues')">&times;</button>
+    </div>
+    <div class="pps-modal-tabs">
+      <button class="pps-tab-btn active" onclick="switchTab('modal-issues',0)">General Info</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-issues',1)">Location &amp; Product</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-issues',2)">Associations</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-issues',3)">Status</button>
+    </div>
+    <div class="pps-modal-body">
+      <div class="pps-tab-panel active">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Issue ID (auto)</label><input type="text" id="issues-id" readonly></div>
+          <div class="pps-field"><label>Item Name *</label><input type="text" id="issues-itemName"></div>
+          <div class="pps-field"><label>Product Type</label>
+            <select id="issues-productType">
+              <option>Furniture-Fixtures-Equip (Non AV/Ed-Tech &amp; IT)</option>
+              <option>AV / Ed-Tech</option><option>IT</option><option>Other</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Issue Type</label>
+            <select id="issues-issueType">
+              <option>Delivery</option><option>Damage</option><option>Warranty</option>
+              <option>Installation</option><option>Other</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>No. of Items with Issue</label><input type="number" id="issues-noItemsIssue" min="0" value="0"></div>
+          <div class="pps-field"><label>No. of Items Resolved</label><input type="number" id="issues-noItemsResolved" min="0" value="0"></div>
+          <div class="pps-field full-width"><label>Description of Issue *</label><textarea id="issues-description"></textarea></div>
+          <div class="pps-field full-width"><label>Resolution</label><textarea id="issues-resolution"></textarea></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-form-section-label">Location</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="issues-building"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="issues-floor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="issues-roomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="issues-roomNo"></div>
+          <div class="pps-form-section-label">Product Details</div>
+          <div class="pps-field"><label>Vendor / Supplier</label><input type="text" id="issues-vendor"></div>
+          <div class="pps-field"><label>Vendor POC</label><input type="text" id="issues-vendorPOC"></div>
+          <div class="pps-field"><label>Manufacturer</label><input type="text" id="issues-manufacturer"></div>
+          <div class="pps-field"><label>Product Link</label><input type="text" id="issues-productLink"></div>
+          <div class="pps-field"><label>Model No.</label><input type="text" id="issues-modelNo"></div>
+          <div class="pps-field"><label>Equip No.</label><input type="text" id="issues-equipNo"></div>
+          <div class="pps-field"><label>Product / SKU Code</label><input type="text" id="issues-skuCode"></div>
+          <div class="pps-field"><label>Ext. Dimensions</label><input type="text" id="issues-dimensions"></div>
+          <div class="pps-field"><label>Procurement Method</label>
+            <select id="issues-procMethod">
+              <option>OFOI</option><option>OFCI</option><option>New Purchase</option>
+              <option>Remanufactured</option><option>Donated</option><option>Lease</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Associated FF&amp;E ID</label><input type="text" id="issues-ffeId"></div>
+          <div class="pps-field"><label>Associated Move Management ID</label><input type="text" id="issues-moveId"></div>
+          <div class="pps-field"><label>Associated Swing Space ID</label><input type="text" id="issues-ssId"></div>
+          <div class="pps-field full-width"><label>Notes</label><textarea id="issues-notes"></textarea></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Issue Status</label>
+            <select id="issues-status">
+              <option>Active</option><option>Resolved</option><option>On Hold</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Priority</label>
+            <select id="issues-priority"><option>High</option><option selected>Med</option><option>Low</option></select>
+          </div>
+          <div class="pps-field"><label>Warranty</label>
+            <select id="issues-warranty"><option>Yes</option><option>No</option><option selected>TBD</option></select>
+          </div>
+          <div class="pps-field"><label>Warranty Type</label><input type="text" id="issues-warrantyType"></div>
+        </div>
+      </div>
+    </div>
+    <div class="pps-modal-footer">
+      <span class="pps-modal-status" id="issues-status-msg"></span>
+      <button class="pps-btn-cancel" onclick="closeModal('modal-issues')">Cancel</button>
+      <button class="pps-btn-save"   onclick="submitForm('issues')" id="issues-save-btn">Save Issue</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Move Management Modal ────────────────────────────────── -->
+<div class="pps-modal-overlay" id="modal-move">
+  <div class="pps-modal">
+    <div class="pps-modal-header">
+      <h2>Add Move Record</h2>
+      <button class="pps-modal-close" onclick="closeModal('modal-move')">&times;</button>
+    </div>
+    <div class="pps-modal-tabs">
+      <button class="pps-tab-btn active" onclick="switchTab('modal-move',0)">General Info</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-move',1)">Locations</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-move',2)">Move Details</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-move',3)">Associations</button>
+    </div>
+    <div class="pps-modal-body">
+      <div class="pps-tab-panel active">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Move ID (auto)</label><input type="text" id="move-id" readonly></div>
+          <div class="pps-field"><label>Item Name *</label><input type="text" id="move-itemName"></div>
+          <div class="pps-field"><label>User / User Group</label><input type="text" id="move-userGroup"></div>
+          <div class="pps-field"><label>No. of Occupants</label><input type="text" id="move-noOccupants"></div>
+          <div class="pps-field"><label>No. of Boxes</label><input type="number" id="move-noBoxes" min="0" value="0"></div>
+          <div class="pps-field"><label>Box Label / Tags</label><input type="text" id="move-boxTags"></div>
+          <div class="pps-field"><label>Client / Owner POC</label><input type="text" id="move-poc"></div>
+          <div class="pps-field full-width"><label>Notes</label><textarea id="move-notes"></textarea></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-form-section-label">From (Current)</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="move-fromBuilding"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="move-fromFloor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="move-fromRoomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="move-fromRoom"></div>
+          <div class="pps-form-section-label">To (New)</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="move-toBuilding"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="move-toFloor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="move-toRoomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="move-toRoom"></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Scheduled Move Date</label><input type="text" id="move-scheduledMoveDate" placeholder="e.g. Nov 3, 2025"></div>
+          <div class="pps-field"><label>Date Moved</label><input type="text" id="move-dateMoved"></div>
+          <div class="pps-field"><label>Mover / Transportation Entity</label><input type="text" id="move-mover"></div>
+          <div class="pps-field"><label>Mover POC</label><input type="text" id="move-moverPOC"></div>
+          <div class="pps-field"><label>Move Cost</label><input type="number" id="move-moveCost" min="0" step="0.01" value="0"></div>
+          <div class="pps-field"><label>Move Status</label>
+            <select id="move-status">
+              <option>On Track</option><option>Complete</option><option>Issue</option><option>Pending</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Swing Space Item</label>
+            <select id="move-swing"><option value="false">No</option><option value="true">Yes</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Associated FF&amp;E ID</label><input type="text" id="move-ffeId"></div>
+          <div class="pps-field"><label>Associated Swing Space ID</label><input type="text" id="move-ssId"></div>
+        </div>
+      </div>
+    </div>
+    <div class="pps-modal-footer">
+      <span class="pps-modal-status" id="move-status-msg"></span>
+      <button class="pps-btn-cancel" onclick="closeModal('modal-move')">Cancel</button>
+      <button class="pps-btn-save"   onclick="submitForm('move')" id="move-save-btn">Save Record</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Swing Space Modal ─────────────────────────────────────── -->
+<div class="pps-modal-overlay" id="modal-swing">
+  <div class="pps-modal">
+    <div class="pps-modal-header">
+      <h2>Add Swing Space Record</h2>
+      <button class="pps-modal-close" onclick="closeModal('modal-swing')">&times;</button>
+    </div>
+    <div class="pps-modal-tabs">
+      <button class="pps-tab-btn active" onclick="switchTab('modal-swing',0)">General Info</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-swing',1)">Locations</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-swing',2)">Schedule</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-swing',3)">Associations</button>
+    </div>
+    <div class="pps-modal-body">
+      <div class="pps-tab-panel active">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Swing Space ID (auto)</label><input type="text" id="swing-id" readonly></div>
+          <div class="pps-field"><label>User / User Group *</label><input type="text" id="swing-userGroup"></div>
+          <div class="pps-field"><label>Swing Space Phase</label>
+            <select id="swing-phase">
+              <option>In Swing</option><option>Pre-Swing</option><option>Complete</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>No. of Occupants</label><input type="text" id="swing-noOccupants"></div>
+          <div class="pps-field"><label>No. of Boxes Needed</label><input type="number" id="swing-noBoxes" min="0" value="0"></div>
+          <div class="pps-field"><label>Box Label / Tags</label><input type="text" id="swing-boxTags"></div>
+          <div class="pps-field full-width"><label>FF&amp;E Needs</label><input type="text" id="swing-ffeNeeds"></div>
+          <div class="pps-field full-width"><label>Technology Needs</label><input type="text" id="swing-techNeeds"></div>
+          <div class="pps-field full-width"><label>Facility / Space Needs</label><input type="text" id="swing-facilityNeeds"></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-form-section-label">Current Location</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="swing-curBuilding"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="swing-curFloor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="swing-curRoomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="swing-curRoomNo"></div>
+          <div class="pps-form-section-label">Swing Location</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="swing-swingBuilding"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="swing-swingFloor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="swing-swingRoomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="swing-swingRoomNo"></div>
+          <div class="pps-form-section-label">New (Final) Location</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="swing-newBuilding"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="swing-newFloor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="swing-newRoomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="swing-newRoomNo"></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Scheduled Move to Swing</label><input type="text" id="swing-scheduledMoveToSwing" placeholder="e.g. Oct 1, 2025"></div>
+          <div class="pps-field"><label>Date Moved to Swing</label><input type="text" id="swing-dateMoveToSwing"></div>
+          <div class="pps-field"><label>Scheduled Move to New Location</label><input type="text" id="swing-scheduledMoveToNew"></div>
+          <div class="pps-field"><label>Date Moved to New Location</label><input type="text" id="swing-dateMoveToNew"></div>
+          <div class="pps-field"><label>Status</label>
+            <select id="swing-status">
+              <option>On Track</option><option>Complete</option><option>Issue</option><option>Pending</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Swing Space Cost</label><input type="number" id="swing-swingCost" min="0" step="0.01" value="0"></div>
+          <div class="pps-field"><label>Punch List Item</label>
+            <select id="swing-punchListItem"><option value="false">No</option><option value="true">Yes</option></select>
+          </div>
+          <div class="pps-field"><label>Client / Owner POC</label><input type="text" id="swing-poc"></div>
+          <div class="pps-field full-width"><label>Notes</label><textarea id="swing-notes"></textarea></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Associated FF&amp;E ID</label><input type="text" id="swing-ffeId"></div>
+          <div class="pps-field"><label>Associated Move Management ID</label><input type="text" id="swing-moveId"></div>
+        </div>
+      </div>
+    </div>
+    <div class="pps-modal-footer">
+      <span class="pps-modal-status" id="swing-status-msg"></span>
+      <button class="pps-btn-cancel" onclick="closeModal('modal-swing')">Cancel</button>
+      <button class="pps-btn-save"   onclick="submitForm('swing')" id="swing-save-btn">Save Record</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Tenant Improvement Modal ──────────────────────────────── -->
+<div class="pps-modal-overlay" id="modal-ti">
+  <div class="pps-modal">
+    <div class="pps-modal-header">
+      <h2>Add Tenant Improvement</h2>
+      <button class="pps-modal-close" onclick="closeModal('modal-ti')">&times;</button>
+    </div>
+    <div class="pps-modal-tabs">
+      <button class="pps-tab-btn active" onclick="switchTab('modal-ti',0)">General Info</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-ti',1)">Location &amp; Trade</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-ti',2)">Cost &amp; Status</button>
+    </div>
+    <div class="pps-modal-body">
+      <div class="pps-tab-panel active">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>TI ID (auto)</label><input type="text" id="ti-id" readonly></div>
+          <div class="pps-field"><label>User / User Group *</label><input type="text" id="ti-userGroup"></div>
+          <div class="pps-field full-width"><label>Facility / Space Needs *</label><input type="text" id="ti-facilityNeeds"></div>
+          <div class="pps-field"><label>Vendor</label><input type="text" id="ti-vendor"></div>
+          <div class="pps-field"><label>Vendor POC</label><input type="text" id="ti-vendorPOC"></div>
+          <div class="pps-field"><label>Client / Owner POC</label><input type="text" id="ti-clientPOC"></div>
+          <div class="pps-field"><label>Action Owner</label><input type="text" id="ti-actionOwner"></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Trade</label>
+            <select id="ti-trade">
+              <option>Electrical</option><option>Plumbing</option><option>HVAC</option>
+              <option>Carpentry</option><option>Painting</option><option>Flooring</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Building</label><input type="text" id="ti-building"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="ti-floor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="ti-roomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="ti-roomNo"></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Quoted Cost</label><input type="number" id="ti-quotedCost" min="0" step="0.01" value="0"></div>
+          <div class="pps-field"><label>Status</label>
+            <select id="ti-status">
+              <option>Not Started</option><option>In Progress</option><option>Complete</option><option>On Hold</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Priority</label>
+            <select id="ti-priority"><option>High</option><option selected>Medium</option><option>Low</option></select>
+          </div>
+          <div class="pps-field full-width"><label>Notes</label><textarea id="ti-notes"></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="pps-modal-footer">
+      <span class="pps-modal-status" id="ti-status-msg"></span>
+      <button class="pps-btn-cancel" onclick="closeModal('modal-ti')">Cancel</button>
+      <button class="pps-btn-save"   onclick="submitForm('ti')" id="ti-save-btn">Save Item</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Schedule Modal ───────────────────────────────────────── -->
+<div class="pps-modal-overlay" id="modal-schedule">
+  <div class="pps-modal">
+    <div class="pps-modal-header">
+      <h2>Add Schedule Activity</h2>
+      <button class="pps-modal-close" onclick="closeModal('modal-schedule')">&times;</button>
+    </div>
+    <div class="pps-modal-tabs">
+      <button class="pps-tab-btn active" onclick="switchTab('modal-schedule',0)">Activity Info</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-schedule',1)">Dates &amp; Duration</button>
+    </div>
+    <div class="pps-modal-body">
+      <div class="pps-tab-panel active">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Activity ID (auto)</label><input type="text" id="schedule-id" readonly></div>
+          <div class="pps-field"><label>Activity Name *</label><input type="text" id="schedule-name"></div>
+          <div class="pps-field full-width"><label>Activity Type</label>
+            <select id="schedule-type">
+              <option>FF&amp;E</option><option>Move</option><option>TI</option>
+              <option>IT</option><option>Milestone</option><option>Other</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>% Complete</label><input type="number" id="schedule-pctComplete" min="0" max="100" value="0"></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-form-section-label">Planned</div>
+          <div class="pps-field"><label>Planned Start</label><input type="text" id="schedule-plannedStart" placeholder="e.g. Oct 8, 2025"></div>
+          <div class="pps-field"><label>Planned Finish</label><input type="text" id="schedule-plannedFinish" placeholder="e.g. Oct 9, 2025"></div>
+          <div class="pps-field"><label>Planned Duration (Days)</label><input type="number" id="schedule-durationDays" min="0" value="1"></div>
+          <div class="pps-field"><label>Start Day (offset)</label><input type="number" id="schedule-startDay" min="0" value="0"></div>
+          <div class="pps-form-section-label">Actual</div>
+          <div class="pps-field"><label>Actual Start</label><input type="text" id="schedule-actualStart"></div>
+          <div class="pps-field"><label>Actual Finish</label><input type="text" id="schedule-actualFinish"></div>
+          <div class="pps-field"><label>Variance</label><input type="number" id="schedule-variance" value="0"></div>
+        </div>
+      </div>
+    </div>
+    <div class="pps-modal-footer">
+      <span class="pps-modal-status" id="schedule-status-msg"></span>
+      <button class="pps-btn-cancel" onclick="closeModal('modal-schedule')">Cancel</button>
+      <button class="pps-btn-save"   onclick="submitForm('schedule')" id="schedule-save-btn">Save Activity</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Budget & Costs Modal ──────────────────────────────────── -->
+<div class="pps-modal-overlay" id="modal-budget">
+  <div class="pps-modal">
+    <div class="pps-modal-header">
+      <h2>Add Budget Item</h2>
+      <button class="pps-modal-close" onclick="closeModal('modal-budget')">&times;</button>
+    </div>
+    <div class="pps-modal-tabs">
+      <button class="pps-tab-btn active" onclick="switchTab('modal-budget',0)">General Info</button>
+    </div>
+    <div class="pps-modal-body">
+      <div class="pps-tab-panel active">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Budget ID (auto)</label><input type="text" id="budget-id" readonly></div>
+          <div class="pps-field"><label>Item *</label><input type="text" id="budget-item"></div>
+          <div class="pps-field"><label>Vendor</label><input type="text" id="budget-vendor"></div>
+          <div class="pps-field"><label>Cost Area</label>
+            <select id="budget-costArea">
+              <option>Furniture-Fixtures-Equip (Non AV/Ed-Tech &amp; IT)</option>
+              <option>Tenant Improvement</option><option>IT</option><option>AV / Ed-Tech</option><option>Other</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Quote Amount</label><input type="number" id="budget-quoteAmount" min="0" step="0.01" value="0"></div>
+          <div class="pps-field"><label>Actual Spend Amount</label><input type="number" id="budget-actualSpend" min="0" step="0.01" value="0"></div>
+          <div class="pps-field full-width"><label>Comments</label><textarea id="budget-comments"></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="pps-modal-footer">
+      <span class="pps-modal-status" id="budget-status-msg"></span>
+      <button class="pps-btn-cancel" onclick="closeModal('modal-budget')">Cancel</button>
+      <button class="pps-btn-save"   onclick="submitForm('budget')" id="budget-save-btn">Save Item</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── FF&E Punch List Modal ─────────────────────────────────── -->
+<div class="pps-modal-overlay" id="modal-punchlist">
+  <div class="pps-modal">
+    <div class="pps-modal-header">
+      <h2>Add Punch List Item</h2>
+      <button class="pps-modal-close" onclick="closeModal('modal-punchlist')">&times;</button>
+    </div>
+    <div class="pps-modal-tabs">
+      <button class="pps-tab-btn active" onclick="switchTab('modal-punchlist',0)">General Info</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-punchlist',1)">Location &amp; Product</button>
+      <button class="pps-tab-btn"        onclick="switchTab('modal-punchlist',2)">Status</button>
+    </div>
+    <div class="pps-modal-body">
+      <div class="pps-tab-panel active">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Punch List ID (auto)</label><input type="text" id="pl-id" readonly></div>
+          <div class="pps-field"><label>Item Name *</label><input type="text" id="pl-itemName"></div>
+          <div class="pps-field full-width"><label>Item Description</label><input type="text" id="pl-itemDesc"></div>
+          <div class="pps-field full-width"><label>Product Type</label>
+            <select id="pl-productType">
+              <option>Furniture-Fixtures-Equip (Non AV/Ed-Tech &amp; IT)</option>
+              <option>AV / Ed-Tech</option><option>IT</option><option>Other</option>
+            </select>
+          </div>
+          <div class="pps-field full-width"><label>Remaining Tasks &amp; Corrections *</label><textarea id="pl-remainingTasks"></textarea></div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-form-section-label">Location</div>
+          <div class="pps-field"><label>Building</label><input type="text" id="pl-building"></div>
+          <div class="pps-field"><label>Floor</label><input type="text" id="pl-floor"></div>
+          <div class="pps-field"><label>Room Type</label><input type="text" id="pl-roomType"></div>
+          <div class="pps-field"><label>Room No.</label><input type="text" id="pl-roomNo"></div>
+          <div class="pps-form-section-label">Product Details</div>
+          <div class="pps-field"><label>Vendor / Supplier</label><input type="text" id="pl-vendor"></div>
+          <div class="pps-field"><label>Vendor POC</label><input type="text" id="pl-vendorPOC"></div>
+          <div class="pps-field"><label>Manufacturer</label><input type="text" id="pl-manufacturer"></div>
+          <div class="pps-field"><label>Product Link</label><input type="text" id="pl-productLink"></div>
+          <div class="pps-field"><label>Model No.</label><input type="text" id="pl-modelNo"></div>
+          <div class="pps-field"><label>Equip No.</label><input type="text" id="pl-equipNo"></div>
+          <div class="pps-field"><label>Product / SKU Code</label><input type="text" id="pl-skuCode"></div>
+          <div class="pps-field"><label>Client Asset Tag</label><input type="text" id="pl-assetTag"></div>
+          <div class="pps-field"><label>Ext. Dimensions</label><input type="text" id="pl-dimensions"></div>
+          <div class="pps-field"><label>Weight</label><input type="text" id="pl-weight"></div>
+          <div class="pps-field"><label>Power Type Required</label><input type="text" id="pl-powerType"></div>
+          <div class="pps-field"><label>Data Type Required</label><input type="text" id="pl-dataType"></div>
+          <div class="pps-field"><label>Mounting Type</label><input type="text" id="pl-mountingType"></div>
+          <div class="pps-field"><label>Procurement Method</label>
+            <select id="pl-procMethod">
+              <option>OFOI</option><option>OFCI</option><option>New Purchase</option>
+              <option>Remanufactured</option><option>Donated</option><option>Lease</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="pps-tab-panel">
+        <div class="pps-form-grid">
+          <div class="pps-field"><label>Status</label>
+            <select id="pl-status">
+              <option>Not Started</option><option>In Progress</option><option>Complete</option>
+            </select>
+          </div>
+          <div class="pps-field"><label>Action Owner</label><input type="text" id="pl-actionOwner"></div>
+          <div class="pps-field"><label>Priority</label>
+            <select id="pl-priority"><option>High</option><option selected>Medium</option><option>Low</option></select>
+          </div>
+          <div class="pps-field full-width"><label>Notes</label><textarea id="pl-notes"></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="pps-modal-footer">
+      <span class="pps-modal-status" id="pl-status-msg"></span>
+      <button class="pps-btn-cancel" onclick="closeModal('modal-punchlist')">Cancel</button>
+      <button class="pps-btn-save"   onclick="submitForm('punchlist')" id="pl-save-btn">Save Item</button>
+    </div>
+  </div>
+</div>

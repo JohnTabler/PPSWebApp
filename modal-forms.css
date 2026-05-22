@@ -1,0 +1,206 @@
+/* =============================================================
+   PPS MODAL FORMS — Add to pps-theme.css
+   Find & Replace anchor: paste this block anywhere after the
+   last existing rule in pps-theme.css
+   ============================================================= */
+
+/* ── Modal Overlay ─────────────────────────────────────────── */
+.pps-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 26, 0.72);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.pps-modal-overlay.open {
+  display: flex;
+}
+
+/* ── Modal Box ──────────────────────────────────────────────── */
+.pps-modal {
+  background: var(--surface, #1a1f2e);
+  border: 1px solid var(--border, #2a3142);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 760px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+/* ── Modal Header ───────────────────────────────────────────── */
+.pps-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0;
+  flex-shrink: 0;
+}
+.pps-modal-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #e8eaf0);
+  margin: 0;
+}
+.pps-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted, #6b7280);
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+  transition: color 0.15s;
+}
+.pps-modal-close:hover { color: var(--text-primary, #e8eaf0); }
+
+/* ── Tab Bar ────────────────────────────────────────────────── */
+.pps-modal-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 16px 24px 0;
+  border-bottom: 1px solid var(--border, #2a3142);
+  flex-shrink: 0;
+}
+.pps-tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted, #6b7280);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px 10px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  margin-bottom: -1px;
+}
+.pps-tab-btn:hover { color: var(--text-primary, #e8eaf0); }
+.pps-tab-btn.active {
+  color: var(--accent, #5ecce6);
+  border-bottom-color: var(--accent, #5ecce6);
+}
+
+/* ── Tab Panels ─────────────────────────────────────────────── */
+.pps-modal-body {
+  overflow-y: auto;
+  padding: 20px 24px;
+  flex: 1;
+}
+.pps-tab-panel { display: none; }
+.pps-tab-panel.active { display: block; }
+
+/* ── Form Grid ──────────────────────────────────────────────── */
+.pps-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+.pps-form-grid .full-width { grid-column: 1 / -1; }
+
+.pps-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pps-field label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pps-field input,
+.pps-field select,
+.pps-field textarea {
+  background: var(--bg, #0f1320);
+  border: 1px solid var(--border, #2a3142);
+  border-radius: 6px;
+  color: var(--text-primary, #e8eaf0);
+  font-size: 13px;
+  padding: 7px 10px;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.pps-field input:focus,
+.pps-field select:focus,
+.pps-field textarea:focus {
+  outline: none;
+  border-color: var(--accent, #5ecce6);
+}
+.pps-field textarea { resize: vertical; min-height: 72px; }
+.pps-field select option { background: var(--surface, #1a1f2e); }
+
+/* readonly / auto-generated ID */
+.pps-field input[readonly] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ── Section Divider ────────────────────────────────────────── */
+.pps-form-section-label {
+  grid-column: 1 / -1;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted, #6b7280);
+  border-bottom: 1px solid var(--border, #2a3142);
+  padding-bottom: 6px;
+  margin-top: 6px;
+}
+
+/* ── Modal Footer ───────────────────────────────────────────── */
+.pps-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border, #2a3142);
+  flex-shrink: 0;
+  gap: 12px;
+}
+.pps-modal-status {
+  font-size: 12px;
+  color: var(--text-muted, #6b7280);
+  flex: 1;
+  min-height: 18px;
+}
+.pps-modal-status.error   { color: #f87171; }
+.pps-modal-status.success { color: #34d399; }
+.pps-modal-status.saving  { color: var(--accent, #5ecce6); }
+
+.pps-btn-cancel {
+  background: none;
+  border: 1px solid var(--border, #2a3142);
+  border-radius: 6px;
+  color: var(--text-muted, #6b7280);
+  font-size: 13px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.pps-btn-cancel:hover {
+  border-color: var(--text-muted, #6b7280);
+  color: var(--text-primary, #e8eaf0);
+}
+.pps-btn-save {
+  background: var(--accent, #5ecce6);
+  border: none;
+  border-radius: 6px;
+  color: #0f1320;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 20px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.pps-btn-save:hover   { opacity: 0.88; }
+.pps-btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
