@@ -591,6 +591,10 @@ function initSwing(c) {
         <td class="muted-cell">${i.poc||'—'}</td>
         <td class="note-cell">${i.notes||'—'}</td>
         <td><div class="row-actions"><button class="action-btn" onclick="editRecord('swing','${i.id}')">Edit</button><button class="action-btn" onclick="showFFEDetail('${i.id}')">View</button></div></td>
+      </tr>`).join('')}
+    </tbody>`;
+});
+}
 function renderTI() {
   return `
   <div class="topbar"><span class="page-title">Tenant Improvement</span><span class="badge badge-blue" id="ti-count-badge">${ACTIVE.tenantImprovementItems.length} Items</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-ti">+ Add Item</button></div>
