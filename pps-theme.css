@@ -156,7 +156,7 @@ a.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
 .p-low    { color: #6b7591; }
 
 /* ── TABLE SHARED ─────────────────────────────────────────── */
-.table-wrap { overflow: auto; }
+.table-wrap { overflow: auto; flex: 1; min-height: 0; }
 table { width: 100%; border-collapse: collapse; }
 thead { position: sticky; top: 0; z-index: 10; background: var(--surface2); }
 th { background: var(--surface2); border-bottom: 2px solid var(--border); padding: 10px 14px; font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; text-align: left; white-space: nowrap; font-weight: 400; }
@@ -197,7 +197,7 @@ tr:hover .row-actions { opacity: 1; }
 .grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .grid-3-1 { display: grid; grid-template-columns: 3fr 1fr; gap: 20px; }
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.content { padding: 28px 32px; display: flex; flex-direction: column; gap: 24px; }
+.content { padding: 28px 32px; display: flex; flex-direction: column; gap: 24px; flex: 1; min-height: 0; overflow: hidden; }
 
 /* ── Modal Overlay ─────────────────────────────────────────── */
 .pps-modal-overlay {
