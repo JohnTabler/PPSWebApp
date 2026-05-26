@@ -249,6 +249,9 @@ const PPS_ALL = {
 };
 
 // ── Active Project ────────────────────────────────────────────
+// Load any persisted data from localStorage before setting ACTIVE
+loadFromLocalStorage();
+
 let ACTIVE = PPS;
 
 function updateSidebar() {
@@ -407,7 +410,7 @@ function renderFFE() {
     <span class="page-title">Master FF&amp;E List</span>
     <span class="badge badge-blue" id="ffe-count-badge">${ACTIVE.ffeItems.length} Items</span>
     <div class="topbar-spacer"></div>
-    <button class="btn btn-ghost">Import CSV</button><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-ffe">+ Add Item</button>
+    <button class="btn btn-ghost">Import CSV</button><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button>
   </div>
   <div class="toolbar">
     <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, ID, room, vendor, user group…"></div>
@@ -474,7 +477,7 @@ function renderMove() {
     <span class="badge badge-blue" id="move-count-badge">${r.length} Moves</span>
     <span class="badge badge-warn">Move Date: ${ACTIVE.project.moveDate}</span>
     <div class="topbar-spacer"></div>
-    <button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-move">+ Add Move</button>
+    <button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Move</button>
   </div>
   <div class="toolbar" style="border-top:1px solid var(--border);">
     <div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input placeholder="Search item, room, ID…"></div>
@@ -531,7 +534,7 @@ function renderSchedule() {
     <span class="badge badge-warn">⚑ Move Date: ${ACTIVE.project.moveDate}</span>
     <div class="topbar-spacer"></div>
     <div class="legend"><div class="leg-item"><div class="leg-dot" style="background:#4f9cf9"></div>Move Mgmt</div><div class="leg-item"><div class="leg-dot" style="background:#38d9a9"></div>FF&amp;E</div><div class="leg-item"><div class="leg-dot" style="background:#ffa94d"></div>Other</div><div class="leg-item"><div class="leg-dot" style="background:#6b7591"></div>Swing Space</div></div>
-    <button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-schedule">+ Add Activity</button>
+    <button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Activity</button>
   </div>
   <div class="content" style="flex:1;overflow:auto;">
     <div class="gantt-card">
@@ -552,7 +555,7 @@ function renderSchedule() {
 // ── SWING SPACE ───────────────────────────────────────────────
 function renderSwing() {
   return `
-  <div class="topbar"><span class="page-title">Swing Space</span><span class="badge badge-blue" id="swing-count-badge">${ACTIVE.swingSpaceItems.length} Items</span><span class="badge badge-warn">Move Date: ${ACTIVE.project.moveDate}</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-swing">+ Add Item</button></div>
+  <div class="topbar"><span class="page-title">Swing Space</span><span class="badge badge-blue" id="swing-count-badge">${ACTIVE.swingSpaceItems.length} Items</span><span class="badge badge-warn">Move Date: ${ACTIVE.project.moveDate}</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, location, ID…"></div><div class="filter-chip active">All</div><div class="filter-chip">Active</div><div class="filter-chip">Vacated</div><div class="filter-chip">Pending</div><div class="filter-chip">🚨 Issues</div><span class="count-label" id="swing-count-label"></span></div>
   <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="swing-table-wrap"><table style="min-width:1100px;" id="swing-table"><thead><tr><th>SS ID</th><th>User/Group</th><th>Phase</th><th>FF&amp;E Needs</th><th>Tech Needs</th><th>Facility Needs</th><th>No. Boxes</th><th>Cur. Floor</th><th>Cur. Room</th><th>Move to Swing</th><th>Moved to Swing</th><th>Swing Bldg</th><th>Swing Floor</th><th>Swing Room Type</th><th>Swing Room No.</th><th>Move to New</th><th>Moved to New</th><th>New Floor</th><th>New Room</th><th>Status</th><th>Swing Cost</th><th>PL Item?</th><th>FF&amp;E ID</th><th>Move ID</th><th>POC</th><th>Notes</th><th></th></tr></thead><tbody id="swing-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="swing-info"></span></div>`;
@@ -591,7 +594,7 @@ function initSwing(c) {
 // ── TENANT IMPROVEMENT ────────────────────────────────────────
 function renderTI() {
   return `
-  <div class="topbar"><span class="page-title">Tenant Improvement</span><span class="badge badge-blue" id="ti-count-badge">${ACTIVE.tenantImprovementItems.length} Items</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-ti">+ Add Item</button></div>
+  <div class="topbar"><span class="page-title">Tenant Improvement</span><span class="badge badge-blue" id="ti-count-badge">${ACTIVE.tenantImprovementItems.length} Items</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by name, scope, contractor…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip">Complete</div><div class="filter-chip">🚨 Issues</div><span class="count-label" id="ti-count-label"></span></div>
   <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;" id="ti-table-wrap"><table style="min-width:1200px;" id="ti-table"><thead><tr><th>TI ID</th><th>Facility/Space Needs</th><th>Trade</th><th>Building</th><th>Floor</th><th>Room Type</th><th>Room No.</th><th>Status</th><th>Action Owner</th><th>Priority</th><th>Vendor</th><th>Vendor POC</th><th>Client POC</th><th>Quoted Cost</th><th>Notes</th><th></th></tr></thead><tbody id="ti-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="ti-info"></span></div>`;
@@ -624,7 +627,7 @@ function initTI(c) {
 // ── ISSUE LOG ─────────────────────────────────────────────────
 function renderIssues() {
   return `
-  <div class="topbar"><span class="page-title">Issue Log</span><span class="badge badge-red" id="issue-open-badge">0 Open</span><span class="badge badge-blue" id="issue-total-badge">0 Total</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-issue">+ Log Issue</button></div>
+  <div class="topbar"><span class="page-title">Issue Log</span><span class="badge badge-red" id="issue-open-badge">0 Open</span><span class="badge badge-blue" id="issue-total-badge">0 Total</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Log Issue</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search issues, linked items…"></div><div class="filter-chip active">All</div><div class="filter-chip" style="color:var(--danger);border-color:var(--danger);">🔴 High</div><div class="filter-chip">Open</div><div class="filter-chip">In Progress</div><div class="filter-chip">Resolved</div><span class="count-label" id="issue-count-label"></span></div>
   <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1100px;"><thead><tr><th>Issue ID</th><th>Item Name</th><th>Product Type</th><th>Issue Type</th><th>Status</th><th>Items w/ Issue</th><th>Items Resolved</th><th>Description</th><th>Resolution</th><th>Vendor</th><th>Vendor POC</th><th>Building</th><th>Room Type</th><th>Room No.</th><th>Proc. Method</th><th>Warranty</th><th>Priority</th><th>FF&amp;E ID</th><th>Move ID</th><th>SS ID</th><th>Notes</th><th></th></tr></thead><tbody id="issue-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="issue-info"></span></div>`;
@@ -667,7 +670,7 @@ function initIssues(c) {
 // ── PUNCH LIST ────────────────────────────────────────────────
 function renderPunchList() {
   return `
-  <div class="topbar"><span class="page-title">Punch List</span><span class="badge badge-blue" id="pl-total-badge">0 Tasks</span><span class="badge badge-green" id="pl-complete-badge">0 Complete</span><span class="badge badge-warn" id="pl-pending-badge">0 Pending</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-punchlist">+ Add Task</button></div>
+  <div class="topbar"><span class="page-title">Punch List</span><span class="badge badge-blue" id="pl-total-badge">0 Tasks</span><span class="badge badge-green" id="pl-complete-badge">0 Complete</span><span class="badge badge-warn" id="pl-pending-badge">0 Pending</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Task</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search tasks, linked items…"></div><div class="filter-chip active">All</div><div class="filter-chip">Not Started</div><div class="filter-chip">In Progress</div><div class="filter-chip green">Complete</div><div class="filter-chip">Blocked</div><span class="count-label" id="pl-count-label"></span></div>
   <div class="table-wrap" style="flex:1;min-height:0;overflow:auto;"><table style="min-width:1050px;"><thead><tr><th>PL ID</th><th>Item Name</th><th>Description</th><th>Product Type</th><th>Remaining Tasks & Corrections</th><th>Status</th><th>Vendor</th><th>Vendor POC</th><th>Building</th><th>Floor</th><th>Room Type</th><th>Room No.</th><th>Proc. Method</th><th>Action Owner</th><th>Priority</th><th>Notes</th><th></th></tr></thead><tbody id="pl-tbody"></tbody></table></div>
   <div class="pagination"><span class="page-info" id="pl-info"></span></div>`;
@@ -825,7 +828,7 @@ function renderBudget() {
   const totalActual = items.reduce((s,r)=>s+(r.actualSpend||0),0);
   const variance = totalQuote - totalActual;
   return `
-  <div class="topbar"><span class="page-title">Budget &amp; Costs</span><span class="badge badge-blue" id="budget-count-badge">${items.length} Line Items</span><span class="badge badge-green">Budget: ${fmt(summary.ffebudget||0)}</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-budget">+ Add Item</button></div>
+  <div class="topbar"><span class="page-title">Budget &amp; Costs</span><span class="badge badge-blue" id="budget-count-badge">${items.length} Line Items</span><span class="badge badge-green">Budget: ${fmt(summary.ffebudget||0)}</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary">+ Add Item</button></div>
   <div class="toolbar"><div class="search-box"><span style="color:var(--muted);font-size:13px;">🔍</span><input type="text" placeholder="Search by ID, vendor, item…"></div><div class="filter-chip active">All</div><div class="filter-chip">FF&amp;E</div><div class="filter-chip">TI</div><div class="filter-chip">Move</div><span class="count-label" id="budget-count-label"></span></div>
   <div class="content" style="flex:1;overflow:auto;">
     <div class="stats-row" style="grid-template-columns:repeat(5,1fr);gap:14px;">
@@ -976,84 +979,46 @@ function populateAutoId(formKey) {
 }
 
 
-// ── GitHub API Write-Back ─────────────────────────────────────
-async function githubWriteBack(newRecord, arrayKey) {
-  const { pat, owner, repo, branch, path } = PPS_CONFIG;
-  const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  const headers = {
-    'Authorization': `token ${pat}`,
-    'Accept': 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json'
-  };
+// ── localStorage Persistence ──────────────────────────────────
+// Keys: one per project dataset
+const LS_KEYS = { PPS: 'pps_data_PPS', PPS_2: 'pps_data_PPS_2' };
 
-  // 1. GET current file
-  const getRes = await fetch(apiBase, { headers });
-  if (!getRes.ok) throw new Error(`GitHub GET failed: ${getRes.status} ${getRes.statusText}`);
-  const fileData = await getRes.json();
-  const sha = fileData.sha;
-  const currentContent = atob(fileData.content.replace(/\n/g, ''));
+// Arrays that get saved/restored per project
+const SAVED_ARRAYS = [
+  'ffeItems', 'issues', 'moveRecords', 'swingSpaceItems',
+  'tenantImprovementItems', 'scheduleActivities', 'budgetItems', 'punchListItems'
+];
 
-  // 2. Find the injection point — the closing `]` of the target array.
-  //    Each array in pps-data.js ends with a line that is just `  ],`
-  //    We locate the array by its key name declaration, then find its closing `],`
-  const arrayDeclaration = `${arrayKey}:`;
-  const declIndex = currentContent.indexOf(arrayDeclaration);
-  if (declIndex === -1) throw new Error(`Array key "${arrayKey}" not found in pps-data.js`);
-
-  // Find the closing `],` after the declaration
-  const closingPattern = '  ],';
-  const insertionIndex = currentContent.indexOf(closingPattern, declIndex);
-  if (insertionIndex === -1) throw new Error(`Could not find closing ], for "${arrayKey}"`);
-
-  // 3. Serialize the new record as a compact JS object literal
-  const recordStr = '    ' + jsObjectLiteral(newRecord);
-
-  // 4. Determine whether the array is empty (no existing items)
-  //    Slice from declaration to closing to check
-  const arrayBody = currentContent.slice(declIndex, insertionIndex);
-  const isEmpty = !arrayBody.includes('{');
-  const separator = isEmpty ? '' : ',\n';
-
-  // 5. Build updated content
-  const updatedContent =
-    currentContent.slice(0, insertionIndex) +
-    separator + recordStr + '\n' +
-    currentContent.slice(insertionIndex);
-
-  // 6. PUT updated file
-  const encoded = btoa(unescape(encodeURIComponent(updatedContent)));
-  const putRes = await fetch(apiBase, {
-    method: 'PUT',
-    headers,
-    body: JSON.stringify({
-      message: `Add ${newRecord.id} to ${arrayKey}`,
-      content: encoded,
-      sha,
-      branch
-    })
+// Save the current state of both project datasets to localStorage
+function saveToLocalStorage() {
+  [PPS, PPS_2].forEach((dataset, i) => {
+    const key = i === 0 ? LS_KEYS.PPS : LS_KEYS.PPS_2;
+    const snapshot = {};
+    SAVED_ARRAYS.forEach(arr => { snapshot[arr] = dataset[arr]; });
+    try {
+      localStorage.setItem(key, JSON.stringify(snapshot));
+    } catch(e) {
+      console.warn('localStorage save failed:', e);
+    }
   });
-  if (!putRes.ok) {
-    const errBody = await putRes.json().catch(() => ({}));
-    throw new Error(`GitHub PUT failed: ${putRes.status} — ${errBody.message || putRes.statusText}`);
-  }
-
-  return newRecord.id;
 }
 
-// Converts a JS object to a compact single-line object literal string
-// (matches the style already used in pps-data.js)
-function jsObjectLiteral(obj) {
-  const pairs = Object.entries(obj).map(([k, v]) => {
-    if (typeof v === 'string') {
-      // Escape any double-quotes inside the string
-      const escaped = v.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-      return `${k}:"${escaped}"`;
+// Load saved data from localStorage and merge into PPS / PPS_2
+// Called once at startup — falls back to pps-data.js values if nothing saved
+function loadFromLocalStorage() {
+  [PPS, PPS_2].forEach((dataset, i) => {
+    const key = i === 0 ? LS_KEYS.PPS : LS_KEYS.PPS_2;
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return;
+      const saved = JSON.parse(raw);
+      SAVED_ARRAYS.forEach(arr => {
+        if (Array.isArray(saved[arr])) dataset[arr] = saved[arr];
+      });
+    } catch(e) {
+      console.warn('localStorage load failed:', e);
     }
-    if (typeof v === 'boolean') return `${k}:${v}`;
-    if (v === null || v === undefined) return `${k}:""`;
-    return `${k}:${v}`;
   });
-  return '{ ' + pairs.join(', ') + ' }';
 }
 
 
@@ -1073,7 +1038,7 @@ function setSaveBtn(key, disabled) {
 
 
 // ── Form Submission Router ────────────────────────────────────
-async function submitForm(formKey) {
+function submitForm(formKey) {
   let record, arrayKey, modalId, requiredFields;
 
   switch (formKey) {
@@ -1140,19 +1105,16 @@ async function submitForm(formKey) {
   }
 
   const statusKey = formKey === 'ffe' ? 'ffe' : formKey;
-  setStatus(statusKey, 'Saving…', 'saving');
-  setSaveBtn(statusKey, true);
 
   try {
-    // Append to ACTIVE in-memory array so page re-renders immediately
+    // Append to ACTIVE in-memory array
     const cfg = ID_CONFIG[formKey];
     if (cfg) cfg.array().push(record);
 
-    // Write to GitHub
-    await githubWriteBack(record, arrayKey);
+    // Persist to localStorage
+    saveToLocalStorage();
 
     setStatus(statusKey, `✓ Saved as ${record.id}`, 'success');
-    setSaveBtn(statusKey, false);
 
     // Re-render current page
     const currentPage = location.hash.replace('#', '') || 'dashboard';
@@ -1167,7 +1129,6 @@ async function submitForm(formKey) {
     const cfg = ID_CONFIG[formKey];
     if (cfg) { const arr = cfg.array(); arr.splice(arr.length - 1, 1); }
     setStatus(statusKey, '✗ ' + err.message, 'error');
-    setSaveBtn(statusKey, false);
   }
 }
 
@@ -1313,19 +1274,23 @@ function buildPunchlistRecord() {
 //
 // Pattern: find the button, replace its onclick.
 //
-document.body.addEventListener('click', function(e) {
-  const modalMap = {
-    'btn-add-ffe':       'modal-ffe',
-    'btn-add-issue':     'modal-issues',
-    'btn-add-move':      'modal-move',
-    'btn-add-swing':     'modal-swing',
-    'btn-add-ti':        'modal-ti',
-    'btn-add-schedule':  'modal-schedule',
-    'btn-add-budget':    'modal-budget',
-    'btn-add-punchlist': 'modal-punchlist',
+function wireAddButtons() {
+  const map = {
+    'btn-add-ffe':       () => openModal('modal-ffe'),
+    'btn-add-issue':     () => openModal('modal-issues'),
+    'btn-add-move':      () => openModal('modal-move'),
+    'btn-add-swing':     () => openModal('modal-swing'),
+    'btn-add-ti':        () => openModal('modal-ti'),
+    'btn-add-schedule':  () => openModal('modal-schedule'),
+    'btn-add-budget':    () => openModal('modal-budget'),
+    'btn-add-punchlist': () => openModal('modal-punchlist'),
   };
-  if (modalMap[e.target.id]) openModal(modalMap[e.target.id]);
-});
+  Object.entries(map).forEach(([id, fn]) => {
+    const el = document.getElementById(id);
+    if (el) el.onclick = fn;
+  });
+}
+wireAddButtons();
 
 </script>
 
