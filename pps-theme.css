@@ -317,7 +317,7 @@ tr:hover .row-actions { opacity: 1; }
   background: var(--bg, #0f1320);
   border: 1px solid var(--border, #2a3142);
   border-radius: 6px;
-  color: var(--text-primary, #e8eaf0);
+  color: var(--text-primary, #0b1638);
   font-size: 13px;
   padding: 7px 10px;
   transition: border-color 0.15s;
@@ -335,7 +335,7 @@ tr:hover .row-actions { opacity: 1; }
 
 /* readonly / auto-generated ID */
 .pps-field input[readonly] {
-  opacity: 0.5;
+  opacity: 0.85;
   cursor: default;
 }
 
