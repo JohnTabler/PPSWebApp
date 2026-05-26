@@ -924,7 +924,7 @@ function openModal(modalId) {
   const saveBtn = document.getElementById(formKey + '-save-btn');
   const header  = overlay.querySelector('.pps-modal-header h2');
   if (saveBtn) saveBtn.textContent = { ffe:'Save Item', issues:'Save Issue', move:'Save Record', swing:'Save Record', ti:'Save Item', schedule:'Save Activity', budget:'Save Item', punchlist:'Save Item' }[formKey] || 'Save';
-  if (header)  header.textContent  = { ffe:'Add FF&E Item', issues:'Add Issue', move:'Add Move Record', swing:'Add Swing Space Record', ti:'Add Tenant Improvement', schedule:'Add Schedule Activity', budget:'Add Budget Item', punchlist:'Add Punch List Item' }[formKey] || 'Add Item';
+  if (header)  header.textContent  = { ffe:'Add FF\u0026E Item', issues:'Add Issue', move:'Add Move Record', swing:'Add Swing Space Record', ti:'Add Tenant Improvement', schedule:'Add Schedule Activity', budget:'Add Budget Item', punchlist:'Add Punch List Item' }[formKey] || 'Add Item';
   overlay.classList.add('open');
   switchTab(modalId, 0);
   populateAutoId(formKey);
@@ -955,7 +955,7 @@ function editRecord(formKey, id) {
   // Update header and save button for edit mode
   const header  = overlay.querySelector('.pps-modal-header h2');
   const saveBtn = document.getElementById(formKey + '-save-btn');
-  if (header)  header.textContent  = 'Edit ' + { ffe:'FF&E Item', move:'Move Record', swing:'Swing Space Record', ti:'Tenant Improvement' }[formKey];
+  if (header)  header.textContent  = 'Edit ' + { ffe:'FF\u0026E Item', move:'Move Record', swing:'Swing Space Record', ti:'Tenant Improvement' }[formKey];
   if (saveBtn) saveBtn.textContent = 'Save Changes';
 
   // Populate fields per module
