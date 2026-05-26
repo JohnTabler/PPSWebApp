@@ -448,7 +448,7 @@ function initFFE(c) {
       document.getElementById('ffe-count-badge').textContent=f.length+' Items';
       document.getElementById('ffe-count-label').textContent=f.length+' items';
       document.getElementById('ffe-info').textContent=f.length+' items';
-      document.getElementById('ffe-tbody').innerHTML=(f.length===0?emptyRow(38,'No items match'):f.map(i=>`<tr>
+      document.getElementById('ffe-tbody').innerHTML=f.length===0?emptyRow(38,'No items match'):f.map(i=>`<tr>
         <td class="id-cell">${i.id}</td>
         <td style="max-width:220px;"><span class="item-name" style="cursor:pointer;color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.name}</span>${i.desc&&i.desc!==i.name?'<div class="item-desc">'+i.desc+'</div>':''}</td>
         <td class="muted-cell" style="max-width:140px;white-space:normal;">${i.type}</td>
@@ -470,7 +470,7 @@ function initFFE(c) {
         <td class="link-cell">${i.moveId||'—'}</td><td class="link-cell">${i.ssId||'—'}</td>
         <td class="note-cell">${i.notes||'—'}</td>
         <td><div class="row-actions"><button class="action-btn" onclick="editRecord('ffe','${i.id}')">Edit</button><button class="action-btn" onclick="showFFEDetail('${i.id}')">View</button></div></td>
-      </tr>`).join(''));
+            </tr>`).join('');
 });
 }
 function renderMove() {
@@ -521,15 +521,14 @@ function initMove(c) {
         <td class="muted-cell">${m.swing?'Yes':'No'}</td><td class="link-cell">${m.ffeId}</td><td class="link-cell">${m.ssId}</td>
         <td class="muted-cell">${m.poc}</td><td class="note-cell">${m.notes||'—'}</td>
         <td><div class="row-actions"><button class="action-btn" onclick="editRecord('move','${m.id}')">Edit</button></div></td>
-      </tr>`}).join('')}
-    </tbody>`;
+            </tr>`}).join('');
 });
 }
 function renderSchedule() {
   const DAYS=31;
   const labels=ACTIVE.scheduleActivities.map(a=>`<div class="gantt-row"><span class="act-name">${a.name}</span><span class="act-type-pill ${typePillClass[a.type]||''}">${a.type}</span></div>`).join('');
   const bars=ACTIVE.scheduleActivities.map(a=>{const l=((a.startDay/DAYS)*100).toFixed(1),w=Math.max(3,(a.durationDays/DAYS)*100).toFixed(1);return`<div class="gantt-bar-row"><div class="bar-item" style="background:${typeColor[a.type]||'#6b7591'};left:${l}%;width:${w}%;">${a.durationDays>3?a.name:'▌'}</div></div>`;}).join('');
-  const pcts=ACTIVE.scheduleActivities.map(a=>`<div class="pct-row"><span class="pct-num" style="color:${a.pctComplete>0?'var(--accent2)':'var(--muted)'};">${a.pctComplete}%</span>${a.pctComplete>0?`<div class="pct-bar"><div class="pct-fill" style="width:${a.pctComplete}%"></div></div>`:''}</div>`).join('');
+  const pcts=ACTIVE.scheduleActivities.map(a=>`<div class="pct-row"><span class="pct-num" style="color:${a.pctComplete>0?'var(--accent2)':'var(--muted)'};">${a.pctComplete}%</span>${a.pctComplete>0?'<div class="pct-bar"><div class="pct-fill" style="width:'+a.pctComplete+'%"></div></div>':''}</div>`).join('');
   return `
   <div class="topbar">
     <span class="page-title">Schedule</span>
@@ -590,8 +589,7 @@ function initSwing(c) {
         <td class="muted-cell">${i.poc||'—'}</td>
         <td class="note-cell">${i.notes||'—'}</td>
         <td><div class="row-actions"><button class="action-btn" onclick="editRecord('swing','${i.id}')">Edit</button><button class="action-btn" onclick="showFFEDetail('${i.id}')">View</button></div></td>
-      </tr>`).join('')}
-    </tbody>`;
+      </tr>`).join('');
 });
 }
 function renderTI() {
@@ -622,8 +620,7 @@ function initTI(c) {
         <td class="cost-cell">${fmt(i.quotedCost||i.plannedCost||0)}</td>
         <td class="note-cell">${i.notes||'—'}</td>
         <td><div class="row-actions"><button class="action-btn" onclick="editRecord('ti','${i.id}')">Edit</button><button class="action-btn" onclick="showFFEDetail('${i.id}')">View</button></div></td>
-      </tr>`).join('')}
-    </tbody>`;
+      </tr>`).join('');
 });
 }
 function renderIssues() {
