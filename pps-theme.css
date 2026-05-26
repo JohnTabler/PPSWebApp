@@ -48,7 +48,9 @@ body { height: 100%; background: var(--bg); color: var(--text); font-family: var
   border-right: 1px solid var(--border); padding: 28px 0;
   flex-shrink: 0; display: flex; flex-direction: column;
   position: fixed; top: 0; left: 0; overflow-y: auto;
+  scrollbar-width: none;
 }
+.sidebar::-webkit-scrollbar { display: none;
 .logo { padding: 0 10px 20px; border-bottom: 1px solid var(--border); }
 .logo-mark { font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--text); }
 .logo-mark span { color: var(--accent); }
@@ -398,3 +400,41 @@ tr:hover .row-actions { opacity: 1; }
 .pps-btn-save:hover   { opacity: 0.88; }
 .pps-btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
 
+/* ADD — append to end of file */
+@media (max-height: 720px) {
+  .nav-section {
+    margin: 10px 16px 2px;
+    padding-top: 8px;
+  }
+  .nav-item {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .nav-item--compact {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+  .project-chip {
+    margin: 10px 14px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-height: 580px) {
+  .nav-section {
+    margin: 6px 16px 0;
+    padding-top: 6px;
+  }
+  .nav-item {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 12px;
+  }
+  .logo {
+    padding-bottom: 12px;
+  }
+  .project-chip {
+    margin: 6px 14px;
+    padding: 6px 10px;
+  }
+}

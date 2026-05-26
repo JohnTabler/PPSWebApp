@@ -469,12 +469,7 @@ function initFFE(c) {
         <td class="muted-cell">${i.punchListItem?'Yes':'—'}</td>
         <td class="link-cell">${i.moveId||'—'}</td><td class="link-cell">${i.ssId||'—'}</td>
         <td class="note-cell">${i.notes||'—'}</td>
-        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
-      </tr>`).join('');
-    });
-}
-
-// ── MOVE MANAGEMENT ───────────────────────────────────────────
+        <td><div class="row-actions"><button class="action-btn" onclick="editRecord('ffe','${i.id}')">Edit</button><button class="action-btn" onclick="showFFEDetail('${i.id}')">View</button></div></td>
 function renderMove() {
   const r=ACTIVE.moveRecords;
   return `
@@ -522,12 +517,7 @@ function initMove(c) {
         <td><span class="move-status ${moveStatusClass[m.status]||'ms-na'}">${m.status}</span></td>
         <td class="muted-cell">${m.swing?'Yes':'No'}</td><td class="link-cell">${m.ffeId}</td><td class="link-cell">${m.ssId}</td>
         <td class="muted-cell">${m.poc}</td><td class="note-cell">${m.notes||'—'}</td>
-        <td><div class="row-actions"><button class="action-btn">Edit</button></div></td>
-      </tr>`}).join('');
-    });
-}
-
-// ── SCHEDULE ──────────────────────────────────────────────────
+        <td><div class="row-actions"><button class="action-btn" onclick="editRecord('move','${m.id}')">Edit</button></div></td>
 function renderSchedule() {
   const DAYS=31;
   const labels=ACTIVE.scheduleActivities.map(a=>`<div class="gantt-row"><span class="act-name">${a.name}</span><span class="act-type-pill ${typePillClass[a.type]||''}">${a.type}</span></div>`).join('');
@@ -592,12 +582,7 @@ function initSwing(c) {
         <td class="link-cell">${i.ffeId||'—'}</td><td class="link-cell">${i.moveId||'—'}</td>
         <td class="muted-cell">${i.poc||'—'}</td>
         <td class="note-cell">${i.notes||'—'}</td>
-        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
-      </tr>`).join('');
-    });
-}
-
-// ── TENANT IMPROVEMENT ────────────────────────────────────────
+        <td><div class="row-actions"><button class="action-btn" onclick="editRecord('swing','${i.id}')">Edit</button><button class="action-btn" onclick="showFFEDetail('${i.id}')">View</button></div></td>
 function renderTI() {
   return `
   <div class="topbar"><span class="page-title">Tenant Improvement</span><span class="badge badge-blue" id="ti-count-badge">${ACTIVE.tenantImprovementItems.length} Items</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-ti">+ Add Item</button></div>
@@ -625,12 +610,7 @@ function initTI(c) {
         <td class="muted-cell">${i.clientPOC||'—'}</td>
         <td class="cost-cell">${fmt(i.quotedCost||i.plannedCost||0)}</td>
         <td class="note-cell">${i.notes||'—'}</td>
-        <td><div class="row-actions"><button class="action-btn">Edit</button><button class="action-btn">View</button></div></td>
-      </tr>`).join('');
-    });
-}
-
-// ── ISSUE LOG ─────────────────────────────────────────────────
+        <td><div class="row-actions"><button class="action-btn" onclick="editRecord('ti','${i.id}')">Edit</button><button class="action-btn" onclick="showFFEDetail('${i.id}')">View</button></div></td>
 function renderIssues() {
   return `
   <div class="topbar"><span class="page-title">Issue Log</span><span class="badge badge-red" id="issue-open-badge">0 Open</span><span class="badge badge-blue" id="issue-total-badge">0 Total</span><div class="topbar-spacer"></div><button class="btn btn-ghost">Export</button><button class="btn btn-primary" id="btn-add-issue">+ Log Issue</button></div>
@@ -932,16 +912,115 @@ function switchTab(modalId, tabIndex) {
 }
 
 
-// ── Open / Close Modals ───────────────────────────────────────
+// ── Edit Mode State ───────────────────────────────────────────
+let isEditMode = false;
+
 function openModal(modalId) {
   const overlay = document.getElementById(modalId);
   if (!overlay) return;
-  overlay.classList.add('open');
-  // Reset to first tab
-  switchTab(modalId, 0);
-  // Populate auto-ID for the relevant form
+  // Reset to add mode
+  isEditMode = false;
   const formKey = modalId.replace('modal-', '');
+  const saveBtn = document.getElementById(formKey + '-save-btn');
+  const header  = overlay.querySelector('.pps-modal-header h2');
+  if (saveBtn) saveBtn.textContent = { ffe:'Save Item', issues:'Save Issue', move:'Save Record', swing:'Save Record', ti:'Save Item', schedule:'Save Activity', budget:'Save Item', punchlist:'Save Item' }[formKey] || 'Save';
+  if (header)  header.textContent  = { ffe:'Add FF&E Item', issues:'Add Issue', move:'Add Move Record', swing:'Add Swing Space Record', ti:'Add Tenant Improvement', schedule:'Add Schedule Activity', budget:'Add Budget Item', punchlist:'Add Punch List Item' }[formKey] || 'Add Item';
+  overlay.classList.add('open');
+  switchTab(modalId, 0);
   populateAutoId(formKey);
+}
+
+// ── Edit Record — populate form with existing data ────────────
+function editRecord(formKey, id) {
+  const cfg = ID_CONFIG[formKey];
+  if (!cfg) return;
+  const record = cfg.array().find(r => r.id === id);
+  if (!record) return;
+
+  // Helper: set field value safely
+  const set = (elId, val) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.value = (val === null || val === undefined) ? '' : val;
+  };
+
+  const modalId = 'modal-' + (formKey === 'punchlist' ? 'punchlist' : formKey);
+  const overlay = document.getElementById(modalId);
+  if (!overlay) return;
+
+  // Open modal first (resets state), then override to edit mode
+  openModal(modalId);
+  isEditMode = true;
+
+  // Update header and save button for edit mode
+  const header  = overlay.querySelector('.pps-modal-header h2');
+  const saveBtn = document.getElementById(formKey + '-save-btn');
+  if (header)  header.textContent  = 'Edit ' + { ffe:'FF&E Item', move:'Move Record', swing:'Swing Space Record', ti:'Tenant Improvement' }[formKey];
+  if (saveBtn) saveBtn.textContent = 'Save Changes';
+
+  // Populate fields per module
+  if (formKey === 'ffe') {
+    set('ffe-id', record.id); set('ffe-name', record.name); set('ffe-desc', record.desc);
+    set('ffe-type', record.type); set('ffe-vendor', record.vendor); set('ffe-vendorPOC', record.vendorPOC);
+    set('ffe-userGroup', record.userGroup); set('ffe-actionOwner', record.actionOwner);
+    set('ffe-manufacturer', record.manufacturer); set('ffe-productLink', record.productLink);
+    set('ffe-modelNo', record.modelNo); set('ffe-equipNo', record.equipNo); set('ffe-skuCode', record.skuCode);
+    set('ffe-assetTag', record.assetTag); set('ffe-dimensions', record.dimensions); set('ffe-weight', record.weight);
+    set('ffe-powerType', record.powerType); set('ffe-dataType', record.dataType); set('ffe-mountingType', record.mountingType);
+    set('ffe-curBuilding', record.curBuilding); set('ffe-curFloor', record.curFloor);
+    set('ffe-curRoomType', record.curRoomType); set('ffe-curRoomNo', record.curRoomNo);
+    set('ffe-newBuilding', record.newBuilding); set('ffe-newFloor', record.newFloor);
+    set('ffe-newRoomType', record.newRoomType); set('ffe-newRoomNo', record.newRoomNo);
+    set('ffe-procMethod', record.procMethod); set('ffe-fundingSource', record.fundingSource);
+    set('ffe-qtyNeeded', record.qtyNeeded); set('ffe-qtyExisting', record.qtyExisting); set('ffe-qtyNew', record.qtyNew);
+    set('ffe-unitPrice', record.unitPrice); set('ffe-uom', record.uom); set('ffe-eta', record.eta);
+    set('ffe-processStatus', record.processStatus); set('ffe-ffeStatus', record.ffeStatus);
+    set('ffe-condition', record.condition); set('ffe-warranty', record.warranty); set('ffe-warrantyType', record.warrantyType);
+    set('ffe-priority', record.priority);
+    set('ffe-punchListItem', record.punchListItem ? 'true' : 'false');
+    set('ffe-swing', record.swing ? 'true' : 'false');
+    set('ffe-moveId', record.moveId); set('ffe-ssId', record.ssId); set('ffe-notes', record.notes);
+  }
+  else if (formKey === 'move') {
+    set('move-id', record.id); set('move-itemName', record.itemName); set('move-userGroup', record.userGroup);
+    set('move-fromBuilding', record.fromBuilding); set('move-fromFloor', record.fromFloor);
+    set('move-fromRoom', record.fromRoom); set('move-fromRoomType', record.fromRoomType);
+    set('move-toBuilding', record.toBuilding); set('move-toFloor', record.toFloor);
+    set('move-toRoom', record.toRoom); set('move-toRoomType', record.toRoomType);
+    set('move-scheduledMoveDate', record.scheduledMoveDate); set('move-dateMoved', record.dateMoved);
+    set('move-noOccupants', record.noOccupants); set('move-noBoxes', record.noBoxes); set('move-boxTags', record.boxTags);
+    set('move-mover', record.mover); set('move-moverPOC', record.moverPOC);
+    set('move-status', record.status); set('move-moveCost', record.moveCost);
+    set('move-swing', record.swing ? 'true' : 'false');
+    set('move-ffeId', record.ffeId); set('move-ssId', record.ssId);
+    set('move-poc', record.poc); set('move-notes', record.notes);
+  }
+  else if (formKey === 'swing') {
+    set('swing-id', record.id); set('swing-userGroup', record.userGroup); set('swing-phase', record.phase);
+    set('swing-noOccupants', record.noOccupants); set('swing-ffeNeeds', record.ffeNeeds);
+    set('swing-techNeeds', record.techNeeds); set('swing-facilityNeeds', record.facilityNeeds);
+    set('swing-noBoxes', record.noBoxes); set('swing-boxTags', record.boxTags);
+    set('swing-curBuilding', record.curBuilding); set('swing-curFloor', record.curFloor);
+    set('swing-curRoomType', record.curRoomType); set('swing-curRoomNo', record.curRoomNo);
+    set('swing-scheduledMoveToSwing', record.scheduledMoveToSwing); set('swing-dateMoveToSwing', record.dateMoveToSwing);
+    set('swing-swingBuilding', record.swingBuilding); set('swing-swingFloor', record.swingFloor);
+    set('swing-swingRoomType', record.swingRoomType); set('swing-swingRoomNo', record.swingRoomNo);
+    set('swing-scheduledMoveToNew', record.scheduledMoveToNew); set('swing-dateMoveToNew', record.dateMoveToNew);
+    set('swing-newBuilding', record.newBuilding); set('swing-newFloor', record.newFloor);
+    set('swing-newRoomType', record.newRoomType); set('swing-newRoomNo', record.newRoomNo);
+    set('swing-status', record.status); set('swing-swingCost', record.swingCost);
+    set('swing-punchListItem', record.punchListItem ? 'true' : 'false');
+    set('swing-ffeId', record.ffeId); set('swing-moveId', record.moveId);
+    set('swing-poc', record.poc); set('swing-notes', record.notes);
+  }
+  else if (formKey === 'ti') {
+    set('ti-id', record.id); set('ti-userGroup', record.userGroup); set('ti-facilityNeeds', record.facilityNeeds);
+    set('ti-trade', record.trade); set('ti-building', record.building); set('ti-floor', record.floor);
+    set('ti-roomType', record.roomType); set('ti-roomNo', record.roomNo);
+    set('ti-status', record.status); set('ti-actionOwner', record.actionOwner); set('ti-priority', record.priority);
+    set('ti-vendor', record.vendor); set('ti-vendorPOC', record.vendorPOC); set('ti-clientPOC', record.clientPOC);
+    set('ti-quotedCost', record.quotedCost); set('ti-notes', record.notes);
+  }
 }
 
 function closeModal(modalId) {
@@ -1105,9 +1184,17 @@ function submitForm(formKey) {
   const statusKey = formKey === 'ffe' ? 'ffe' : formKey;
 
   try {
-    // Append to ACTIVE in-memory array
     const cfg = ID_CONFIG[formKey];
-    if (cfg) cfg.array().push(record);
+
+    if (isEditMode) {
+      // Overwrite existing record in-place
+      const arr = cfg.array();
+      const idx = arr.findIndex(r => r.id === record.id);
+      if (idx !== -1) arr[idx] = record;
+    } else {
+      // Append new record
+      if (cfg) cfg.array().push(record);
+    }
 
     // Persist to localStorage
     saveToLocalStorage();
@@ -1118,14 +1205,20 @@ function submitForm(formKey) {
     const currentPage = location.hash.replace('#', '') || 'dashboard';
     if (typeof navigate === 'function') navigate(currentPage);
 
-    // Auto-close after short delay
-    setTimeout(() => closeModal(modalId), 1200);
+    // Close modal then open detail view for supported modules
+    const detailModules = ['ffe', 'move', 'swing', 'ti'];
+    closeModal(modalId);
+    if (detailModules.includes(formKey)) {
+      setTimeout(() => showFFEDetail(record.id), 100);
+    }
 
   } catch (err) {
     console.error(err);
-    // Roll back in-memory push on failure
-    const cfg = ID_CONFIG[formKey];
-    if (cfg) { const arr = cfg.array(); arr.splice(arr.length - 1, 1); }
+    // Roll back on failure (add mode only)
+    if (!isEditMode) {
+      const cfg = ID_CONFIG[formKey];
+      if (cfg) { const arr = cfg.array(); arr.splice(arr.length - 1, 1); }
+    }
     setStatus(statusKey, '✗ ' + err.message, 'error');
   }
 }
