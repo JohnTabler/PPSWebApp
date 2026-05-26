@@ -450,7 +450,7 @@ function initFFE(c) {
       document.getElementById('ffe-info').textContent=f.length+' items';
       document.getElementById('ffe-tbody').innerHTML=f.length===0?emptyRow(38,'No items match'):f.map(i=>`<tr>
         <td class="id-cell">${i.id}</td>
-        <td style="max-width:220px;"><span class="item-name" style="cursor:pointer;color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.name}</span>${i.desc&&i.desc!==i.name?`<div class="item-desc">${i.desc}</div>`:''}</td>
+        <td style="max-width:220px;"><span class="item-name" style="cursor:pointer;color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'" onclick="showFFEDetail('${i.id}')">${i.name}</span>${i.desc&&i.desc!==i.name?'<div class="item-desc">'+i.desc+'</div>':''}</td>
         <td class="muted-cell" style="max-width:140px;white-space:normal;">${i.type}</td>
         <td>${i.vendor||'—'}</td><td class="muted-cell">${i.vendorPOC||'—'}</td><td class="muted-cell">${i.userGroup||'—'}</td>
         <td class="muted-cell">${i.curBuilding||'—'}</td><td class="muted-cell">${i.curFloor||'—'}</td><td class="muted-cell">${i.curRoomType||'—'}</td><td class="muted-cell">${i.curRoomNo||'—'}</td>
