@@ -249,6 +249,12 @@ const PPS_ALL = {
 };
 
 // ── Active Project ────────────────────────────────────────────
+// localStorage keys and array list must be defined before load call
+const LS_KEYS = { PPS: 'pps_data_PPS', PPS_2: 'pps_data_PPS_2' };
+const SAVED_ARRAYS = [
+  'ffeItems', 'issues', 'moveRecords', 'swingSpaceItems',
+  'tenantImprovementItems', 'scheduleActivities', 'budgetItems', 'punchListItems'
+];
 // Load any persisted data from localStorage before setting ACTIVE
 loadFromLocalStorage();
 
@@ -980,14 +986,6 @@ function populateAutoId(formKey) {
 
 
 // ── localStorage Persistence ──────────────────────────────────
-// Keys: one per project dataset
-const LS_KEYS = { PPS: 'pps_data_PPS', PPS_2: 'pps_data_PPS_2' };
-
-// Arrays that get saved/restored per project
-const SAVED_ARRAYS = [
-  'ffeItems', 'issues', 'moveRecords', 'swingSpaceItems',
-  'tenantImprovementItems', 'scheduleActivities', 'budgetItems', 'punchListItems'
-];
 
 // Save the current state of both project datasets to localStorage
 function saveToLocalStorage() {
