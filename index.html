@@ -258,7 +258,7 @@ const SAVED_ARRAYS = [
 // Load any persisted data from localStorage before setting ACTIVE
 loadFromLocalStorage();
 
-let ACTIVE = PPS_All;
+let ACTIVE = PPS_ALL;
 
 function updateSidebar() {
   document.getElementById('sidebar-project-name').innerHTML = ACTIVE.project.name + '<br>' + ACTIVE.project.subtitle;
@@ -270,6 +270,7 @@ updateSidebar();
 
 const switcher = document.getElementById('project-switcher');
 if (switcher) {
+  switcher.value = 'ALL'
   switcher.addEventListener('change', function () {
   if (this.value === 'PPS_2') ACTIVE = PPS_2;
   else if (this.value === 'ALL') ACTIVE = PPS_ALL;
