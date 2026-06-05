@@ -258,7 +258,7 @@ const SAVED_ARRAYS = [
 // Load any persisted data from localStorage before setting ACTIVE
 loadFromLocalStorage();
 
-let ACTIVE = PPS;
+let ACTIVE = PPS_All;
 
 function updateSidebar() {
   document.getElementById('sidebar-project-name').innerHTML = ACTIVE.project.name + '<br>' + ACTIVE.project.subtitle;
